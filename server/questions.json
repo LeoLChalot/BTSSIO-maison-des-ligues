@@ -1,0 +1,22 @@
+[
+    {
+        "theme": "culture général",
+        "question": "Donner un antonyme de « chasteté » ?",
+        "reponse": "débauche, concupiscence, corruption, cynisme, etc..."
+    },
+    {
+        "theme": "Disney",
+        "question": "Dans Bambi, quel animal s'appelle 'fleur'?",
+        "reponse": "le putois"
+    },
+    {
+        "theme": "Histoire géographie",
+        "question": "Quel est le seul pays commençant par la lettre W ?",
+        "reponse": "Wallis et futuna"
+    },
+    {
+        "theme": "Développement",
+        "question": "Quel est la signification de l'acronyme HTML ?",
+        "reponse": "HyperText Markup Language"
+    }
+]

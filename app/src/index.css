@@ -1,0 +1,90 @@
+/* Color Theme Swatches in RGBA */
+/* 
+.UI/UX-1-rgba { color: rgba(191, 15, 29, 1); }
+.UI/UX-2-rgba { color: rgba(242, 169, 79, 1); }
+.UI/UX-3-rgba { color: rgba(242, 73, 12, 1); }
+.UI/UX-4-rgba { color: rgba(89, 22, 8, 1); }
+.UI/UX-5-rgba { color: rgba(242, 242, 242, .7); } 
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;800&display=swap');
+
+:root {
+  --color-bg-primary: rgba(242, 242, 242, 1);
+  --color-bg-secondary: rgba(242, 242, 242, 0.8);
+  --color-shadow: rgb(181, 181, 181);
+  --color-header: rgba(191, 15, 29, 1);
+  --color-text: rgba(89, 22, 8, 1);
+  --color-highlight: rgba(242, 73, 12, 1);
+  --color-underline: rgba(242, 169, 79, 1);
+  --text-font: 'Mukta', sans-serif;
+  --font-regular: 300;
+  --font-bold: 800;
+
+  /* ? ANIMATION */
+  --transition-config: 0.3s all ease;
+
+
+  /* ? SMALL SCREEN */
+  --font-size: 16px;
+}
+
+* {
+  /* box-shadow: inset 0px 0px 1px 0px red; */
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  font-family: var(--text-font);
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-header);
+}
+
+p,
+.link {
+  color: var(--color-text);
+  font-size: var(--sm-font-size);
+  line-height: calc(1.2 * var(--sm-font-size));
+}
+
+.link {
+  display: inline-block;
+  position: relative;
+  font-weight: var(--font-bold);
+  text-decoration: none;
+}
+
+.link::before {
+  content: '';
+  position: absolute;
+  background-color: var(--color-underline);
+  bottom: 0px;
+  left: 0;
+  width: 0%;
+  height: 0.875rem;
+  opacity: 0.5;
+  transition: var(--transition-config);
+}
+
+.link:hover::before {
+  width: 100%;
+}
+
+
+

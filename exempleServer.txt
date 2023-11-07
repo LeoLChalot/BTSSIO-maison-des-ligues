@@ -1,0 +1,63 @@
+const express = require('express');
+const app = express();
+
+const PORT = 3000;
+
+app.get('/', (req, res) => {
+   res.writeHead(200, {
+      'Content-Type': 'text/html',
+   });
+   res.end('<h1>Hello World</h1>');
+});
+
+app.get('/boutique/:page', (req, res) => {
+   let page = parseInt(req.params.page);
+   let isValid = Number.isInteger(page);
+   if (isValid) {
+      res.writeHead(200, {
+         'Content-Type': 'text/html',
+      });
+      res.end(`<h1>Vous êtes à la page n°${page}</h1>`);
+   } else {
+      res.writeHead(404, {
+         'Content-Type': 'text/html',
+      });
+      res.end(`<h1>Page introuvable :(</h1>`);
+   }
+});
+
+app.get('/boutique', (req, res) => {
+   res.writeHead(200, {
+      'Content-Type': 'text/html',
+   });
+   res.end('<h1>Page boutique</h1>');
+});
+
+app.get('/profil/:id?', (req, res) => {
+   res.writeHead(200, {
+      'Content-Type': 'text/html',
+   });
+
+   let userId = req.params.id;
+   if (req.query.name != undefined) {
+      res.end(`
+    <h1>Page user n°${userId}</h1>
+    <p>Nom: ${req.query.name}</p>`);
+   } else {
+      res.end(`<h1>Page Profil User n°${userId}</h1>`);
+   }
+});
+
+app.get('/produit/:id', (req, res) => {
+   res.writeHead(200, {
+      'Content-Type': 'text/html',
+   });
+
+   let produitId = req.params.id;
+
+   res.end(`<h1>Page Produit n°${produitId}</h1>`);
+});
+
+app.listen(PORT, () => {
+   console.log(`Listen on port ${PORT}`);
+});
