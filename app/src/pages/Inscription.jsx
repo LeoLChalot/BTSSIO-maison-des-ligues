@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const Inscription = () => {
   return (
-    <section id="page-inscription">
+    <section id="page-inscription" className='page'>
       <div className="content">
         <div className="image-container image-connexion sm-none">
           <img src={Surf} alt="Photo d'un grimpeur sur un pan de falaise" />

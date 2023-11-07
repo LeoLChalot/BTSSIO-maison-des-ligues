@@ -6,6 +6,15 @@
   min-height: 100dvh;
   padding: 0.5rem;
 }
+section {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+}
+.container {
+  position: relative;
+  width: 100%;
+}
 
 @media screen and (max-width: 768px) {
   .App {
@@ -42,11 +51,7 @@
     left: 0;
   }
 
-  section {
-    position: relative;
-    width: 100%;
-    min-height: 100dvh;
-  }
+  
 
   .content {
     width: 100%;

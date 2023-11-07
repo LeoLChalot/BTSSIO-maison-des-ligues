@@ -2,9 +2,9 @@ import React from 'react';
 
 const Profil = () => {
   return (
-    <div>
+    <section id="page-profil" className='page'>
       Page Profil
-    </div>
+    </section>
   );
 };
 

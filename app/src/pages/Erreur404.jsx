@@ -2,9 +2,9 @@ import React from 'react';
 
 const Erreur404 = () => {
   return (
-    <div>
+    <section id="page-404" className='page'>
       Erreur 404
-    </div>
+    </section>
   );
 };
 
