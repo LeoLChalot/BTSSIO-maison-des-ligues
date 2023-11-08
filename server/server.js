@@ -27,7 +27,23 @@ app.use(cors());
 
 app.get('/', (req, res) => {
    res.writeHead(200, { 'Content-Type': 'text/html' });
-   res.end(`<h1>Quizz !</h1>`);
+   res.end(`Node script`);
+});
+
+app.get('/get-categorie-id/:nom_categorie', async (req, res) => {
+   const nom = req.params.nom_categorie;
+   try {
+      let query = `SELECT id_categorie FROM categories WHERE nom = ?`;
+      values = [nom]
+      console.log(query);
+      let result = await connection.promise().query(query, nom);
+      const id = await result[0][0]['id_categorie'];
+      res.status(200).json(id)
+      console.log(id);
+   }catch(err){
+      throw err
+   }
+   
 });
 
 // * GET ALL articles
@@ -70,8 +86,20 @@ app.get('/boutique', async (req, res) => {
    }
 });
 
-app.get('/article/:id', (req, res) => {
-   
+app.get('/article/:id', async (req, res) => {
+   const id = parseInt(req.params.id);
+   try {
+      id != isNaN;
+      console.log(1);
+      let query = `SELECT * FROM articles WHERE id_article = ?`;
+      const values = [id];
+      const result = await connection.promise().query(query, values);
+      const article = await result[0][0];
+      console.log(article);
+      res.status(200).json(article);
+   } catch (err) {
+      throw err;
+   }
 });
 
 // * POST catégorie
@@ -120,6 +148,20 @@ app.post('/add-article', async (req, res) => {
       query = `INSERT INTO articles(nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?)`;
       await connection.promise().query(query, bindValues);
       res.status(200).end('Article ajoutée !');
+   } catch (err) {
+      throw err;
+   }
+});
+
+app.put('edit-article/:id', (req, res) => {
+   const id = parseInt(req.params.id);
+   try {
+      id != isNaN;
+      const nom = req.body.nom;
+      const photo = req.body.photo;
+      const description = req.body.description;
+      const prix = req.body.prix;
+      const quantite = req.body.quantite;
    } catch (err) {
       throw err;
    }
