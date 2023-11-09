@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { v4, validate } = require('uuid');
 const express = require('express');
 const app = express();
 const questions = require('./questions.json');
@@ -25,25 +26,24 @@ connection.connect((err) => {
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
    res.writeHead(200, { 'Content-Type': 'text/html' });
-   res.end(`Node script`);
+   res.end(`${v4()}, ${validate(v4())}`);
 });
 
 app.get('/get-categorie-id/:nom_categorie', async (req, res) => {
    const nom = req.params.nom_categorie;
    try {
       let query = `SELECT id_categorie FROM categories WHERE nom = ?`;
-      values = [nom]
+      values = [nom];
       console.log(query);
       let result = await connection.promise().query(query, nom);
       const id = await result[0][0]['id_categorie'];
-      res.status(200).json(id)
+      res.status(200).json(id);
       console.log(id);
-   }catch(err){
-      throw err
+   } catch (err) {
+      throw err;
    }
-   
 });
 
 // * GET ALL articles
@@ -99,6 +99,55 @@ app.get('/article/:id', async (req, res) => {
       res.status(200).json(article);
    } catch (err) {
       throw err;
+   }
+});
+
+// * ROUTES USER
+app.post('/inscription', async (req, res) => {
+   if (
+      req.body.id_utilisateur != '' &&
+      validate(req.body.id_utilisateur) &&
+      req.body.prenom != '' &&
+      req.body.nom != '' &&
+      req.body.pseudo != '' &&
+      req.body.email != '' &&
+      req.body.mot_de_passe != ''
+   ) {
+      const values = [
+         req.body.id_utilisateur,
+         req.body.prenom,
+         req.body.nom,
+         req.body.pseudo,
+         req.body.email,
+         req.body.mot_de_passe,
+      ];
+      try {
+         const query = `INSERT INTO utilisateurs(id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)`;
+         await connection.promise().query(query, values);
+         // res.status(302).redirect('http://localhost:5173/connexion')
+         res.status(200);
+      } catch {
+         res.status(500).end('Informations erronées');
+      }
+   } else {
+      res.status(200).end('Informations erronées');
+   }
+});
+
+app.get('/connexion/:login', async (req, res) => {
+   if (req.params.login != '') {
+      const values = [req.params.login, req.params.login];
+      try {
+         const query = `SELECT * FROM utilisateurs WHERE pseudo = ? OR email = ?`;
+         const user = await connection.promise().query(query, values);
+         // console.log(user)
+         // res.status(302).redirect('http://localhost:5173/connexion')
+         res.status(200).json(user[0][0]);
+      } catch {
+         res.status(500).end('Informations erronées');
+      }
+   } else {
+      res.status(200).end('Informations erronées');
    }
 });
 
