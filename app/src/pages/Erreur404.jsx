@@ -1,11 +1,19 @@
-import React from 'react';
+import React from 'react'
+import { useRouteError } from "react-router-dom";
 
 const Erreur404 = () => {
-  return (
-    <section id="page-404" className='page'>
-      Erreur 404
-    </section>
-  );
-};
+  const error = useRouteError()
+  console.error(error)
 
-export default Erreur404;
+  return (
+    <div id="error-page">
+      <h1>Oops!</h1>
+      <p>Sorry, an unexpected error has occurred.</p>
+      <p>
+        <i>{error.statusText || error.message}</i>
+      </p>
+    </div>
+  )
+}
+
+export default Erreur404

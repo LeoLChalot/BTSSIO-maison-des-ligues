@@ -1,32 +1,59 @@
 import React, { useState } from 'react'
 import './Navbar.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ButtonBurger from '../ButtonBurger/ButtonBurger'
 
 const Navbar = () => {
   const [isActive, setIsActive] = useState('hide')
-
+  const ls = localStorage
   console.log(isActive)
+  const navigate = useNavigate()
+
+  const deconnexion = () => {
+    localStorage.clear()
+    navigate('/')
+  }
 
   return (
     <>
       <ButtonBurger isActive={isActive} setIsActive={setIsActive} />
-      <div id="navbar" className={isActive} onClick={(e) => setIsActive('hide')}>
+      <div
+        id="navbar"
+        className={isActive}
+        onClick={(e) => setIsActive('hide')}
+      >
         <Link to="/" className="link ">
           Accueil
         </Link>
         <Link to="/boutique" className="link">
           Boutique
         </Link>
-        <Link to="/connexion" className="link">
-          Connexion
-        </Link>
-        <Link to="/inscription" className="link">
-          Inscription
-        </Link>
-        <Link to="/profil" className="link">
-          Profil
-        </Link>
+        {ls.getItem('isAuth') != '1' && (
+          <>
+            <Link to="/connexion" className="link">
+              Connexion
+            </Link>
+            <Link to="/inscription" className="link">
+              Inscription
+            </Link>
+          </>
+        )}
+
+        {ls.getItem('isAdmin') == '1' && (
+          <Link to="/admin/dashboard" className="link">
+            Dashboard
+          </Link>
+        )}
+        {ls.getItem('isAuth') == '1' && (
+          <>
+            <Link to="/profil" className="link">
+              Profil
+            </Link>
+            <Link to="#" onClick={deconnexion} className="link">
+              Déconnexion
+            </Link>
+          </>
+        )}
       </div>
     </>
   )

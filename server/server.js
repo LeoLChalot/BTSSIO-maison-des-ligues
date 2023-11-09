@@ -5,6 +5,7 @@ const app = express();
 const questions = require('./questions.json');
 const mysql = require('mysql2');
 let cors = require('cors');
+const { uuid } = require('uuidv4');
 const PORT = 3000;
 
 const connection = mysql.createConnection({
@@ -24,6 +25,7 @@ connection.connect((err) => {
 });
 
 app.use(express.json());
+
 app.use(cors());
 
 app.get('/', async (req, res) => {
@@ -103,10 +105,11 @@ app.get('/article/:id', async (req, res) => {
 });
 
 // * ROUTES USER
-app.post('/inscription', async (req, res) => {
+app.post('/inscription', cors(), async (req, res) => {
+   console.log('.post/inscription');
+   console.log(req.body.id_utilisateur);
    if (
       req.body.id_utilisateur != '' &&
-      validate(req.body.id_utilisateur) &&
       req.body.prenom != '' &&
       req.body.nom != '' &&
       req.body.pseudo != '' &&
@@ -121,16 +124,17 @@ app.post('/inscription', async (req, res) => {
          req.body.email,
          req.body.mot_de_passe,
       ];
+      console.log(values);
       try {
          const query = `INSERT INTO utilisateurs(id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)`;
          await connection.promise().query(query, values);
-         // res.status(302).redirect('http://localhost:5173/connexion')
-         res.status(200);
+         // res.status(302).redirect('http://127.0.0.1:5173/connexion');
+         res.status(200).json({ msg: 'status 200' });
       } catch {
          res.status(500).end('Informations erronées');
       }
    } else {
-      res.status(200).end('Informations erronées');
+      res.status(501).end('Informations erronées');
    }
 });
 
@@ -141,13 +145,13 @@ app.get('/connexion/:login', async (req, res) => {
          const query = `SELECT * FROM utilisateurs WHERE pseudo = ? OR email = ?`;
          const user = await connection.promise().query(query, values);
          // console.log(user)
-         // res.status(302).redirect('http://localhost:5173/connexion')
+         // res.status(302).redirect('http://127.0.0.1:5173/');
          res.status(200).json(user[0][0]);
       } catch {
          res.status(500).end('Informations erronées');
       }
    } else {
-      res.status(200).end('Informations erronées');
+      res.status(501).end('Informations erronées');
    }
 });
 
@@ -172,6 +176,7 @@ app.post('/add-categorie', async (req, res) => {
  */
 app.post('/add-article', async (req, res) => {
    try {
+      const id_article = v4();
       const nom = req.body.nom;
       const photo = req.body.photo;
       const description = req.body.description;
@@ -180,7 +185,7 @@ app.post('/add-article', async (req, res) => {
       const categorie = req.body.categorie;
 
       // * Récupération de categorie_id
-      let query = `SELECT id_categorie FROM categories WHERE nom = ?`;
+      let query = `INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES()`;
       console.log(query, categorie);
       let result = await connection.promise().query(query, [categorie]);
       const categorie_id = await result[0][0]['id_categorie'];
@@ -224,6 +229,19 @@ app.delete('/del-categorie', async (req, res) => {
       const query = `DELETE FROM categories WHERE nom = ?`;
       await connection.promise().query(query, [nom]);
       res.status(200).end('Catégorie supprimée !');
+   } catch (err) {
+      throw err;
+   }
+});
+
+// * DELETE article
+// * /del-article?article=[nom]
+app.delete('/del-article', async (req, res) => {
+   try {
+      const nom = req.query.article;
+      const query = `DELETE FROM articles WHERE nom = ?`;
+      await connection.promise().query(query, [nom]);
+      res.status(200).end('Article supprimée !');
    } catch (err) {
       throw err;
    }

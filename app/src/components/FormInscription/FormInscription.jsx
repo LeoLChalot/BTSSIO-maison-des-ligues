@@ -2,19 +2,22 @@ import React, { useState } from 'react'
 import bcrypt from 'bcryptjs'
 import { v4 } from 'uuid'
 import axios from 'axios'
-
+import { useNavigate } from 'react-router-dom'
 import Oeil from '/oeil.svg'
 import OeilFerme from '/oeil_ferme.svg'
 import './FormInscription.css'
 
 const FormInscription = () => {
+  const [idUtilisateur, setIdUtilisateur] = useState('')
   const [prenom, setPrenom] = useState('')
   const [nom, setNom] = useState('')
   const [pseudo, setPseudo] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordCheck, setPasswordCheck] = useState('')
+  const [passwordHash, setPasswordHash] = useState('')
   const [showPassord, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const checkPassword = (password, passwordCheck) => {
     if (password != '' && passwordCheck != '') {
@@ -48,40 +51,46 @@ const FormInscription = () => {
 
   async function handleFormData(e) {
     e.preventDefault()
-    // const formData = new FormData(e.currentTarget)
-    // const formJson = Object.fromEntries(formData.entries())
 
-    const id_utilisateur = v4()
-    const prenom = e.target['prenom'].value
-    const nom = e.target['nom'].value
-    const pseudo = e.target['pseudo'].value
-    const email = e.target['email'].value
-    const passwordCheck = e.target['password-check'].value
-    const passwordHash = await bcrypt.hash(passwordCheck, 10)
+    let id = v4()
+    setPrenom(e.target['prenom'].value)
+    setNom(e.target['nom'].value)
+    setPseudo(e.target['pseudo'].value)
+    setEmail(e.target['email'].value)
+    setPasswordCheck(e.target['password-check'].value)
+    let pass = await bcrypt.hash(passwordCheck, 10)
 
     const user = {
-      id_utilisateur: id_utilisateur,
+      id_utilisateur: id,
       prenom: prenom,
       nom: nom,
       pseudo: pseudo,
       email: email,
-      passwordHash: passwordHash,
-    }
-
-    try {
-      axios.post(`http://localhost:3000/inscription`, {
-        id_utilisateur: id_utilisateur,
-        prenom: prenom,
-        nom: nom,
-        pseudo: pseudo,
-        email: email,
-        mot_de_passe: passwordHash,
-      })
-    } catch (err) {
-      throw `${err.response.status} ${err.response.data}`
+      passwordHash: pass,
     }
     console.table(user)
-    window.location.assign('http://localhost:5173/connexion')
+
+    try {
+      const inscription = await axios.post(
+        `http://localhost:3000/inscription`,
+        {
+          id_utilisateur: id,
+          prenom: prenom,
+          nom: nom,
+          pseudo: pseudo,
+          email: email,
+          mot_de_passe: pass,
+        }
+      )
+
+      console.log(inscription)
+
+      if (inscription.status === 200) {
+        navigate('/connexion')
+      }
+    } catch (err) {
+      throw err
+    }
   }
 
   return (

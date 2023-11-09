@@ -4,11 +4,13 @@ import bcrypt from 'bcryptjs'
 import Oeil from '/oeil.svg'
 import OeilFerme from '/oeil_ferme.svg'
 import './FormConnexion.css'
+import { useNavigate } from 'react-router-dom'
 
 const FormConnexion = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [showPassord, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const showPassordToggle = () => {
     showPassord == false ? setShowPassword(true) : setShowPassword(false)
@@ -17,30 +19,39 @@ const FormConnexion = () => {
   async function handleFormData(e) {
     e.preventDefault()
 
-    let login = e.target['login'].value
-    let mot_de_passe = e.target['mot_de_passe'].value
+    const login = e.target['login'].value
+    const mot_de_passe = e.target['mot_de_passe'].value
 
     try {
-      axios
-        .get(`http://localhost:3000/connexion/${login}`)
-        .then(async (res) => {
-          let userData = await res.data
-          console.log(userData)
+      const userData = await axios.get(
+        `http://localhost:3000/connexion/${login}`
+      )
+      console.log(userData)
+      const userInfos = userData.data
 
-          let hash = userData.mot_de_passe
-          if (bcrypt.compare(mot_de_passe, hash)) {
-            const ls = localStorage
-            ls.setItem('pseudo', userData.pseudo)
-            ls.setItem('email', userData.email)
+      const hash = userInfos.mot_de_passe
+      if (bcrypt.compare(mot_de_passe, hash)) {
+        localStorage.clear()
+        const ls = localStorage
+        ls.setItem('prenom', userInfos.prenom)
+        ls.setItem('nom', userInfos.nom)
+        ls.setItem('pseudo', userInfos.pseudo)
+        ls.setItem('email', userInfos.email)
+        ls.setItem('isAdmin', userInfos.is_admin)
+        ls.setItem('isAuth', '1')
 
-            let user = {
-              pseudo: ls.getItem('pseudo'),
-              email: ls.getItem('email'),
-            }
+        const user = {
+          prenom: ls.getItem('prenom'),
+          nom: ls.getItem('nom'),
+          pseudo: ls.getItem('pseudo'),
+          email: ls.getItem('email'),
+          isAdmin: ls.getItem('isAdmin'),
+          isAuth: ls.getItem('isAuth'),
+        }
 
-            console.table(user)
-          }
-        })
+        console.table(user)
+        navigate('/boutique')
+      }
     } catch (err) {
       throw err
     }
