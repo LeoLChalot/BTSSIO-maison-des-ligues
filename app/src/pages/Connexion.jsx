@@ -4,6 +4,8 @@ import Escalade from '/escalade.jpg'
 import { Link } from 'react-router-dom'
 
 const Connexion = () => {
+
+  
   return (
     <section id="page-connexion" className="page">
       <div className="content">

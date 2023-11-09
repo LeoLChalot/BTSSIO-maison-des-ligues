@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import bcrypt from 'bcryptjs'
+import { v4 } from 'uuid'
+import axios from 'axios'
 
 import Oeil from '/oeil.svg'
 import OeilFerme from '/oeil_ferme.svg'
@@ -13,9 +15,8 @@ const FormInscription = () => {
   const [password, setPassword] = useState('')
   const [passwordCheck, setPasswordCheck] = useState('')
   const [showPassord, setShowPassword] = useState(false)
-  const [passwordHash, setPasswordHash] = useState('')
 
-  const areTheSame = (password, passwordCheck) => {
+  const checkPassword = (password, passwordCheck) => {
     if (password != '' && passwordCheck != '') {
       return password == passwordCheck ? (
         <span className="progress-bar good">
@@ -47,26 +48,40 @@ const FormInscription = () => {
 
   async function handleFormData(e) {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const formJson = Object.fromEntries(formData.entries())
+    // const formData = new FormData(e.currentTarget)
+    // const formJson = Object.fromEntries(formData.entries())
 
+    const id_utilisateur = v4()
+    const prenom = e.target['prenom'].value
+    const nom = e.target['nom'].value
     const pseudo = e.target['pseudo'].value
     const email = e.target['email'].value
-    const password = e.target['password'].value
     const passwordCheck = e.target['password-check'].value
     const passwordHash = await bcrypt.hash(passwordCheck, 10)
 
-    const JSONDataForm = JSON.stringify(formJson)
-
     const user = {
+      id_utilisateur: id_utilisateur,
+      prenom: prenom,
+      nom: nom,
       pseudo: pseudo,
       email: email,
-      password: password,
       passwordHash: passwordHash,
     }
 
-    console.log(JSONDataForm)
+    try {
+      axios.post(`http://localhost:3000/inscription`, {
+        id_utilisateur: id_utilisateur,
+        prenom: prenom,
+        nom: nom,
+        pseudo: pseudo,
+        email: email,
+        mot_de_passe: passwordHash,
+      })
+    } catch (err) {
+      throw `${err.response.status} ${err.response.data}`
+    }
     console.table(user)
+    window.location.assign('http://localhost:5173/connexion')
   }
 
   return (
@@ -75,7 +90,7 @@ const FormInscription = () => {
         <div className="input-group">
           <input
             type="text"
-            name="Nom"
+            name="nom"
             value={nom}
             placeholder="Nom"
             className={nom.match(loginRegex) ? 'check' : null}
@@ -83,7 +98,7 @@ const FormInscription = () => {
           />
           <input
             type="text"
-            name="Prénom"
+            name="prenom"
             value={prenom}
             placeholder="Prénom"
             className={prenom.match(loginRegex) ? 'check' : null}
@@ -161,7 +176,7 @@ const FormInscription = () => {
           />
         </div>
         <div className="liste">
-          {areTheSame(password, passwordCheck)}
+          {checkPassword(password, passwordCheck)}
 
           <ul>
             <li>
@@ -214,11 +229,11 @@ const FormInscription = () => {
           </ul>
         </div>
         {nom.match(loginRegex) &&
-          prenom.match(loginRegex) &&
-          pseudo.match(pseudoRegex) &&
-          email.match(emailRegex) &&
-          password.match(passwordRegex) &&
-          passwordCheck.match(passwordRegex) ? (
+        prenom.match(loginRegex) &&
+        pseudo.match(pseudoRegex) &&
+        email.match(emailRegex) &&
+        password.match(passwordRegex) &&
+        passwordCheck.match(passwordRegex) ? (
           <input type="submit" value="Inscription" />
         ) : (
           <input type="submit" value="Inscription" disabled />

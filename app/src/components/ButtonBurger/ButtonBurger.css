@@ -27,14 +27,14 @@
   transition: var(--transition-config);
 }
 
-#button-burger.active .bar:nth-child(1):before {
+#button-burger.show .bar:nth-child(1):before {
   transform-origin: center;
   transform: translateY(13px) rotate(45deg) scale(0.9);
 }
-#button-burger.active .bar:nth-child(2):before {
+#button-burger.show .bar:nth-child(2):before {
   opacity: 0;
 }
-#button-burger.active .bar:nth-child(3):before {
+#button-burger.show .bar:nth-child(3):before {
   transform-origin: center;
   transform: translateY(-13px) rotate(-45deg) scale(0.9);
 }
