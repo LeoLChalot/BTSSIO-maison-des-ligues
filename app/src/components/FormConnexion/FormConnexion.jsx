@@ -50,7 +50,7 @@ const FormConnexion = () => {
         }
 
         console.table(user)
-        navigate('/boutique')
+        navigate('/profil')
       }
     } catch (err) {
       throw err

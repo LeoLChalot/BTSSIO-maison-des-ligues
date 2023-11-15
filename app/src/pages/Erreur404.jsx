@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouteError } from "react-router-dom";
+import './page.css'
 
 const Erreur404 = () => {
   const error = useRouteError()

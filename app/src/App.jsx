@@ -8,26 +8,25 @@ import Profil from './pages/Profil'
 import Navbar from './components/Navbar/Navbar'
 
 import './App.css'
-
+import Dashboard from './pages/admin/Dashboard'
 
 function App() {
   return (
     <>
+      <header>
+        <Navbar />
+      </header>
       <div className="App">
-        <header>
-          <Navbar />
-        </header>
         <Routes>
           <Route path="/" element={<Accueil />} />
           <Route path="/boutique" element={<Boutique />} />
           <Route path="/connexion" element={<Connexion />} />
           <Route path="/inscription" element={<Inscription />} />
           <Route path="/profil" element={<Profil />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
         </Routes>
-        <footer>
-          {/* TODO Footer */}
-        </footer>
       </div>
+      <footer>{/* TODO Footer */}</footer>
     </>
   )
 }

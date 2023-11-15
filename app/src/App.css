@@ -6,11 +6,14 @@
   min-height: 100dvh;
   padding: 0.5rem;
 }
-section {
+/* section {
   position: relative;
   width: 100%;
   min-height: 100dvh;
-}
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
 .container {
   position: relative;
   width: 100%;
@@ -33,19 +36,16 @@ section {
     top: 0;
     left: 0;
   }
-  section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+
 }
 
 @media screen and (min-width: 769px) {
   .App {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
   }
 
   header {

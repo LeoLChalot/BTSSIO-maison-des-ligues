@@ -2,10 +2,9 @@ import React from 'react'
 import FormConnexion from '../components/FormConnexion/FormConnexion'
 import Escalade from '/escalade.jpg'
 import { Link } from 'react-router-dom'
+import './page.css'
 
-const Connexion = () => {
-
-  
+const Connexion = () => {  
   return (
     <section id="page-connexion" className="page">
       <div className="content">

@@ -1,0 +1,30 @@
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+
+
+@media screen and (min-width: 769px) {
+  aside {
+    position: relative;
+    top: 0;
+    left: 0;
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 1.2rem;
+    flex-shrink: 1;
+  }
+  main{
+    flex-grow: 1;
+    height: ;
+  }
+}

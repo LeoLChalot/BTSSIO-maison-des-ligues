@@ -53,6 +53,7 @@ const FormInscription = () => {
     e.preventDefault()
 
     let id = v4()
+    // prenom = FormData.get('prenom')
     setPrenom(e.target['prenom'].value)
     setNom(e.target['nom'].value)
     setPseudo(e.target['pseudo'].value)

@@ -141,11 +141,11 @@ app.post('/inscription', cors(), async (req, res) => {
 app.get('/connexion/:login', async (req, res) => {
    if (req.params.login != '') {
       const values = [req.params.login, req.params.login];
+      
       try {
+         console.log("ok")
          const query = `SELECT * FROM utilisateurs WHERE pseudo = ? OR email = ?`;
          const user = await connection.promise().query(query, values);
-         // console.log(user)
-         // res.status(302).redirect('http://127.0.0.1:5173/');
          res.status(200).json(user[0][0]);
       } catch {
          res.status(500).end('Informations erronées');

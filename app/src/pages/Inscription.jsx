@@ -2,6 +2,7 @@ import React from 'react'
 import FormInscription from '../components/FormInscription/FormInscription'
 import Surf from '/surf.jpg'
 import { Link } from 'react-router-dom'
+import './page.css'
 
 const Inscription = () => {
   return (
