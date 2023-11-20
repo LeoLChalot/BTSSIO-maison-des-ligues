@@ -141,9 +141,9 @@ app.post('/inscription', cors(), async (req, res) => {
 app.get('/connexion/:login', async (req, res) => {
    if (req.params.login != '') {
       const values = [req.params.login, req.params.login];
-      
+
       try {
-         console.log("ok")
+         console.log('ok');
          const query = `SELECT * FROM utilisateurs WHERE pseudo = ? OR email = ?`;
          const user = await connection.promise().query(query, values);
          res.status(200).json(user[0][0]);
@@ -153,6 +153,23 @@ app.get('/connexion/:login', async (req, res) => {
    } else {
       res.status(501).end('Informations erronées');
    }
+});
+
+const isAdmin = (req, res, next) => {
+   console.log(req.body)
+   const isAdmin = parseInt(req.body.isAdmin);
+   console.log(isAdmin)
+   isAdmin == 1 ? next() : res.status(401).send('Non Autorisé !');
+};
+
+app.use('/admin', isAdmin);
+
+app.get('/admin', async (req, res) => {
+   res.status(200).send('Bienvenue Admin')
+});
+
+app.get('/admin/articles', async (req, res) => {
+   res.status(200).send('Dashboard articles')
 });
 
 // * POST catégorie
