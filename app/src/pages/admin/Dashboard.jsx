@@ -1,32 +1,35 @@
 import React, { useEffect } from 'react'
 import './../page.css'
 import axios from 'axios'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const Dashboard = () => {
+  const view = useParams().params
+  // console.log(view)
+  const navigate = useNavigate()
   const ls = localStorage
-  const isAdmin = async () => {
-    console.log(`Is admin : ${parseInt(ls.getItem('isAdmin'))}`)
-
-    let admin = axios
-      .post('http://localhost:3000/admin', {
-        isAdmin: 1,
-      })
-      .then((res) => console.log(res))
-  }
-
   useEffect(() => {
-    isAdmin()
-  }, [])
+    const authCheck = () => {
+      !ls.getItem('isAdmin') ? navigate('/') : null
+    }
+    authCheck()
+  }, [ls.getItem('isAdmin')])
 
   return (
     <>
       <div className="page">
         <aside>
-          <p>Ajouter un article</p>
-          <p>Modifier un article</p>
-          <p>Liste des utilisateurs</p>
+          <Link to="/dashboard/articles" className="link">
+            Magasin
+          </Link>
+          <Link to="/dashboard/users" className="link">
+            Liste des utilisateurs
+          </Link>
         </aside>
-        <main id="page-dashboard">Dashboard admin</main>
+        <main id="page-dashboard">
+          {view == 'articles' && <h2>Liste des articles</h2>}
+          {view == 'users' && <h2>Liste des users</h2>}
+        </main>
       </div>
     </>
   )

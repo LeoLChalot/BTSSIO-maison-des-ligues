@@ -24,6 +24,7 @@ function App() {
           <Route path="/inscription" element={<Inscription />} />
           <Route path="/profil" element={<Profil />} />
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/dashboard/:params" element={<Dashboard />} />
         </Routes>
       </div>
       <footer>{/* TODO Footer */}</footer>

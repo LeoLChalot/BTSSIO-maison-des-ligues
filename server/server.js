@@ -155,21 +155,27 @@ app.get('/connexion/:login', async (req, res) => {
    }
 });
 
-const isAdmin = (req, res, next) => {
-   console.log(req.body)
-   const isAdmin = parseInt(req.body.isAdmin);
-   console.log(isAdmin)
-   isAdmin == 1 ? next() : res.status(401).send('Non Autorisé !');
+const isAdmin = async (req, res, next) => {
+   console.log(req.body);
+   const isAdmin = req.body.isAdmin;
+   console.log(isAdmin);
+   if (isAdmin == 1) {
+      next();
+   } else {
+      console.log('status 401 - Non autorisé')
+      res.status(401).send("Oops il semblerait que vous ne soyez pas autorisé à vous trouver ici")
+   }
 };
 
-app.use('/admin', isAdmin);
+// app.use('/admin', isAdmin);
 
 app.get('/admin', async (req, res) => {
-   res.status(200).send('Bienvenue Admin')
+   res.status(200).send(`Bienvenue Admin`);
 });
 
-app.get('/admin/articles', async (req, res) => {
-   res.status(200).send('Dashboard articles')
+app.get('/dashboard/:view', async (req, res) => {
+   const view = req.params.view
+   res.status(200).send(`Dashboard ${view}`);
 });
 
 // * POST catégorie
