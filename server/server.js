@@ -138,6 +138,13 @@ app.delete('/del-categorie', async (req, res) => {
    }
 });
 
+app.post("/m2l/uploadFiles", (req, res) => {
+   console.log("Upload Done")
+
+   res.status(200).send("File Uploaded !")
+
+})
+
 // * Affiche tous les users;
 // * ou seulement celui dont le pseudo est ciblé
 app.get('/m2l/users', async (req, res) => {
@@ -221,9 +228,9 @@ app.post('/m2l/article', async (req, res) => {
 });
 
 const checkArticle = (req, res, next) => {
-   
    const params = req.body;
-   (Object.getOwnPropertyNames(params).filter((prop) => prop == 'id_article').length != 0) 
+   Object.getOwnPropertyNames(params).filter((prop) => prop == 'id_article')
+      .length != 0
       ? next()
       : res.status(400).send('Article introuvable');
 };
@@ -238,19 +245,19 @@ app.put('/m2l/article', checkArticle, async (req, res) => {
       'quantite',
       'categorie_id',
    ];
-   console.log((Object.getOwnPropertyNames(req.body) == arrayPropArticle));
-   console.log(typeof(Object.getOwnPropertyNames(req.body)));
+   console.log(Object.getOwnPropertyNames(req.body) == arrayPropArticle);
+   console.log(typeof Object.getOwnPropertyNames(req.body));
    res.status(200).send('PUT');
 });
 
 // * Supprime l'article ciblé
 app.delete('/m2l/article/:id', async (req, res) => {
    try {
-      const id_article = req.params.id;
+      const value = [req.params.id];
       const query = `
       DELETE FROM articles 
       WHERE id = ?`;
-      await connection.promise().query(query, [id_article]);
+      await connection.promise().query(query, value);
       res.status(200).end('Article supprimée !');
    } catch (err) {
       throw err;
@@ -279,8 +286,8 @@ app.post('/m2l/utilisateur', async (req, res) => {
    }
 });
 
-// * Supprime l'article ciblé
-app.delete('/m2l/article/:id', async (req, res) => {
+// * Supprime l'utilisateur ciblé
+app.delete('/m2l/user/:id', async (req, res) => {
    try {
       const id_article = req.params.id;
       const query = `
