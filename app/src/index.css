@@ -12,7 +12,7 @@
 :root {
   --color-bg-primary: rgba(242, 242, 242, 1);
   --color-bg-secondary: rgba(242, 242, 242, 0.8);
-  --color-shadow: rgb(181, 181, 181);
+  --color-shadow: #b5b5b5;
   --color-header: rgba(191, 15, 29, 1);
   --color-text: rgba(89, 22, 8, 1);
   --color-highlight: rgba(242, 73, 12, 1);
@@ -20,15 +20,16 @@
   --text-font: 'Mukta', sans-serif;
   --font-regular: 300;
   --font-bold: 800;
+  --color: #5ab3cb;
+  --color2: #2e6c2e;
 
   /* ? ANIMATION */
   --transition-config: 0.3s all ease;
 
-
   /* ? SMALL SCREEN */
   --font-size: 16px;
 }
-
+/* // tout va bien ! */
 * {
   /* box-shadow: inset 0px 0px 1px 0px red; */
 }

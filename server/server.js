@@ -58,7 +58,6 @@ app.post('/inscription', cors(), async (req, res) => {
       try {
          const query = `INSERT INTO utilisateurs(id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)`;
          await connection.promise().query(query, values);
-         // res.status(302).redirect('http://127.0.0.1:5173/connexion');
          res.status(200).json({ msg: 'status 200' });
       } catch {
          res.status(500).end('Informations erronées');
@@ -100,7 +99,6 @@ const isAdmin = async (req, res, next) => {
 };
 
 // app.use('/admin', isAdmin);
-
 app.get('/admin', async (req, res) => {
    res.status(200).send(`Bienvenue Admin`);
 });
@@ -111,9 +109,6 @@ app.get('/dashboard/:view', async (req, res) => {
 });
 
 // * POST catégorie
-/*
- ** body{"nom": "[categorie]"}
- */
 app.post('/categorie', async (req, res) => {
    try {
       const query = `INSERT INTO categories(nom) VALUES(?)`;
@@ -138,12 +133,12 @@ app.delete('/del-categorie', async (req, res) => {
    }
 });
 
-app.post("/m2l/uploadFiles", (req, res) => {
-   console.log("Upload Done")
+// +* Ensemble des routes qui ont été revue (FINALES)
+app.post('/m2l/uploadFiles', (req, res) => {
+   console.log('Upload Done');
 
-   res.status(200).send("File Uploaded !")
-
-})
+   res.status(200).send('File Uploaded !');
+});
 
 // * Affiche tous les users;
 // * ou seulement celui dont le pseudo est ciblé
@@ -227,6 +222,7 @@ app.post('/m2l/article', async (req, res) => {
    }
 });
 
+// * Middleware de vérification de l'existance de l'article à mettre à jour
 const checkArticle = (req, res, next) => {
    const params = req.body;
    Object.getOwnPropertyNames(params).filter((prop) => prop == 'id_article')
@@ -264,8 +260,10 @@ app.delete('/m2l/article/:id', async (req, res) => {
    }
 });
 
+// +! A finir impérativement avant le 22/12/23
+// > Toutes les routes incomplète ou qui doivent faire l'objet d'une review
 // * Ajoute l'utilisateur défini
-app.post('/m2l/utilisateur', async (req, res) => {
+app.post('/m2l/admin/user', async (req, res) => {
    try {
       const values = [
          v4(),
@@ -280,14 +278,14 @@ app.post('/m2l/utilisateur', async (req, res) => {
       INSERT INTO articles 
       VALUES(?,?,?,?,?,?,?)`;
       await connection.promise().query(query, values);
-      res.status(200).end('Article Ajouté !');
+      res.status(200).end('User Ajouté !');
    } catch (err) {
       throw err;
    }
 });
 
 // * Supprime l'utilisateur ciblé
-app.delete('/m2l/user/:id', async (req, res) => {
+app.delete('/m2l/admin/user/:id', async (req, res) => {
    try {
       const id_article = req.params.id;
       const query = `
