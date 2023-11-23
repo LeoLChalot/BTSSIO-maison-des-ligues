@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const questions = require('./questions.json');
 const mysql = require('mysql2');
+const axios = require('axios').default;
 let cors = require('cors');
 const { uuid } = require('uuidv4');
 const PORT = 3000;
@@ -31,77 +32,6 @@ app.use(cors());
 app.get('/', async (req, res) => {
    res.writeHead(200, { 'Content-Type': 'text/html' });
    res.end(`${v4()}, ${validate(v4())}`);
-});
-
-app.get('/get-categorie-id/:nom_categorie', async (req, res) => {
-   const nom = req.params.nom_categorie;
-   try {
-      let query = `SELECT id_categorie FROM categories WHERE nom = ?`;
-      values = [nom];
-      console.log(query);
-      let result = await connection.promise().query(query, nom);
-      const id = await result[0][0]['id_categorie'];
-      res.status(200).json(id);
-      console.log(id);
-   } catch (err) {
-      throw err;
-   }
-});
-
-// * GET ALL articles
-// * /boutique?filtre=[filtre]
-app.get('/boutique', async (req, res) => {
-   const filtre = req.query.filtre;
-
-   if (filtre) {
-      // * S'il y a un filtre de spécifié on récupère les articles correspondants
-      console.log(filtre);
-      try {
-         // * On récupère l'id_categorie cible
-         let query = `SELECT id_categorie FROM categories WHERE nom = ?`;
-         console.log(query);
-         let result = await connection
-            .promise()
-            .query(query, [filtre.toLowerCase()]);
-         const categorieId = await result[0][0]['id_categorie'];
-         console.log(categorieId);
-
-         // * On recherche les articles en fonction de l'id de la catégorie récupéré
-         query = `SELECT * FROM articles WHERE categorie_id = ?`;
-         console.log(query);
-         const listeArticle = await connection
-            .promise()
-            .execute(query, [categorieId]);
-         res.status(200).json(listeArticle[0][0]);
-      } catch (err) {
-         throw err;
-      }
-   } // * Sinon, tous les articles sont récupérés
-   else {
-      try {
-         const query = `SELECT * FROM articles`;
-         const result = await connection.promise().query(query);
-         res.status(200).json(result[0]);
-      } catch (err) {
-         throw err;
-      }
-   }
-});
-
-app.get('/article/:id', async (req, res) => {
-   const id = parseInt(req.params.id);
-   try {
-      id != isNaN;
-      console.log(1);
-      let query = `SELECT * FROM articles WHERE id_article = ?`;
-      const values = [id];
-      const result = await connection.promise().query(query, values);
-      const article = await result[0][0];
-      console.log(article);
-      res.status(200).json(article);
-   } catch (err) {
-      throw err;
-   }
 });
 
 // * ROUTES USER
@@ -162,8 +92,10 @@ const isAdmin = async (req, res, next) => {
    if (isAdmin == 1) {
       next();
    } else {
-      console.log('status 401 - Non autorisé')
-      res.status(401).send("Oops il semblerait que vous ne soyez pas autorisé à vous trouver ici")
+      console.log('status 401 - Non autorisé');
+      res.status(401).send(
+         'Oops il semblerait que vous ne soyez pas autorisé à vous trouver ici'
+      );
    }
 };
 
@@ -174,7 +106,7 @@ app.get('/admin', async (req, res) => {
 });
 
 app.get('/dashboard/:view', async (req, res) => {
-   const view = req.params.view
+   const view = req.params.view;
    res.status(200).send(`Dashboard ${view}`);
 });
 
@@ -182,63 +114,12 @@ app.get('/dashboard/:view', async (req, res) => {
 /*
  ** body{"nom": "[categorie]"}
  */
-app.post('/add-categorie', async (req, res) => {
+app.post('/categorie', async (req, res) => {
    try {
-      const nom = req.body.nom;
       const query = `INSERT INTO categories(nom) VALUES(?)`;
-      await connection.promise().query(query, [nom]);
+      const value = [req.body.nom];
+      await connection.promise().query(query, value);
       res.status(200).end('Catégorie ajoutée !');
-   } catch (err) {
-      throw err;
-   }
-});
-
-// * POST article
-/*
- ** body{"nom","photo", "description", "prix", "quantite"}
- */
-app.post('/add-article', async (req, res) => {
-   try {
-      const id_article = v4();
-      const nom = req.body.nom;
-      const photo = req.body.photo;
-      const description = req.body.description;
-      const prix = req.body.prix;
-      const quantite = req.body.quantite;
-      const categorie = req.body.categorie;
-
-      // * Récupération de categorie_id
-      let query = `INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES()`;
-      console.log(query, categorie);
-      let result = await connection.promise().query(query, [categorie]);
-      const categorie_id = await result[0][0]['id_categorie'];
-      console.log(categorie_id);
-
-      const bindValues = [
-         nom,
-         photo,
-         description,
-         prix,
-         quantite,
-         categorie_id,
-      ];
-      query = `INSERT INTO articles(nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?)`;
-      await connection.promise().query(query, bindValues);
-      res.status(200).end('Article ajoutée !');
-   } catch (err) {
-      throw err;
-   }
-});
-
-app.put('edit-article/:id', (req, res) => {
-   const id = parseInt(req.params.id);
-   try {
-      id != isNaN;
-      const nom = req.body.nom;
-      const photo = req.body.photo;
-      const description = req.body.description;
-      const prix = req.body.prix;
-      const quantite = req.body.quantite;
    } catch (err) {
       throw err;
    }
@@ -257,13 +138,155 @@ app.delete('/del-categorie', async (req, res) => {
    }
 });
 
-// * DELETE article
-// * /del-article?article=[nom]
-app.delete('/del-article', async (req, res) => {
+// * Affiche tous les users;
+// * ou seulement celui dont le pseudo est ciblé
+app.get('/m2l/users', async (req, res) => {
+   if (!req.query.pseudo) {
+      const sql = 'SELECT * FROM utilisateurs';
+      const data = await connection.promise().query(sql);
+      const users = data[0];
+      res.status(200).send(users);
+   } else {
+      const sql = `SELECT * FROM utilisateurs WHERE pseudo = ?`;
+      const value = [req.query.pseudo];
+      const data = await connection.promise().query(sql, value);
+      const user = data[0][0];
+      res.status(201).json(user);
+   }
+});
+
+// * Affiche tous les articles;
+// * Ou seulement celui dont le nom est ciblé;
+// * Ou ceux qui correspondent au filtre
+app.get('/m2l/articles', async (req, res) => {
+   const query = req.query;
+   if (Object.keys(query).length === 0) {
+      const sql = `
+      SELECT * 
+      FROM articles`;
+      const data = await connection.promise().query(sql);
+      const articles = data[0];
+      res.status(200).send(articles);
+   } else if (
+      Object.getOwnPropertyNames(query).filter((prop) => prop == 'id').length ==
+      1
+   ) {
+      const sql = `
+      SELECT * 
+      FROM articles 
+      WHERE id_article = ?`;
+      const value = [req.query.id];
+      const data = await connection.promise().query(sql, value);
+      const article = data[0][0];
+      res.status(201).send(article);
+   } else if (
+      Object.getOwnPropertyNames(query).filter((prop) => prop == 'filtre')
+         .length == 1
+   ) {
+      const sql = `
+      SELECT * 
+      FROM articles AS a 
+      JOIN categories AS c 
+      ON c.id_categorie = a.categorie_id 
+      WHERE categorie_id = ?`;
+      const value = [req.query.filtre];
+      const data = await connection.promise().query(sql, value);
+      const user = data[0][0];
+      res.status(202).json(user);
+   } else {
+      res.status(401).send('Demande non autorisée');
+   }
+});
+
+// * Ajoute l'article défini
+app.post('/m2l/article', async (req, res) => {
    try {
-      const nom = req.query.article;
-      const query = `DELETE FROM articles WHERE nom = ?`;
-      await connection.promise().query(query, [nom]);
+      const values = [
+         v4(),
+         req.body.nom,
+         req.body.photo,
+         req.body.description,
+         req.body.prix,
+         req.body.quantite,
+         req.body.categorie_id,
+      ];
+      const query = `
+      INSERT INTO articles 
+      VALUES(?,?,?,?,?,?,?)`;
+      await connection.promise().query(query, values);
+      res.status(200).end('Article Ajouté !');
+   } catch (err) {
+      throw err;
+   }
+});
+
+const checkArticle = (req, res, next) => {
+   
+   const params = req.body;
+   (Object.getOwnPropertyNames(params).filter((prop) => prop == 'id_article').length != 0) 
+      ? next()
+      : res.status(400).send('Article introuvable');
+};
+
+app.put('/m2l/article', checkArticle, async (req, res) => {
+   const arrayPropArticle = [
+      'id_article',
+      'nom',
+      'photo',
+      'description',
+      'prix',
+      'quantite',
+      'categorie_id',
+   ];
+   console.log((Object.getOwnPropertyNames(req.body) == arrayPropArticle));
+   console.log(typeof(Object.getOwnPropertyNames(req.body)));
+   res.status(200).send('PUT');
+});
+
+// * Supprime l'article ciblé
+app.delete('/m2l/article/:id', async (req, res) => {
+   try {
+      const id_article = req.params.id;
+      const query = `
+      DELETE FROM articles 
+      WHERE id = ?`;
+      await connection.promise().query(query, [id_article]);
+      res.status(200).end('Article supprimée !');
+   } catch (err) {
+      throw err;
+   }
+});
+
+// * Ajoute l'utilisateur défini
+app.post('/m2l/utilisateur', async (req, res) => {
+   try {
+      const values = [
+         v4(),
+         req.body.nom,
+         req.body.photo,
+         req.body.description,
+         req.body.prix,
+         req.body.quantite,
+         req.body.categorie_id,
+      ];
+      const query = `
+      INSERT INTO articles 
+      VALUES(?,?,?,?,?,?,?)`;
+      await connection.promise().query(query, values);
+      res.status(200).end('Article Ajouté !');
+   } catch (err) {
+      throw err;
+   }
+});
+
+// * Supprime l'article ciblé
+app.delete('/m2l/article/:id', async (req, res) => {
+   try {
+      const id_article = req.params.id;
+      const query = `
+      DELETE FROM articles 
+      WHERE id = ?`;
+      await connection.promise().query(query, [id_article]);
       res.status(200).end('Article supprimée !');
    } catch (err) {
       throw err;
