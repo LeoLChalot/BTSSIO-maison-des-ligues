@@ -95,6 +95,8 @@ const FormInscription = () => {
   }
 
   return (
+    <>
+    <h1>Inscription</h1>
     <div className="form">
       <form id="formulaire-inscription" onSubmit={(e) => handleFormData(e)}>
         <div className="input-group">
@@ -250,6 +252,7 @@ const FormInscription = () => {
         )}
       </form>
     </div>
+    </>
   )
 }
 

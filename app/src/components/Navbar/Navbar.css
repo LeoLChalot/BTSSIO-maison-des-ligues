@@ -1,6 +1,6 @@
 @media screen and (max-width: 768px) {
   #navbar {
-    background-color: var(--color-bg-primary);
+    background-color: var(--color-underline);
     z-index: 998;
     position: fixed;
     top: 0;
@@ -29,7 +29,7 @@
 
 @media screen and (min-width: 769px) {
   #navbar {
-    background-color: var(--color-bg-primary);
+    background-color: var(--color-underline);
     position: sticky;
     top: 0;
     left: 0;
@@ -40,6 +40,7 @@
     justify-content: center;
     align-items: center;
     gap: calc(2 * var(--font-size));
+    backdrop-filter: blur(8px);
   }
   #navbar .link {
     font-size: var(--font-size);

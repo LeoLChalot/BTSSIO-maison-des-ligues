@@ -157,48 +157,72 @@ app.get('/m2l/users', async (req, res) => {
    }
 });
 
+
+// * Obtient toutes les catégories de la table "categories"
+app.get('/m2l/categories', async (req, res) => {
+   try {
+      const sql = 'SELECT * FROM categories';
+      const data = await connection.promise().query(sql);
+      const categories = data[0];
+      res.status(200).send(categories);
+   } catch (error) {
+      console.error('Error retrieving categories:', error);
+      throw error;
+   }
+});
+
 // * Affiche tous les articles;
 // * Ou seulement celui dont le nom est ciblé;
 // * Ou ceux qui correspondent au filtre
 app.get('/m2l/articles', async (req, res) => {
-   const query = req.query;
-   if (Object.keys(query).length === 0) {
-      const sql = `
-      SELECT * 
-      FROM articles`;
-      const data = await connection.promise().query(sql);
-      const articles = data[0];
-      res.status(200).send(articles);
-   } else if (
-      Object.getOwnPropertyNames(query).filter((prop) => prop == 'id').length ==
-      1
-   ) {
-      const sql = `
-      SELECT * 
-      FROM articles 
-      WHERE id_article = ?`;
-      const value = [req.query.id];
-      const data = await connection.promise().query(sql, value);
-      const article = data[0][0];
-      res.status(201).send(article);
-   } else if (
-      Object.getOwnPropertyNames(query).filter((prop) => prop == 'filtre')
-         .length == 1
-   ) {
-      const sql = `
-      SELECT * 
-      FROM articles AS a 
-      JOIN categories AS c 
-      ON c.id_categorie = a.categorie_id 
-      WHERE categorie_id = ?`;
-      const value = [req.query.filtre];
-      const data = await connection.promise().query(sql, value);
-      const user = data[0][0];
-      res.status(202).json(user);
-   } else {
-      res.status(401).send('Demande non autorisée');
-   }
+    const query = req.query;
+    if (Object.keys(query).length === 0) {
+        console.log("Tous les articles");
+        const sql = `
+        SELECT * 
+        FROM articles`;
+        const data = await connection.promise().query(sql);
+        const articles = data[0];
+        res.status(200).send(articles);
+    } else if (
+        Object.getOwnPropertyNames(query).filter((prop) => prop == 'id').length ==
+        1
+    ) {
+        console.log("Un article")
+        const sql = `
+        SELECT * 
+        FROM articles 
+        WHERE id_article = ?`;
+        const value = [req.query.id];
+        const data = await connection.promise().query(sql, value);
+        const article = data[0][0];
+        res.status(201).send(article);
+    } else if (
+        Object.getOwnPropertyNames(query).filter((prop) => prop == 'filtre')
+            .length == 1
+    ) {
+        console.log("Un filtre")
+        const sql = `
+        SELECT * 
+        FROM articles AS a 
+        JOIN categories AS c 
+        ON c.id_categorie = a.categorie_id 
+        WHERE categorie_id = ?`;
+        const value = [req.query.filtre];
+        const data = await connection.promise().query(sql, value);
+        const articles = data[0];
+        res.status(200).send(articles);
+    } else {
+        res.status(401).send('Demande non autorisée');
+    }
 });
+
+
+
+
+
+
+
 
 // * Ajoute l'article défini
 app.post('/m2l/article', async (req, res) => {

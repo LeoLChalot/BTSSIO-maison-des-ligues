@@ -1,61 +1,72 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import ListeArticles from '../components/Article/ListeArticles'
 import './page.css'
+import ArticleCard from '../components/Articles/ArticleCard'
+import { useParams } from 'react-router-dom'
+import AsideMenu from '../components/MenuBoutique/Menu'
 
 const Boutique = () => {
   const [articles, setArticles] = useState([])
 
+  /**
+   * Retrieves articles from the server and sets them in the component state.
+   *
+   * @return {Promise<void>} - A promise that resolves when the articles are retrieved and set in the state.
+   */
   const getArticles = async () => {
-    let headersList = {
-      Accept: '*/*',
+    try {
+      const response = await axios.get('http://localhost:3000/m2l/articles')
+      setArticles(response.data)
+    } catch (error) {
+      console.error('Error retrieving articles:', error)
+      throw error
     }
-
-    let reqOptions = {
-      url: 'http://localhost:3000/boutique',
-      method: 'GET',
-      headers: headersList,
-    }
-
-    let response = await axios.request(reqOptions)
-    console.log(response.data)
-    setArticles(response.data)
   }
-  const getArticlesByCategory = async (catetogy) => {
-    let headersList = {
-      Accept: '*/*',
+
+  /**
+   * Retrieves articles based on a given category.
+   *
+   * @param {string} category - The category of articles to retrieve.
+   * @return {Promise<void>} - A promise that resolves when the articles are retrieved successfully.
+   */
+  const getArticlesByCategory = async (category) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/m2l/articles?id=${category}`
+      )
+      setArticles(response.data)
+    } catch (error) {
+      console.error('Error retrieving articles:', error)
+      throw error
     }
-    let reqOptions = {
-      url: `http://localhost:3000/boutique?filtre=${catetogy}`,
-      method: 'GET',
-      headers: headersList,
-    }
-    let response = await axios.request(reqOptions)
-    console.table(response.data)
-    setArticles(response.data)
   }
 
   useEffect(() => {
-    getArticles()
-    console.log(articles)
+    /**
+     * Fetches data by calling the getArticles function and logs the articles to the console.
+     * If an error occurs, it logs the error message to the console.
+     */
+    const fetchData = async () => {
+      try {
+        await getArticles()
+        console.log(articles)
+      } catch (error) {
+        console.error('Error fetching articles:', error)
+      }
+    }
+
+    fetchData()
   }, [])
 
   return (
-    <div class="page">
-      <aside>
-        <p>Ajouter un article</p>
-        <p>Modifier un article</p>
-        <p>Liste des utilisateurs</p>
-      </aside>
+    <>
+      <AsideMenu />
       <main id="page-boutique">
-        <header>
-          <h1>Boutique de la maison des ligues</h1>
-        </header>
-        <section>
-          <ListeArticles articles={articles}/>
-        </section>
+        {articles.map((article) => (
+          <ArticleCard article={article} />
+        ))}
       </main>
-    </div>
+    </>
   )
 }
 

@@ -1,19 +1,14 @@
 .App {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 100dvh;
-  padding: 0.5rem;
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	perspective: 100vmin;
 }
-/* section {
-  position: relative;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
+
 .container {
   position: relative;
   width: 100%;
@@ -41,12 +36,14 @@
 
 @media screen and (min-width: 769px) {
   .App {
-    width: 100%;
+    margin: 0;
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
     display: flex;
-    flex-direction: row;
     align-items: flex-start;
-    justify-content: space-between;
-    color: #582f2f;
+    justify-content: center;
+    perspective: 100vmin;
   }
 
   header {

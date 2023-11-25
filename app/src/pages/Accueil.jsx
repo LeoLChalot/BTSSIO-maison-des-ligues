@@ -1,16 +1,19 @@
-import React from 'react';
+import React from 'react'
+import { signal } from '@preact/signals-react'
 import './page.css'
+import Banner from '../components/Banner/Banner'
+
 
 const Accueil = () => {
   return (
-    <section id="page-accueil" className='page'>
-      <div id="accueil-header">
-        <h1>Maison des ligues de Lorraine</h1>
-        <h2>La boutique officielle</h2>
-      </div>
-      
+    <section id="page-accueil" className="page">
+      <Banner
+        title="Maison des Ligues"
+        subtitle="Le sport en bonnes conditions"
+        buttonText="Boutique"
+      />
     </section>
-  );
-};
+  )
+}
 
-export default Accueil;
+export default Accueil

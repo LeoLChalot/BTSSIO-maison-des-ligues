@@ -12,7 +12,7 @@ const Connexion = () => {
           <img src={Escalade} alt="Photo d'un grimpeur sur un pan de falaise" />
         </div>
         <div className="form-container">
-          <h1>Connexion</h1>
+          
           <FormConnexion />
           <p>
             <small>

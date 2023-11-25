@@ -58,48 +58,51 @@ const FormConnexion = () => {
   }
 
   return (
-    <div className="form">
-      <form id="formulaire-inscription" onSubmit={(e) => handleFormData(e)}>
-        <div className="input-group">
-          <input
-            type="text"
-            name="login"
-            value={login}
-            placeholder="Pseudo ou mail"
-            onChange={(e) => setLogin(e.target.value)}
-          />
-        </div>
-        <div className="input-group">
-          <input
-            type={showPassord == false ? 'password' : 'text'}
-            name="mot_de_passe"
-            value={password}
-            placeholder="Mot de passe"
-            onChange={(e) => {
-              setPassword(e.target.value)
-            }}
-          />
-          {showPassord == false ? (
-            <img
-              src={OeilFerme}
-              className="show-password"
-              alt="Voir le mot de passe"
-              onClick={showPassordToggle}
+    <>
+      <h1>Connexion</h1>
+      <div className="form">
+        <form id="formulaire-inscription" onSubmit={(e) => handleFormData(e)}>
+          <div className="input-group">
+            <input
+              type="text"
+              name="login"
+              value={login}
+              placeholder="Pseudo ou mail"
+              onChange={(e) => setLogin(e.target.value)}
             />
-          ) : (
-            <img
-              src={Oeil}
-              className="show-password"
-              alt="Cacher le mot de passe"
-              onClick={showPassordToggle}
+          </div>
+          <div className="input-group">
+            <input
+              type={showPassord == false ? 'password' : 'text'}
+              name="mot_de_passe"
+              value={password}
+              placeholder="Mot de passe"
+              onChange={(e) => {
+                setPassword(e.target.value)
+              }}
             />
-          )}
-        </div>
-        {login != '' && password != '' ? (
-          <input type="submit" value="connexion" />
-        ) : null}
-      </form>
-    </div>
+            {showPassord == false ? (
+              <img
+                src={OeilFerme}
+                className="show-password"
+                alt="Voir le mot de passe"
+                onClick={showPassordToggle}
+              />
+            ) : (
+              <img
+                src={Oeil}
+                className="show-password"
+                alt="Cacher le mot de passe"
+                onClick={showPassordToggle}
+              />
+            )}
+          </div>
+          {login != '' && password != '' ? (
+            <input type="submit" value="connexion" />
+          ) : null}
+        </form>
+      </div>
+    </>
   )
 }
 
