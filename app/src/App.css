@@ -5,7 +5,7 @@
 	overflow: hidden;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	perspective: 100vmin;
 }
 
@@ -42,7 +42,7 @@
     overflow: hidden;
     display: flex;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     perspective: 100vmin;
   }
 

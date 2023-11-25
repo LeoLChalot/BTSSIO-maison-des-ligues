@@ -18,19 +18,8 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="page">
-        <AsideMenu />
-        <main id="page-dashboard">
-          {view == 'general' && <h2>Dashboard Admin</h2>}
-          {view == 'articles' && (
-            <>
-              <h2>Liste des articles</h2>
-              <FormArticle />
-            </>
-          )}
-          {view == 'users' && <h2>Liste des users</h2>}
-        </main>
-      </div>
+      <h1>dashboard</h1>
+      <FormArticle />
     </>
   )
 }

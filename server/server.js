@@ -226,24 +226,26 @@ app.get('/m2l/articles', async (req, res) => {
 
 // * Ajoute l'article défini
 app.post('/m2l/article', async (req, res) => {
-   try {
-      const values = [
-         v4(),
-         req.body.nom,
-         req.body.photo,
-         req.body.description,
-         req.body.prix,
-         req.body.quantite,
-         req.body.categorie_id,
-      ];
-      const query = `
-      INSERT INTO articles 
-      VALUES(?,?,?,?,?,?,?)`;
-      await connection.promise().query(query, values);
-      res.status(200).end('Article Ajouté !');
-   } catch (err) {
-      throw err;
-   }
+   console.log(req.body);
+   const photo = req.body.photo != null ? req.body.photo : null;
+   res.status(200).send(photo);
+   // try {
+   //    const values = [
+   //       v4(),
+   //       req.body.nom,
+   //       photo,
+   //       req.body.description,
+   //       req.body.prix,
+   //       req.body.quantite,
+   //       req.body.categorie_id
+   //    ];
+   //    const query = `
+   //    INSERT INTO articles VALUES(?,?,?,?,?,?,?)`;
+   //    await connection.promise().query(query, values);
+   //    res.status(200).end('Article Ajouté !');
+   // } catch (err) {
+   //    throw err;
+   // }
 });
 
 // * Middleware de vérification de l'existance de l'article à mettre à jour

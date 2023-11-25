@@ -40,7 +40,7 @@ const Navbar = () => {
         )}
 
         {ls.getItem('isAdmin') == '1' && (
-          <Link to="/admin" className="link">
+          <Link to="/dashboard" className="link">
             Dashboard
           </Link>
         )}

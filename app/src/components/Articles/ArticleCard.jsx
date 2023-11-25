@@ -11,7 +11,7 @@ const ArticleCard = ({ article }) => {
   return (
     <div className="card">
       <img
-        src="https://cdn3.iconfinder.com/data/icons/online-states/150/Photos-512.png"
+        src={article.photo}
         alt={article.nom}
         className="card-img-top"
       />

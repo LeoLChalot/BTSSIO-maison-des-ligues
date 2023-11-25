@@ -1,51 +1,146 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-
+import './FormArticle.css'
 const FormArticle = () => {
-  const [files, setFiles] = useState([]);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [nom, setNom] = useState('')
+  const [photo, setPhoto] = useState('')
+  const [description, setDescription] = useState('')
+  const [prix, setPrix] = useState(0)
+  const [quantite, setQuantite] = useState(0)
+  const [categorie, setCategorie] = useState('')
+  const [categories, setCategories] = useState([])
+  const [error, setError] = useState('')
 
-  function handleMultipleChange(event) {
-    setUploadedFiles([...event.target.files]);
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!nom || !description || !prix || !quantite || !categorie) {
+      setError('Veuillez remplir tous les champs obligatoires')
+      return
+    }
 
-  function handleMultipleSubmit(event) {
-    event.preventDefault();
-    const url = 'http://localhost:3000/m2l/uploadFiles';
-    const formData = new FormData();
-    files.forEach((file, index) => {
-      formData.append(`file${index}`, file);
-    });
+    console.log(nom)
+    const formData = new FormData()
+    formData.append('nom', nom)
+    formData.append('photo', photo)
+    formData.append('description', description)
+    formData.append('prix', prix)
+    formData.append('quantite', quantite)
+    formData.append('categorie', categorie)
 
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data',
-      },
-      onUploadProgress: function(progressEvent) {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        setUploadProgress(percentCompleted);
+    console.log(formData.get('nom'))
+
+    
+
+    try {
+      const config = {
+        headers: { 'content-type': 'multipart/form-data' },
       }
-    };
-
-    axios.post(url, formData, config)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error uploading file: ", error);
-      });
+      const response = await axios.post(
+        'http://localhost:3000/m2l/article',
+        formData,
+        config
+      )
+      console.log(response.data)
+      // Handle response here
+    } catch (error) {
+      console.error('Error sending article data:', error)
+      // Handle error here
+    }
   }
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:3000/m2l/categories')
+        setCategories(data)
+      } catch (error) {
+        console.error('Error retrieving categories:', error)
+        throw error
+      }
+    }
+    fetchCategories()
+  }, [])
 
   return (
-    <div className="App">
-      <form onSubmit={handleMultipleSubmit}>
-        <input type="file" multiple onChange={handleMultipleChange} />
-        <button type="submit">Upload</button>
-        <progress value={uploadProgress} max="100"></progress>
-      </form>
-    </div>
-  );
+    <form
+      className="form"
+      onSubmit={(e) => handleSubmit(e)}
+      encType="multipart/form-data"
+    >
+      <div className="input-group">
+        <label htmlFor="nom">Nom:</label>
+        <input
+          type="text"
+          id="nom"
+          value={nom}
+          onChange={(e) => setNom(e.target.value)}
+        />
+      </div>
+      <hr />
+      <div className="input-group">
+        <label htmlFor="description">Description:</label>
+        <textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        ></textarea>
+      </div>
+      <hr />
+      <div className="input-group">
+        <label htmlFor="prix">Prix:</label>
+        <input
+          type="number"
+          id="prix"
+          value={prix}
+          onChange={(e) => setPrix(parseFloat(e.target.value))}
+        />
+      </div>
+      <hr />
+      <div className="input-group">
+        <label htmlFor="quantite">Quantité:</label>
+        <input
+          type="number"
+          id="quantite"
+          value={quantite}
+          onChange={(e) => setQuantite(parseInt(e.target.value))}
+        />
+      </div>
+      <hr />
+      <div className="input-group">
+        <label htmlFor="photo">Photo:</label>
+        <input
+          type="file"
+          id="photo"
+          accept="image/*"
+          onChange={(e) => setPhoto(e.target.files[0])}
+        />
+      </div>
+      <hr />
+      <div className="input-group">
+        <label htmlFor="categories">Categorie:</label>
+        <select
+          id="categories"
+          value={categorie}
+          onChange={(e) => {
+            setCategorie(e.target.value)
+            console.log(categorie)
+          }}
+        >
+          <option value="">-- Choisir --</option>
+          {/* Render categories from the database */}
+          {categories.map((category) => (
+            <option key={category.id_categorie} value={category.id_categorie}>
+              {category.nom}
+            </option>
+          ))}
+        </select>
+      </div>
+      <hr />
+      <div className="input-group">
+        <input type="submit" />
+      </div>
+    </form>
+  )
 }
 
 export default FormArticle

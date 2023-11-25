@@ -2,8 +2,8 @@ aside {
   position: sticky;
   top: 0;
   left: 0;
-  padding: 2rem;
-  width: 300px;
+  padding: 2rem 0 0 1em;
+  width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -13,4 +13,7 @@ aside {
 
 aside ul li {
   list-style-type: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 4px;
 }

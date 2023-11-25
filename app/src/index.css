@@ -10,7 +10,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;800&display=swap');
 
 :root {
-  --color-bg-primary: rgb(75, 75, 75);
+  --color-bg-primary: rgb(198, 198, 198);
   --color-bg-secondary: rgba(242, 242, 242, 0.8);
   --color-shadow: #b5b5b5;
   --color-header: rgba(191, 15, 29, 1);

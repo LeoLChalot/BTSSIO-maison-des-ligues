@@ -1,0 +1,47 @@
+/* d:/github/maison_des_ligues/app/src/components/FormArticle/FormArticle.css */
+
+.form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: space-between;
+}
+.input-group {
+  margin: 0.5rem;
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+label{
+  font-weight: bold;
+}
+
+input[type='text'],
+input[type='file'],
+textarea {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.5rem;
+  border: none;
+}
+input[type='number'] {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 4px 1px rgb(178, 178, 178);
+}
+
+input[type='submit'] {
+  width: fit-content;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 1px 1px 4px 1px rgb(178, 178, 178);
+}
