@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom'
 
 const ArticleCard = ({ article }) => {
 
+  const description = article.description.slice(0, 20)
+
   const url = `/boutique/${article.id_article}`
   return (
     <div className="card">
@@ -18,7 +20,7 @@ const ArticleCard = ({ article }) => {
       <div className="card-body">
         <h5 className="card-title">{article.nom}</h5>
         <p className="card-text">{
-          article.description.slice(0, 20)
+          description
         }...</p>
         <Link className='link-button' to={url} >Voir plus</Link>
       </div>

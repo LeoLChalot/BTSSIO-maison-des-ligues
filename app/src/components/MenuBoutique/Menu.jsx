@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
+import {v4} from 'uuid'
 
 import './Menu.css'
 
@@ -30,7 +30,7 @@ const AsideMenu = ({setCategorie }) => {
       <ul>
         {categories.map((category) => (
           <li
-            key={category.id}
+            key={v4()}
             onClick={() => setCategorie(category.id_categorie)}
           >
             {category.nom}
@@ -41,7 +41,7 @@ const AsideMenu = ({setCategorie }) => {
       <ul>
         {categories.map((category) => (
           <li
-            key={category.id}
+            key={v4()}
             onClick={() => setCategorie(category.id_categorie)}
           >
             {category.nom}
