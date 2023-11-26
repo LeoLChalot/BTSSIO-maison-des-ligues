@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import './page.css'
 
 const Profil = () => {
+  const { pseudo } = useParams()
+  console.log(pseudo)
   const navigate = useNavigate()
   const ls = localStorage
 
+  const authCheck = () => {
+    return ls.getItem('pseudo') === pseudo && ls.getItem('isAuth') === '1'
+  }
+
   useEffect(() => {
-    const authCheck = () => {
-      !ls.getItem('pseudo') ? navigate('/') : null
+    if (!authCheck()) {
+      navigate('/')
     }
-    authCheck()
-  },[ls.getItem('isAuth')])
+  }, [ls.getItem('pseudo'), ls.getItem('isAuth')])
 
   return (
     <section id="page-profil" className="page">
@@ -19,7 +24,6 @@ const Profil = () => {
         <h1>Salut {ls.getItem('pseudo')} !</h1>
         <h3>Content de vous voir :)</h3>
       </div>
-      
     </section>
   )
 }

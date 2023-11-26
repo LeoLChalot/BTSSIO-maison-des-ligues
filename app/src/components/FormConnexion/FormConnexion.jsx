@@ -16,7 +16,7 @@ const FormConnexion = () => {
     showPassord == false ? setShowPassword(true) : setShowPassword(false)
   }
 
-  async function handleFormData(e) {
+  const handleFormData = async (e) => {
     e.preventDefault()
 
     const login = e.target['login'].value
@@ -24,33 +24,37 @@ const FormConnexion = () => {
 
     try {
       const userData = await axios.get(
-        `http://localhost:3000/connexion/${login}`
+        `http://localhost:3000/m2l/user/connexion/${login}`
       )
       console.log(userData)
-      const userInfos = userData.data
 
-      const hash = userInfos.mot_de_passe
-      if (bcrypt.compare(mot_de_passe, hash)) {
-        localStorage.clear()
-        const ls = localStorage
-        ls.setItem('prenom', userInfos.prenom)
-        ls.setItem('nom', userInfos.nom)
-        ls.setItem('pseudo', userInfos.pseudo)
-        ls.setItem('email', userInfos.email)
-        ls.setItem('isAdmin', userInfos.is_admin)
-        ls.setItem('isAuth', '1')
+      if (userData.status == 200) {
+        const userInfos = userData.data
 
-        const user = {
-          prenom: ls.getItem('prenom'),
-          nom: ls.getItem('nom'),
-          pseudo: ls.getItem('pseudo'),
-          email: ls.getItem('email'),
-          isAdmin: ls.getItem('isAdmin'),
-          isAuth: ls.getItem('isAuth'),
+        const hash = userInfos.mot_de_passe
+        if (bcrypt.compare(mot_de_passe, hash)) {
+          localStorage.clear()
+          const ls = localStorage
+          ls.setItem('id_utilisateur', userInfos.id_utilisateur)
+          ls.setItem('prenom', userInfos.prenom)
+          ls.setItem('nom', userInfos.nom)
+          ls.setItem('pseudo', userInfos.pseudo)
+          ls.setItem('email', userInfos.email)
+          ls.setItem('isAdmin', userInfos.is_admin)
+          ls.setItem('isAuth', '1')
+
+          const user = {
+            prenom: ls.getItem('prenom'),
+            nom: ls.getItem('nom'),
+            pseudo: ls.getItem('pseudo'),
+            email: ls.getItem('email'),
+            isAdmin: ls.getItem('isAdmin'),
+            isAuth: ls.getItem('isAuth'),
+          }
+
+          console.table(user)
+          navigate(`/profil/${ls.getItem('pseudo')}`)
         }
-
-        console.table(user)
-        navigate('/profil')
       }
     } catch (err) {
       throw err

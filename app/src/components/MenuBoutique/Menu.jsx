@@ -9,7 +9,7 @@ const AsideMenu = ({setCategorie }) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/m2l/categories')
+      const response = await axios.get('http://localhost:3000/m2l/boutique/categories')
       setCategories(response.data)
       console.log(categories)
     } catch (error) {

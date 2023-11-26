@@ -4,6 +4,7 @@ import './page.css'
 import ArticleCard from '../components/Articles/ArticleCard'
 import { useParams } from 'react-router-dom'
 import AsideMenu from '../components/MenuBoutique/Menu'
+import { v4 } from 'uuid'
 
 const Boutique = () => {
   const [articles, setArticles] = useState([])
@@ -11,7 +12,7 @@ const Boutique = () => {
   console.log(categorie)
 
   const getArticles = async (categorie) => {
-    const url = `http://localhost:3000/m2l/articles${categorie ? `?filtre=${categorie}` : ''}`
+    const url = `http://localhost:3000/m2l/boutique/articles${categorie ? `?filtre=${categorie}` : ''}`
     try {
       const { data } = await axios.get(url)
       return data
@@ -39,7 +40,7 @@ const Boutique = () => {
       <AsideMenu setCategorie={setCategorie} />
       <main id="page-boutique">
         {articles.map((article) => (
-          <ArticleCard article={article} />
+          <ArticleCard key={v4()} article={article} />
         ))}
       </main>
     </>

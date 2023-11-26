@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import './FormArticle.css'
 const FormArticle = () => {
@@ -11,41 +12,32 @@ const FormArticle = () => {
   const [categories, setCategories] = useState([])
   const [error, setError] = useState('')
 
+  const uploadPhoto = async (photo) => {
+    try {
+      const formData = new FormData()
+      formData.append('photo', photo)
+
+      const response = await axios
+        .post('http://localhost:3000/m2l/uploadFile', formData, {
+          headers: {
+            'Content-Type': 'Multipart/form-data',
+          },
+        })
+        .then((res) => console.log(res))
+        .catch((err) => console.error(err))
+
+      const fileName = await response.data.fileName
+      return fileName
+    } catch (error) {
+      console.error('Error uploading photo:', error)
+      throw error
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!nom || !description || !prix || !quantite || !categorie) {
-      setError('Veuillez remplir tous les champs obligatoires')
-      return
-    }
-
-    console.log(nom)
-    const formData = new FormData()
-    formData.append('nom', nom)
-    formData.append('photo', photo)
-    formData.append('description', description)
-    formData.append('prix', prix)
-    formData.append('quantite', quantite)
-    formData.append('categorie', categorie)
-
-    console.log(formData.get('nom'))
-
-    
-
-    try {
-      const config = {
-        headers: { 'content-type': 'multipart/form-data' },
-      }
-      const response = await axios.post(
-        'http://localhost:3000/m2l/article',
-        formData,
-        config
-      )
-      console.log(response.data)
-      // Handle response here
-    } catch (error) {
-      console.error('Error sending article data:', error)
-      // Handle error here
-    }
+    const fileName = await uploadPhoto(photo)
+    console.log(fileName)
   }
 
   useEffect(() => {
@@ -137,7 +129,7 @@ const FormArticle = () => {
       </div>
       <hr />
       <div className="input-group">
-        <input type="submit" />
+        <button>Envoyer</button>
       </div>
     </form>
   )

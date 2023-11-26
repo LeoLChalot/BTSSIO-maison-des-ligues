@@ -73,7 +73,7 @@ const FormInscription = () => {
 
     try {
       const inscription = await axios.post(
-        `http://localhost:3000/inscription`,
+        `http://localhost:3000/m2l/user/inscription`,
         {
           id_utilisateur: id,
           prenom: prenom,

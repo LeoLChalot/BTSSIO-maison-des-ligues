@@ -45,8 +45,9 @@ const Navbar = () => {
           </Link>
         )}
         {ls.getItem('isAuth') == '1' && (
+
           <>
-            <Link to="/profil" className="link">
+            <Link to={'/profil/' + ls.getItem('pseudo')} className="link">
               Profil
             </Link>
             <Link to="#" onClick={deconnexion} className="link">

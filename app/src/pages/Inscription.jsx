@@ -12,7 +12,6 @@ const Inscription = () => {
           <img src={Surf} alt="Photo d'un grimpeur sur un pan de falaise" />
         </div>
         <div className="form-container">
-          <h1>Inscription</h1>
           <FormInscription />
           <p>
             <small>

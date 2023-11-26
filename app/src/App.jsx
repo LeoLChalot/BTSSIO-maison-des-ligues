@@ -26,7 +26,7 @@ function App() {
             <Route path="/boutique" element={<Boutique />} />
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/inscription" element={<Inscription />} />
-            <Route path="/profil/:id" element={<Profil />} />
+            <Route path="/profil/:pseudo" element={<Profil />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </Suspense>
