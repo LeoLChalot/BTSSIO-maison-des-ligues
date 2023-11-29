@@ -120,7 +120,7 @@ class Article {
          const connection = Connection.connect();
          const query = 'SELECT * FROM articles';
          const result = await connection.promise().query(query);
-         Connection.disconnect();
+         connection.end();
          return result[0];
       } catch (error) {
          console.error('Error fetching articles:', error);

@@ -6,7 +6,6 @@ import ButtonBurger from '../ButtonBurger/ButtonBurger'
 const Navbar = () => {
   const [isActive, setIsActive] = useState('hide')
   const ls = localStorage
-  console.log(isActive)
   const navigate = useNavigate()
 
   const deconnexion = () => {

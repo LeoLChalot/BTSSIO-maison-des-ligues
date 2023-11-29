@@ -4,7 +4,6 @@ import './page.css'
 
 const Profil = () => {
   const { pseudo } = useParams()
-  console.log(pseudo)
   const navigate = useNavigate()
   const ls = localStorage
 
