@@ -12,8 +12,14 @@ import Navbar from './components/Navbar/Navbar'
 import './App.css'
 import Loader from './components/Loader/Loader'
 
+import { v4 } from 'uuid'
+
 
 function App() {
+
+  const uuid = v4();
+  console.log(typeof uuid);
+
   return (
     <>
       <header>
@@ -31,7 +37,7 @@ function App() {
           </Routes>
         </Suspense>
       </div>
-      <footer>{/* TODO Footer */}</footer>
+      <footer>{/* > Footer < */}</footer>
     </>
   )
 }

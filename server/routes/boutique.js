@@ -1,8 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('../middleware/multer-config');
+const multerMiddleware = require('../middleware/multer-config');
 const checkArticle = require('../middleware/check-article');
 const isAdmin = require('../middleware/is-admin');
+// Importer le module express et le middleware multer
+const multer = require('multer');
+
+// Créer une instance de multer pour gérer le téléchargement de fichiers
+const upload = multer({ dest: 'uploads/' });
 const { Categorie, Article } = require('../models/models');
 
 // Affiche toutes les catégories
@@ -78,24 +83,34 @@ router.get('/articles', async (req, res) => {
    }
 });
 
-// POST article
-router.post('/article', multer, isAdmin, async (req, res) => {
-   const article = {
-      nom: req.body.nom,
-      photo: req.body.photo,
-      description: req.body.description,
-      prix: req.body.prix,
-      quantite: req.body.quantite,
-      categorie_id: req.body.categorie_id,
-   }
+// Créer la route de type POST avec le middleware multer
+router.post('/article', upload.single('photo'), async (req, res) => {
    try {
-      const newArticle = await Article.addArticle(article);
-      res.status(201).json(newArticle);
-   } catch (error) {
-      console.error('Error adding article:', error);
-      res.status(500).send('Internal Server Error');
-   }
+      // Récupérer les données de l'article à partir de la requête
+      const { nom, description, prix, quantite, categorie_id } = req.body;
 
+      // Créer un nouvel objet Article avec les données récupérées
+      const newArticle = new Article({
+         nom,
+         description,
+         prix,
+         quantite,
+         categorie_id,
+         photo: req.file.filename, // Utiliser le nom du fichier téléchargé comme photo de l'article
+      });
+
+      // Sauvegarder l'article dans la base de données
+      await Article.addArticle(newArticle);
+
+      // Envoyer une réponse de succès
+      res.status(200).json({ message: "L'article a été ajouté avec succès" });
+   } catch (error) {
+      // En cas d'erreur, envoyer une réponse d'erreur avec le message approprié
+      console.error("Erreur lors de l'ajout de l'article:", error);
+      res.status(500).json({
+         message: "Une erreur est survenue lors de l'ajout de l'article",
+      });
+   }
 });
 
 // PUT article
@@ -108,7 +123,7 @@ router.put('/article', checkArticle, isAdmin, async (req, res) => {
       prix: req.body.prix,
       quantite: req.body.quantite,
       categorie_id: req.body.categorie_id,
-   }
+   };
    try {
       const result = await Article.updateArticleById(updatedArticle);
       res.status(201).json(result);

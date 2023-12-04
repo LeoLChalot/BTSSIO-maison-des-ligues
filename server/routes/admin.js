@@ -35,6 +35,8 @@ router.get('/users', async (req, res) => {
    }
 });
 
+
+
 // * Supprime l'utilisateur ciblé
 router.delete('/user/:id', async (req, res) => {
   try {
