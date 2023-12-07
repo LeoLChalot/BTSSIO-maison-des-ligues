@@ -2,33 +2,42 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const cors = require('./middleware/cors');
-// const isAdmin = require('./middleware/is-admin');
+
 const routesBoutique = require('./routes/boutique');
-const routesLoginOut = require('./routes/user-connexion');
+const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
 
-
 app.use(express.json());
-
 app.use(cors);
 
 // ? Router inscription / connexion
-app.use('/m2l/user', routesLoginOut);
+app.use('/m2l/user', routesUsers);
 
 // ? Router Boutique
-app.use('/m2l/boutique', routesBoutique)
+app.use('/m2l/boutique', routesBoutique);
 
 // ? Router Admin
 app.use('/m2l/admin', routesAdmin);
 
-// app.use('/admin', isAdmin);
-app.get('/admin', async (req, res) => {
-   res.status(200).send(`Bienvenue Admin`);
+// ? Router Error 400
+app.use((req, res, next) => {
+   res.status(400).json({ message: 'Bad request' });
 });
 
-app.get('/dashboard/:view', async (req, res) => {
-   const view = req.params.view;
-   res.status(200).send(`Dashboard ${view}`);
+// ? Router Error 401
+app.use((req, res, next) => {
+   res.status(401).json({ message: 'Unauthorized' });
+});
+
+// ? Router Error 404
+app.use((req, res) => {
+   res.status(404).json({ message: 'Page not found' });
+});
+
+// ? Router Error 500
+app.use((err, req, res, next) => {
+   console.error(err.stack);
+   res.status(500).json({ message: 'Internal server error' });
 });
 
 app.listen(PORT, () => {

@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
 class ConnectionDAO {
    constructor() {
@@ -274,6 +275,55 @@ class UserDAO {
       this.mot_de_passe = password;
    }
 
+   static async createUser(firstName, lastName, pseudo, email, password) {
+      try {
+         const values = [
+            uuidv4(),
+            firstName,
+            lastName,
+            pseudo,
+            email,
+            password,
+         ];
+         const connection = ConnectionDAO.connect();
+         const query =
+            'INSERT INTO utilisateurs (id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)';
+         const result = await connection.promise().query(query, values);
+         ConnectionDAO.disconnect();
+         return result;
+      } catch (error) {
+         console.error('Error creating user:', error);
+         throw error;
+      }
+   }
+
+   static async connectUser(login, password) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query =
+            'SELECT * FROM utilisateurs WHERE pseudo = ? OR email = ?';
+         const result = await connection.promise().query(query, [login, login]);
+
+         if (result[0].length === 0) {
+            return null;
+         }
+
+         const user = result[0][0];
+         const validPassword = await bcrypt.compare(
+            password,
+            user.mot_de_passe
+         );
+         if (!validPassword) {
+            return null;
+         }
+         ConnectionDAO.disconnect();
+         return user;
+      } catch (error) {
+         console.error('Error connecting user:', error);
+         throw error;
+      }
+   }
+
    static async getAllUsers() {
       try {
          const connection = ConnectionDAO.connect();
@@ -291,7 +341,8 @@ class UserDAO {
    static async getUserByEmail(email) {
       try {
          const connection = ConnectionDAO.connect();
-         const query = 'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE email = ?';
+         const query =
+            'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE email = ?';
          const result = await connection.promise().query(query, [email]);
          ConnectionDAO.disconnect();
          return result[0];
@@ -304,7 +355,8 @@ class UserDAO {
    static async getUserByPseudo(pseudo) {
       try {
          const connection = ConnectionDAO.connect();
-         const query = 'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE pseudo = ?';
+         const query =
+            'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE pseudo = ?';
          const result = await connection.promise().query(query, [pseudo]);
          ConnectionDAO.disconnect();
          return result[0];
@@ -312,12 +364,13 @@ class UserDAO {
          console.error('Error fetching user by pseudo:', error);
          throw error;
       }
-   } 
+   }
 
    static async getUserById(id) {
       try {
          const connection = ConnectionDAO.connect();
-         const query = 'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE id = ?';
+         const query =
+            'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE id = ?';
          const result = await connection.promise().query(query, [id]);
          ConnectionDAO.disconnect();
          return result[0];
@@ -364,11 +417,11 @@ class UserDAO {
    setFirstName(firstName) {
       this.firstName = firstName;
    }
-
+   
    setLastName(lastName) {
       this.lastName = lastName;
    }
-
+   
    setPseudo(pseudo) {
       this.pseudo = pseudo;
    }
@@ -385,6 +438,39 @@ class UserDAO {
 class PanierDAO {
    constructor() {
       this.articles = []; // tableau pour stocker les articles du panier
+   }
+
+   static async createPanier(id_utilisateur) {
+      const id_panier = uuidv4();
+      try {
+         const connection = ConnectionDAO.connect();
+         const query =
+            'INSERT INTO panier (id_panier, id_utilisateur) VALUES (?, ?)';
+         const result = await connection
+            .promise()
+            .query(query, [id_panier, id_utilisateur]);
+         ConnectionDAO.disconnect();
+         return result;
+      } catch (error) {
+         console.error('Error creating panier:', error);
+         throw error;
+      }
+   }
+
+   static async getPanier(id_utilisateur) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query =
+            'SELECT * FROM panier WHERE id_utilisateur = ?';
+         const result = await connection
+            .promise()
+            .query(query, [id_utilisateur]);
+         ConnectionDAO.disconnect();
+         return result[0];
+      } catch (error) {
+         console.error('Error fetching panier:', error);
+         throw error;
+      }
    }
 
    ajouterArticle(article) {
