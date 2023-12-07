@@ -87,4 +87,13 @@ router.delete('/ajoutPanier', async (req, res) => {
   }
 })
 
+router.post('/confirmPanier', async (req, res) => {
+  const { id_panier } = req.body;
+ console.log( id_panier )
+  if (id_panier) {
+     const panier = await PanierDAO.confirmPanier(id_panier);
+     res.status(200).json(panier);
+  }
+})
+
 module.exports = router;

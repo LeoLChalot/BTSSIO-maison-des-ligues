@@ -499,6 +499,22 @@ class PanierDAO {
       }
    }
 
+   static async confirmPanier(id_panier) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query = 'UPDATE panier SET ordered = ? WHERE id_panier = ?';
+
+         const result = await connection
+            .promise()
+            .query(query, ["ordered", id_panier]);
+         ConnectionDAO.disconnect();
+         return result;
+      } catch (error) {
+         console.error('Error fetching panier:', error);
+         throw error;
+      }
+   }
+
    static async deleteArticleFromPanier(id_panier, id_article) {
       try {
          const connection = ConnectionDAO.connect();

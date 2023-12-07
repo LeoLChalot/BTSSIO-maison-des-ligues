@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const cors = require('./middleware/cors');
-
 const routesBoutique = require('./routes/boutique');
 const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
