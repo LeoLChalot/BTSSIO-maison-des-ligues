@@ -11,6 +11,7 @@ const Navbar = () => {
   const deconnexion = () => {
     ls.setItem('isAuth', '0')
     localStorage.clear()
+    navigate('/')
   }
 
   return (

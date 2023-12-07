@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+// const auth = require('../middleware/auth');
 const connection = require('../database/connexion');
+const jwt = require('jsonwebtoken');
 
 connection.connect((err) => {
    if (err) {
@@ -9,6 +10,33 @@ connection.connect((err) => {
       return;
    } else {
       console.log(`Connexion réussie à la BDD : ${process.env.DB_NAME}!`);
+   }
+});
+
+router.get('/gettoken', async (req, res) => {
+   const authorizationHeader = req.header('Authorization');
+
+   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Invalid authorization header' });
+   }
+   const token = authorizationHeader.replace('Bearer ', '');
+   if (!token) {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Authorization token not found' });
+   }
+   try {
+      const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+      user = decoded;
+      console.log(user);
+      return res
+         .status(200)
+         .json({ success: true, message: 'Token verified', user: decoded });
+   } catch (err) {
+      console.error(err);
+      return res.status(401).json({ success: false, message: 'Invalid token' });
    }
 });
 
@@ -35,20 +63,18 @@ router.get('/users', async (req, res) => {
    }
 });
 
-
-
 // * Supprime l'utilisateur ciblé
 router.delete('/user/:id', async (req, res) => {
-  try {
-     const id_article = req.params.id_utilisateur;
-     const query = `
+   try {
+      const id_article = req.params.id_utilisateur;
+      const query = `
      DELETE FROM utilisateurs 
      WHERE id_utilisateur = ?`;
-     await connection.promise().query(query, [id_article]);
-     res.status(200).end('Article supprimée !');
-  } catch (err) {
-     throw err;
-  }
+      await connection.promise().query(query, [id_article]);
+      res.status(200).end('Article supprimée !');
+   } catch (err) {
+      throw err;
+   }
 });
 
 module.exports = router;

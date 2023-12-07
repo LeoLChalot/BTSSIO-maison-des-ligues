@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const cors = require('./middleware/cors');
-const isAdmin = require('./middleware/is-admin');
+// const isAdmin = require('./middleware/is-admin');
 const routesBoutique = require('./routes/boutique');
 const routesLoginOut = require('./routes/user-connexion');
 const routesAdmin = require('./routes/admin');
@@ -19,7 +19,7 @@ app.use('/m2l/user', routesLoginOut);
 app.use('/m2l/boutique', routesBoutique)
 
 // ? Router Admin
-app.use('/m2l/admin', isAdmin, routesAdmin);
+app.use('/m2l/admin', routesAdmin);
 
 // app.use('/admin', isAdmin);
 app.get('/admin', async (req, res) => {

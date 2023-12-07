@@ -7,19 +7,42 @@ import AsideMenu from '../../components/AsideMenu/AsideMenu'
 
 const Dashboard = () => {
   const view = useParams().params
+
   const navigate = useNavigate()
   const ls = localStorage
-  useEffect(() => {
-    const authCheck = () => {
-      !ls.getItem('isAdmin') ? navigate('/') : null
+
+  const authCheck = async (oauth_token) => {
+    try {
+      const data = await axios.get(
+        `http://localhost:3000/m2l/admin/gettoken`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${oauth_token}`,
+          },
+        }
+      )
+      if (data.status === 200) {
+        console.log(data)
+        return data
+      } else {
+        navigate('/')
+      }
+    } catch (error) {
+      console.error(error)
+      navigate('/')
     }
-    authCheck()
-  }, [ls.getItem('isAdmin')])
+  }
+
+  useEffect(() => {
+    const access = authCheck(ls.getItem('oauth_token'))
+  }, [])
 
   return (
     <>
-      <h1>dashboard</h1>
-      <FormArticle />
+      <h1>Dashboard</h1>
+
+      {/* <FormArticle /> */}
     </>
   )
 }

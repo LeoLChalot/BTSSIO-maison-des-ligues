@@ -19,42 +19,44 @@ const FormConnexion = () => {
   const handleFormData = async (e) => {
     e.preventDefault()
 
-    const login = e.target['login'].value
-    const mot_de_passe = e.target['mot_de_passe'].value
+    console.log(login, password)
 
     try {
-      const userData = await axios.get(
-        `http://localhost:3000/m2l/user/connexion/${login}`
+      const userData = await axios.post(
+        `http://localhost:3000/m2l/user/connexion`,
+        {
+          login: login,
+          mot_de_passe: password,
+        }
       )
-      console.log(userData)
+      console.log(userData.data)
 
       if (userData.status == 200) {
         const userInfos = userData.data
 
-        const hash = userInfos.mot_de_passe
-        if (bcrypt.compare(mot_de_passe, hash)) {
-          localStorage.clear()
-          const ls = localStorage
-          ls.setItem('id_utilisateur', userInfos.id_utilisateur)
-          ls.setItem('prenom', userInfos.prenom)
-          ls.setItem('nom', userInfos.nom)
-          ls.setItem('pseudo', userInfos.pseudo)
-          ls.setItem('email', userInfos.email)
-          ls.setItem('isAdmin', userInfos.is_admin)
-          ls.setItem('isAuth', '1')
+        localStorage.clear()
+        const ls = localStorage
+        ls.setItem('oauth_token', userInfos.token)
+        ls.setItem('id_utilisateur', userInfos.user.id_utilisateur)
+        ls.setItem('prenom', userInfos.user.prenom)
+        ls.setItem('nom', userInfos.user.nom)
+        ls.setItem('pseudo', userInfos.user.pseudo)
+        ls.setItem('email', userInfos.user.email)
+        ls.setItem('isAdmin', userInfos.status)
+        ls.setItem('isAuth', '1')
 
-          const user = {
-            prenom: ls.getItem('prenom'),
-            nom: ls.getItem('nom'),
-            pseudo: ls.getItem('pseudo'),
-            email: ls.getItem('email'),
-            isAdmin: ls.getItem('isAdmin'),
-            isAuth: ls.getItem('isAuth'),
-          }
-
-          console.table(user)
-          navigate(`/profil/${ls.getItem('pseudo')}`)
+        const user = {
+          id_utilisateur: ls.getItem('id_utilisateur'),
+          prenom: ls.getItem('prenom'),
+          nom: ls.getItem('nom'),
+          pseudo: ls.getItem('pseudo'),
+          email: ls.getItem('email'),
+          token: ls.getItem('oauth_token'),
+          role: ls.getItem('isAdmin'),
         }
+
+        console.table(user)
+        navigate(`/profil/${ls.getItem('pseudo')}`)
       }
     } catch (err) {
       throw err

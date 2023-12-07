@@ -3,45 +3,120 @@ const router = express.Router();
 const multerMiddleware = require('../middleware/multer-config');
 const checkArticle = require('../middleware/check-article');
 const isAdmin = require('../middleware/is-admin');
+const jwt = require('jsonwebtoken');
 // Importer le module express et le middleware multer
 const multer = require('multer');
 
 // Créer une instance de multer pour gérer le téléchargement de fichiers
 const upload = multer({ dest: 'uploads/' });
-const { Categorie, Article } = require('../models/models');
+const { CategorieDAO, ArticleDAO } = require('../models/models');
 
 // Affiche toutes les catégories
-router.get('/categories', async (req, res) => {
+router.get('/categorie', async (req, res) => {
    try {
-      const categories = await Categorie.getCategories();
-      res.status(200).json(categories);
+      const categories = await CategorieDAO.getCategories();
+      return res.status(200).json(categories);
    } catch (error) {
       console.error('Error fetching categories:', error);
-      res.status(500).send('Internal Server Error');
+      return res.status(500).send('Internal Server Error');
    }
 });
 
 // POST catégorie
 router.post('/categorie', async (req, res) => {
+   const authorizationHeader = req.header('Authorization');
+   console.log(authorizationHeader);
+
+   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Invalid authorization header' });
+   }
+   const token = authorizationHeader.replace('Bearer ', '');
+   if (!token) {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Authorization token not found' });
+   }
    try {
-      const { nom } = req.body;
-      await Categorie.addCategory(nom);
-      res.status(201).json('Categorie ajoutée !');
-   } catch (error) {
-      console.error('Error adding category:', error);
-      res.status(500).send('Internal Server Error');
+      const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+      req.user = decoded;
+      if (req.user.status !== 'admin') {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Unauthorized' });
+      }
+      try {
+         const { nom } = req.body;
+         await CategorieDAO.addCategory(nom);
+         res.status(201).json('Categorie ajoutée !');
+      } catch (error) {
+         console.error('Error adding category:', error);
+         res.status(500).send('Internal Server Error');
+      }
+   } catch (err) {
+      console.error(err);
+      return res
+         .status(401)
+         .json({
+            success: false,
+            message: `Invalid token ${authorizationHeader}`,
+         });
    }
 });
 
 // DELETE catégorie
 router.delete('/categorie', async (req, res) => {
+   const authorizationHeader = req.header('Authorization');
+   console.log(authorizationHeader);
+
+   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Invalid authorization header' });
+   }
+   const token = authorizationHeader.replace('Bearer ', '');
+   if (!token) {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Authorization token not found' });
+   }
    try {
-      const { id_categorie } = req.query;
-      await Categorie.deleteCategory(id_categorie);
-      res.status(201).json('Categorie supprimée !');
-   } catch (error) {
-      console.error('Error adding category:', error);
-      res.status(500).send('Internal Server Error');
+      const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+      req.user = decoded;
+      if (req.user.status !== 'admin') {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Unauthorized' });
+      }
+      try {
+         const { id_categorie } = req.body;
+         const categorie = await CategorieDAO.getCategoryById(id_categorie);
+         if(id_categorie === undefined) {
+            return res
+               .status(401)
+               .json({ success: false, message: 'no id_category' });
+         }
+         if(!categorie) {
+            return res
+               .status(401)
+               .json({ success: false, message: 'Categorie not found' });
+         }
+
+         await CategorieDAO.deleteCategory(id_categorie);
+         res.status(201).json({success: true, message: 'Categorie supprimée !'});
+      } catch (error) {
+         console.error('Error adding category:', error);
+         res.status(500).send('Internal Server Error');
+      }
+   } catch (err) {
+      console.error(err);
+      return res
+         .status(401)
+         .json({
+            success: false,
+            message: `Invalid token ${authorizationHeader}`,
+         });
    }
 });
 
@@ -50,7 +125,7 @@ router.get('/articles', async (req, res) => {
    const query = req.query;
    if (Object.keys(query).length === 0) {
       try {
-         const articles = await Article.getAllArticles();
+         const articles = await ArticleDAO.getAllArticles();
          res.status(200).json(articles);
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -61,7 +136,7 @@ router.get('/articles', async (req, res) => {
       1
    ) {
       try {
-         const articles = await Article.getArticleById(req.query.id);
+         const articles = await ArticleDAO.getArticleById(req.query.id);
          res.status(200).json(articles);
       } catch (error) {
          console.error('Error fetching article:', error);
@@ -72,7 +147,7 @@ router.get('/articles', async (req, res) => {
          .length == 1
    ) {
       try {
-         const articles = await Article.getArticleByCategorieId(
+         const articles = await ArticleDAO.getArticleByCategorieId(
             req.query.id_categorie
          );
          res.status(200).json(articles);
@@ -100,7 +175,7 @@ router.post('/article', upload.single('photo'), async (req, res) => {
       });
 
       // Sauvegarder l'article dans la base de données
-      await Article.addArticle(newArticle);
+      await ArticleDAO.addArticle(newArticle);
 
       // Envoyer une réponse de succès
       res.status(200).json({ message: "L'article a été ajouté avec succès" });
@@ -125,7 +200,7 @@ router.put('/article', checkArticle, isAdmin, async (req, res) => {
       categorie_id: req.body.categorie_id,
    };
    try {
-      const result = await Article.updateArticleById(updatedArticle);
+      const result = await ArticleDAO.updateArticleById(updatedArticle);
       res.status(201).json(result);
    } catch (error) {
       console.error('Error editing article:', error);
@@ -137,7 +212,7 @@ router.put('/article', checkArticle, isAdmin, async (req, res) => {
 router.delete('/article', isAdmin, async (req, res) => {
    try {
       const { id_article } = req.query;
-      await Article.deleteArticleById(id_article);
+      await ArticleDAO.deleteArticleById(id_article);
       res.status(201).json('Article supprimé !');
    } catch (error) {
       console.error('Error deleting article:', error);
