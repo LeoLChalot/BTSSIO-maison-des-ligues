@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
-// +* Classes finies
 class ConnectionDAO {
    constructor() {
       this.connection = null;
@@ -65,6 +64,20 @@ class CategorieDAO {
          const connection = ConnectionDAO.connect();
          const sql = 'SELECT * FROM categories WHERE id_categorie = ?';
          const data = await connection.promise().query(sql, [id_categorie]);
+         const category = data[0][0];
+         ConnectionDAO.disconnect();
+         return category;
+      } catch (error) {
+         console.error('Error retrieving category:', error);
+         throw error;
+      }
+   }
+
+   static async getCategoryByName(nom) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const sql = 'SELECT * FROM categories WHERE nom = ?';
+         const data = await connection.promise().query(sql, [nom]);
          const category = data[0][0];
          ConnectionDAO.disconnect();
          return category;
@@ -168,22 +181,30 @@ class ArticleDAO {
       }
    }
 
-   static async updateArticleById(updatedArticle) {
-      try {
-         const connection = ConnectionDAO.connect();
-         const values = [
-            ...Object.values(updatedArticle),
-            updatedArticle.id_article,
-         ];
-         const query =
-            'UPDATE articles SET id_article = ?, nom = ?, photo = ?, description = ?, prix = ?, quantite = ?, categorie_id = ? WHERE id_article = ?';
-         const result = await connection.promise().query(query, values);
-         ConnectionDAO.disconnect();
-         return result;
-      } catch (error) {
-         console.error('Error updating article:', error);
-         throw error;
-      }
+   static async updateArticle(updatedArticle) {
+      const {
+         id_article,
+         nom,
+         photo,
+         description,
+         prix,
+         quantite,
+         categorie_id,
+      } = updatedArticle;
+      const query = `UPDATE articles SET id_article = ?, nom = ?, photo = ?, description = ?, prix = ?, quantite = ?, categorie_id = ? WHERE id_article = ?`;
+      const result = await ConnectionDAO.connect()
+         .promise()
+         .query(query, [
+            id_article,
+            nom,
+            photo,
+            description,
+            prix,
+            quantite,
+            categorie_id,
+            id_article,
+         ]);
+      return result;
    }
 
    static async deleteArticleById(articleId) {
@@ -244,15 +265,81 @@ class ArticleDAO {
    }
 }
 
-// > Reste à completer
 class UserDAO {
    constructor(firstName, lastName, pseudo, email, password) {
-      this.firstName = firstName;
-      this.lastName = lastName;
+      this.prenom = firstName;
+      this.nom = lastName;
       this.pseudo = pseudo;
       this.email = email;
-      this.password = password;
+      this.mot_de_passe = password;
    }
+
+   static async getAllUsers() {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query =
+            'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs';
+         const result = await connection.promise().query(query);
+         ConnectionDAO.disconnect();
+         return result[0];
+      } catch (error) {
+         console.error('Error fetching users:', error);
+         throw error;
+      }
+   }
+
+   static async getUserByEmail(email) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query = 'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE email = ?';
+         const result = await connection.promise().query(query, [email]);
+         ConnectionDAO.disconnect();
+         return result[0];
+      } catch (error) {
+         console.error('Error fetching user by email:', error);
+         throw error;
+      }
+   }
+
+   static async getUserByPseudo(pseudo) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query = 'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE pseudo = ?';
+         const result = await connection.promise().query(query, [pseudo]);
+         ConnectionDAO.disconnect();
+         return result[0];
+      } catch (error) {
+         console.error('Error fetching user by pseudo:', error);
+         throw error;
+      }
+   } 
+
+   static async getUserById(id) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query = 'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE id = ?';
+         const result = await connection.promise().query(query, [id]);
+         ConnectionDAO.disconnect();
+         return result[0];
+      } catch (error) {
+         console.error('Error fetching user by id:', error);
+         throw error;
+      }
+   }
+
+   static async deleteUserById(id) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query = 'DELETE FROM utilisateurs WHERE id = ?';
+         const result = await connection.promise().query(query, [id]);
+         ConnectionDAO.disconnect();
+         return result;
+      } catch (error) {
+         console.error('Error deleting user by id:', error);
+         throw error;
+      }
+   }
+
    getFirstName() {
       return this.firstName;
    }
