@@ -417,11 +417,11 @@ class UserDAO {
    setFirstName(firstName) {
       this.firstName = firstName;
    }
-   
+
    setLastName(lastName) {
       this.lastName = lastName;
    }
-   
+
    setPseudo(pseudo) {
       this.pseudo = pseudo;
    }
@@ -437,7 +437,10 @@ class UserDAO {
 
 class PanierDAO {
    constructor() {
+      this.id_panier = null;
       this.articles = []; // tableau pour stocker les articles du panier
+      this.totalPrix = 0;
+      this.nombreArticles = this.articles.length;
    }
 
    static async createPanier(id_utilisateur) {
@@ -449,6 +452,7 @@ class PanierDAO {
          const result = await connection
             .promise()
             .query(query, [id_panier, id_utilisateur]);
+
          ConnectionDAO.disconnect();
          return result;
       } catch (error) {
@@ -460,8 +464,7 @@ class PanierDAO {
    static async getPanier(id_utilisateur) {
       try {
          const connection = ConnectionDAO.connect();
-         const query =
-            'SELECT * FROM panier WHERE id_utilisateur = ?';
+         const query = 'SELECT * FROM panier WHERE id_utilisateur = ?';
          const result = await connection
             .promise()
             .query(query, [id_utilisateur]);
@@ -473,14 +476,42 @@ class PanierDAO {
       }
    }
 
-   ajouterArticle(article) {
-      this.articles.push(article); // ajouter un article au panier
+   static async addArticleToPanier(id_panier, id_article) {
+      const article = await ArticleDAO.getArticleById(id_article);
+      if (article) {
+         console.log(article);
+         this.articles += article[0];
+         
+         const id = uuidv4();
+         try {
+            const connection = ConnectionDAO.connect();
+            const query =
+               'INSERT INTO panier_produits (id, id_panier, id_article) VALUES (?, ?, ?)';
+            const result = await connection
+               .promise()
+               .query(query, [id, id_panier, id_article]);
+            ConnectionDAO.disconnect();
+            return result;
+         } catch (error) {
+            console.error('Error creating panier:', error);
+            throw error;
+         }
+      }
    }
 
-   supprimerArticle(article) {
-      const index = this.items.indexOf(article);
-      if (index > -1) {
-         this.articles.splice(index, 1); // supprimer l'article du panier
+   static async deleteArticleFromPanier(id_panier, id_article) {
+      try {
+         const connection = ConnectionDAO.connect();
+         const query =
+            'DELETE FROM panier_produits WHERE id_panier = ? AND id_article = ?';
+         const result = await connection
+            .promise()
+            .query(query, [id_panier, id_article]);
+         ConnectionDAO.disconnect();
+         return result;
+      } catch (error) {
+         console.error('Error deleting article from panier:', error);
+         throw error;
       }
    }
 

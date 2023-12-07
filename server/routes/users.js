@@ -52,19 +52,39 @@ router.post('/connexion', async (req, res) => {
 
          const panier = await PanierDAO.getPanier(user.id_utilisateur);
          if (panier.length == 0) {
-            await PanierDAO.createPanier(user.id_utilisateur);
+            const panier = await PanierDAO.createPanier(user.id_utilisateur);
          }
+
+         console.log(panier);
 
          res.status(200).json({
             msg: 'Connexion réussie - Création / Récupération du panier',
             token,
             status: isAdmin ? 'admin' : 'user',
             id_user: user.id_utilisateur,
+            id_panier: panier[0].id_panier,
          });
       } else {
          res.status(400).json({ msg: 'Email et mot de passe requis' });
       }
    }
 });
+
+router.post('/ajoutPanier', async (req, res) => {
+   const { id_panier, id_article } = req.body;
+  console.log( id_panier, id_article)
+   if (id_panier && id_article) {
+      const panier = await PanierDAO.addArticleToPanier(id_panier, id_article);
+      res.status(200).json(panier);
+   }
+})
+router.delete('/ajoutPanier', async (req, res) => {
+  const { id_panier, id_article } = req.body;
+ console.log( id_panier, id_article)
+  if (id_panier && id_article) {
+     const panier = await PanierDAO.deleteArticleFromPanier(id_panier, id_article);
+     res.status(200).json(panier);
+  }
+})
 
 module.exports = router;
