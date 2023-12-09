@@ -6,28 +6,23 @@ import FormArticle from '../../components/FormArticle/FormArticle'
 import AsideMenu from '../../components/AsideMenu/AsideMenu'
 
 const Dashboard = () => {
-  const view = useParams().params
-
   const navigate = useNavigate()
   const ls = localStorage
 
   const authCheck = async (oauth_token) => {
     try {
-      const data = await axios.get(
-        `http://localhost:3000/m2l/admin/gettoken`,
+      console.log(oauth_token)
+      await axios.get(
+        `http://localhost:3000/m2l/admin/`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${oauth_token}`,
+            'Authorization': `Bearer ${oauth_token}`,
           },
         }
-      )
-      if (data.status === 200) {
-        console.log(data)
-        return data
-      } else {
-        navigate('/')
-      }
+      ).then((res) => {
+        console.log(res)
+      })
     } catch (error) {
       console.error(error)
       navigate('/')
@@ -35,7 +30,7 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    const access = authCheck(ls.getItem('oauth_token'))
+    authCheck(ls.getItem('oauth_token'))
   }, [])
 
   return (

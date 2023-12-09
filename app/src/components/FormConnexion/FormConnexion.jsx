@@ -33,22 +33,19 @@ const FormConnexion = () => {
 
       if (userData.status == 200) {
         const userInfos = userData.data
+        console.log(userInfos)
 
         localStorage.clear()
         const ls = localStorage
         ls.setItem('oauth_token', userInfos.token)
-        ls.setItem('id_utilisateur', userInfos.user.id_utilisateur)
-        ls.setItem('prenom', userInfos.user.prenom)
-        ls.setItem('nom', userInfos.user.nom)
-        ls.setItem('pseudo', userInfos.user.pseudo)
-        ls.setItem('email', userInfos.user.email)
+        ls.setItem('id_utilisateur', userInfos.id_utilisateur)
+        ls.setItem('pseudo', userInfos.pseudo)
+        ls.setItem('email', userInfos.email)
         ls.setItem('isAdmin', userInfos.status)
         ls.setItem('isAuth', '1')
 
         const user = {
           id_utilisateur: ls.getItem('id_utilisateur'),
-          prenom: ls.getItem('prenom'),
-          nom: ls.getItem('nom'),
           pseudo: ls.getItem('pseudo'),
           email: ls.getItem('email'),
           token: ls.getItem('oauth_token'),

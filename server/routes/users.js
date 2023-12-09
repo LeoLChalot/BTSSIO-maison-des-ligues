@@ -3,16 +3,18 @@ const router = express.Router();
 const connection = require('../database/connexion');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { UserDAO, PanierDAO } = require('../models/models');
 
-connection.connect((err) => {
-   if (err) {
-      console.log('Erreur de connexion : ' + err.stack);
-      return;
-   } else {
-      console.log(`Connexion réussie à la BDD : ${process.env.DB_NAME}!`);
-   }
-});
+const UserDAO = require('./../models/UserDAO');
+const PanierDAO = require('./../models/PanierDAO');
+
+// connection.connect((err) => {
+//    if (err) {
+//       console.log('Erreur de connexion : ' + err.stack);
+//       return;
+//    } else {
+//       console.log(`Connexion réussie à la BDD : ${process.env.DB_NAME}!`);
+//    }
+// });
 
 router.post('/inscription', async (req, res) => {
    const { prenom, nom, pseudo, email, mot_de_passe } = req.body;
@@ -56,12 +58,15 @@ router.post('/connexion', async (req, res) => {
          }
 
          console.log(panier);
+         console.log(user)
 
          res.status(200).json({
             msg: 'Connexion réussie - Création / Récupération du panier',
             token,
             status: isAdmin ? 'admin' : 'user',
-            id_user: user.id_utilisateur,
+            id_utilisateur: user.id_utilisateur,
+            email: user.email,
+            pseudo: user.pseudo,
             id_panier: panier[0].id_panier,
          });
       } else {
@@ -70,30 +75,33 @@ router.post('/connexion', async (req, res) => {
    }
 });
 
-router.post('/ajoutPanier', async (req, res) => {
+router.post('/articlePanier', async (req, res) => {
    const { id_panier, id_article } = req.body;
-  console.log( id_panier, id_article)
+   console.log(id_panier, id_article);
    if (id_panier && id_article) {
       const panier = await PanierDAO.addArticleToPanier(id_panier, id_article);
       res.status(200).json(panier);
    }
-})
-router.delete('/ajoutPanier', async (req, res) => {
-  const { id_panier, id_article } = req.body;
- console.log( id_panier, id_article)
-  if (id_panier && id_article) {
-     const panier = await PanierDAO.deleteArticleFromPanier(id_panier, id_article);
-     res.status(200).json(panier);
-  }
-})
+});
+router.delete('/articlePanier', async (req, res) => {
+   const { id_panier, id_article } = req.body;
+   console.log(id_panier, id_article);
+   if (id_panier && id_article) {
+      const panier = await PanierDAO.deleteArticleFromPanier(
+         id_panier,
+         id_article
+      );
+      res.status(200).json(panier);
+   }
+});
 
 router.post('/confirmPanier', async (req, res) => {
-  const { id_panier } = req.body;
- console.log( id_panier )
-  if (id_panier) {
-     const panier = await PanierDAO.confirmPanier(id_panier);
-     res.status(200).json(panier);
-  }
-})
+   const { id_panier } = req.body;
+   console.log(id_panier);
+   if (id_panier) {
+      const panier = await PanierDAO.confirmPanier(id_panier);
+      res.status(200).json(panier);
+   }
+});
 
 module.exports = router;

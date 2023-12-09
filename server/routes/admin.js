@@ -3,7 +3,8 @@ const router = express.Router();
 const connection = require('../database/connexion');
 const auth = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
-const { UserDAO } = require('../models/models');
+
+const UserDAO = require('./../models/UserDAO');
 
 router.use((req, res, next) => {
    const authorizationHeader = req.header('Authorization');
@@ -29,17 +30,9 @@ router.use((req, res, next) => {
    }
 });
 
-connection.connect((err) => {
-   if (err) {
-      console.log('Erreur de connexion : ' + err.stack);
-      return;
-   } else {
-      console.log(`Connexion réussie à la BDD : ${process.env.DB_NAME}!`);
-   }
-});
-
 router.get('/', async (req, res) => {
    try {
+      console.log(req.user);
       res.status(200).json(req.user);
    } catch (error) {
       console.error('Error fetching current user:', error);

@@ -1,17 +1,16 @@
 const express = require('express');
 const router = express.Router();
-
+const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-// Importer le module express et le middleware multer
 const multer = require('multer');
-
-// Créer une instance de multer pour gérer le téléchargement de fichiers
 const upload = multer({ dest: 'uploads/' });
-const { CategorieDAO, ArticleDAO } = require('../models/models');
+
+const CategorieDAO = require('../models/CategorieDAO');
+const ArticleDAO = require('../models/ArticleDAO');
 
 // Affiche toutes les catégories
 router.get('/categorie', async (req, res) => {
-   const categories = await CategorieDAO.getCategories();
+   const categories = await CategorieDAO.getAllCategories();
    return res.status(200).json(categories);
 });
 
@@ -113,9 +112,9 @@ router.delete('/categorie', async (req, res) => {
 });
 
 // Affiche tous les articles
-router.get('/articles', async (req, res) => {
-   const query = req.query;
-   if (Object.keys(query).length === 0) {
+router.get('/article', async (req, res) => {
+   console.log(Object.keys(req.body));
+   if (Object.keys(req.body).length === 0) {
       try {
          const articles = await ArticleDAO.getAllArticles();
          res.status(200).json(articles);
@@ -124,56 +123,64 @@ router.get('/articles', async (req, res) => {
          res.status(500).send('Internal Server Error');
       }
    } else if (
-      Object.getOwnPropertyNames(query).filter((prop) => prop == 'id').length ==
-      1
+      Object.keys(req.body).length === 1 &&
+      Object.keys(req.body)[0] === 'id_article'
    ) {
       try {
-         const articles = await ArticleDAO.getArticleById(req.query.id);
+         const articles = await ArticleDAO.getArticleById(req.body.id_article);
          res.status(200).json(articles);
       } catch (error) {
          console.error('Error fetching article:', error);
          res.status(500).send('Internal Server Error');
       }
    } else if (
-      Object.getOwnPropertyNames(query).filter((prop) => prop == 'id_categorie')
-         .length == 1
+      Object.keys(req.body).length === 1 &&
+      Object.keys(req.body)[0] === 'id_categorie'
    ) {
       try {
-         const articles = await ArticleDAO.getArticleByCategorieId(
-            req.query.id_categorie
+         const articles = await ArticleDAO.getArticlesByCategoryId(
+            req.body.id_categorie
          );
          res.status(200).json(articles);
       } catch (error) {
          console.error('Error fetching article:', error);
          res.status(500).send('Internal Server Error');
       }
+   } else {
+      res.status(400).json({ message: 'Bad request' });
    }
 });
 
 // Créer la route de type POST avec le middleware multer
-router.post('/article', upload.single('photo'), async (req, res) => {
+router.post('/article', async (req, res) => {
    try {
       // Récupérer les données de l'article à partir de la requête
       const { nom, description, prix, quantite, categorie_id } = req.body;
 
       // Créer un nouvel objet Article avec les données récupérées
-      const newArticle = new Article({
+      const newArticle = new ArticleDAO(
+         uuidv4(),
          nom,
          description,
          prix,
          quantite,
-         categorie_id,
-         photo: req.file.filename, // Utiliser le nom du fichier téléchargé comme photo de l'article
-      });
+         categorie_id
+         // photo: req.file.filename, // Utiliser le nom du fichier téléchargé comme photo de l'article
+      );
+
+      console.log(newArticle);
 
       // Sauvegarder l'article dans la base de données
-      await ArticleDAO.addArticle(newArticle);
-
-      // Envoyer une réponse de succès
-      res.status(200).json({ message: "L'article a été ajouté avec succès" });
+      if (newArticle.addArticle()) {
+         res.status(201).json({
+            message: "L'article a été ajouté avec succès",
+         });
+      } else {
+         res.status(500).json({
+            message: "Une erreur est survenue lors de l'ajout de l'article",
+         });
+      }
    } catch (error) {
-      // En cas d'erreur, envoyer une réponse d'erreur avec le message approprié
-      console.error("Erreur lors de l'ajout de l'article:", error);
       res.status(500).json({
          message: "Une erreur est survenue lors de l'ajout de l'article",
       });

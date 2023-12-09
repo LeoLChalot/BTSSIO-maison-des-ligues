@@ -1,44 +1,43 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+
 import './page.css'
 import ArticleCard from '../components/Articles/ArticleCard'
-import { useParams } from 'react-router-dom'
+
 import AsideMenu from '../components/MenuBoutique/Menu'
 import { v4 } from 'uuid'
-import { stringify } from 'uuid'
+
+import Article from '../models/Article'
 
 const Boutique = () => {
   const [articles, setArticles] = useState([])
-  const [categorie, setCategorie] = useState('')
+  const [categorie, setCategorie] = useState(null)
 
-  // const getArticles = async (categorie) => {
-  //   let url = `http://localhost:3000/m2l/boutique/articles`
+  console.log(categorie)
 
-  //   if (categorie) {
-  //     const params = new URLSearchParams()
-  //     params.append('categorie', categorie)
-  //     url += '?' + params.toString()
-  //     const { data } = await axios.get(url, params)
-  //     return data
-  //   } else {
-  //     const { data } = await axios.get(url)
-  //     return data
-  //   }
-  // }
+  const validateUUIDv4 = (uuid) => {
+    const regex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    return regex.test(uuid)
+  }
+  const fetchArticles = async (id_categorie) => {
+    if (id_categorie === null) {
+      await Article.getAllArticles().then((listArticles) => {
+        setArticles(listArticles)
+      })
+    } else if (validateUUIDv4(id_categorie)) {
+      await Article.getArticlesByCategoryId(id_categorie).then(
+        (listArticles) => {
+          setArticles(listArticles)
+        }
+      )
+    }
+  }
+  useEffect(() => {
+    fetchArticles(categorie)
+    console.log(articles)
+  }, [categorie])
 
-  // const fetchData = async () => {
-  //   try {
-  //     const articles = await getArticles(categorie)
-  //     setArticles(articles)
-  //   } catch (error) {
-  //     console.error('Error fetching articles:', error)
-  //   }
-  // }
-
-  // useEffect(async () => {
-  //   await fetchData()
-  // }, [categorie])
-
+  console.log(articles)
 
   return (
     <>

@@ -12,11 +12,11 @@ const ArticleCard = ({ article }) => {
   const url = `/boutique/${article.id_article}`
   return (
     <div className="card">
-      <img
+      {/* <img
         src={article.photo}
         alt={article.nom}
         className="card-img-top"
-      />
+      /> */}
       <div className="card-body">
         <h5 className="card-title">{article.nom}</h5>
         <p className="card-text">{
