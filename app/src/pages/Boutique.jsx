@@ -34,18 +34,19 @@ const Boutique = () => {
   }
   useEffect(() => {
     fetchArticles(categorie)
-    console.log(articles)
   }, [categorie])
-
-  console.log(articles)
 
   return (
     <>
       <AsideMenu setCategorie={setCategorie} />
       <main id="page-boutique">
-        {articles.map((article) => (
-          <ArticleCard key={v4()} article={article} />
-        ))}
+        {articles?.length ? (
+          articles.map((article) => (
+            <ArticleCard key={v4()} article={article} />
+          ))
+        ) : (
+          <p>Aucun article</p>
+        )}
       </main>
     </>
   )

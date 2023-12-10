@@ -13,7 +13,7 @@ class Article {
   static async getAllArticles() {
     console.log('serveur : getAllArticles')
     try {
-      const { data } = await axios.get(
+      const { data } = await axios.post(
         'http://localhost:3000/m2l/boutique/article'
       )
       return data
@@ -28,8 +28,7 @@ class Article {
     const category = String(categoryId)
     console.log('serveur : getArticlesByCategoryId')
     try {
-      console.log("request")
-      const {data}  = await axios.get(
+      const { data } = await axios.post(
         `http://localhost:3000/m2l/boutique/article`,
         {
           id_categorie: categoryId,

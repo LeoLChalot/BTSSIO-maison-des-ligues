@@ -112,9 +112,12 @@ router.delete('/categorie', async (req, res) => {
 });
 
 // Affiche tous les articles
-router.get('/article', async (req, res) => {
-   console.log(Object.keys(req.body));
-   if (Object.keys(req.body).length === 0) {
+router.post('/article', async (req, res) => {
+   console.log(req.body)
+   const key = Object.keys(req.body);
+   console.log(key);
+   if (key.length === 0) {
+      console.log('all');
       try {
          const articles = await ArticleDAO.getAllArticles();
          res.status(200).json(articles);
@@ -122,10 +125,8 @@ router.get('/article', async (req, res) => {
          console.error('Error fetching articles:', error);
          res.status(500).send('Internal Server Error');
       }
-   } else if (
-      Object.keys(req.body).length === 1 &&
-      Object.keys(req.body)[0] === 'id_article'
-   ) {
+   } else if (key.length === 1 && key[0] === 'id_article') {
+      console.log('id_article');
       try {
          const articles = await ArticleDAO.getArticleById(req.body.id_article);
          res.status(200).json(articles);
@@ -133,10 +134,8 @@ router.get('/article', async (req, res) => {
          console.error('Error fetching article:', error);
          res.status(500).send('Internal Server Error');
       }
-   } else if (
-      Object.keys(req.body).length === 1 &&
-      Object.keys(req.body)[0] === 'id_categorie'
-   ) {
+   } else if (key.length === 1 && key[0] === 'id_categorie') {
+      console.log('id_categorie');
       try {
          const articles = await ArticleDAO.getArticlesByCategoryId(
             req.body.id_categorie

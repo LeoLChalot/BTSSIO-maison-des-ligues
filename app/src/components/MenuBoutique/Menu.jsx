@@ -15,7 +15,6 @@ const AsideMenu = ({ setCategorie }) => {
 
   useEffect(() => {
     fetchCategories()
-    console.log(categories)
   }, [])
 
   return (
