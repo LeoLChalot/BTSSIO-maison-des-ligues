@@ -18,7 +18,7 @@ const Dashboard = () => {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${oauth_token}`,
-          },
+          }
         }
       ).then((res) => {
         console.log(res)

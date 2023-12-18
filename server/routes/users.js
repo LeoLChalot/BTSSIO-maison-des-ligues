@@ -7,14 +7,6 @@ const bcrypt = require('bcryptjs');
 const UserDAO = require('./../models/UserDAO');
 const PanierDAO = require('./../models/PanierDAO');
 
-// connection.connect((err) => {
-//    if (err) {
-//       console.log('Erreur de connexion : ' + err.stack);
-//       return;
-//    } else {
-//       console.log(`Connexion réussie à la BDD : ${process.env.DB_NAME}!`);
-//    }
-// });
 
 router.post('/inscription', async (req, res) => {
    const { prenom, nom, pseudo, email, mot_de_passe } = req.body;
@@ -49,8 +41,9 @@ router.post('/connexion', async (req, res) => {
             status: isAdmin ? 'admin' : 'user',
          };
          const token = jwt.sign(payload, 'RANDOM_TOKEN_SECRET', {
-            expiresIn: '100y', // Set expiration to 100 years
+            expiresIn: '1h', // Set expiration to 100 years
          });
+         console.log({token: token});
 
          const panier = await PanierDAO.getPanier(user.id_utilisateur);
          if (panier.length == 0) {
