@@ -1,32 +1,31 @@
 import { Route, Routes } from 'react-router-dom'
 import React, { lazy, Suspense } from 'react'
 
-const Accueil = lazy(() => import('./pages/Accueil'))
+import Accueil from './pages/Accueil'
 const Boutique = lazy(() => import('./pages/Boutique'))
-const Connexion = lazy(() => import('./pages/Connexion'))
-const Inscription = lazy(() => import('./pages/Inscription'))
-const Profil = lazy(() => import('./pages/Profil'))
-const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
+// import Boutique from './pages/Boutique'
+import Connexion from './pages/Connexion'
+import Inscription from './pages/Inscription'
+import Profil from './pages/Profil'
+import Dashboard from './pages/admin/Dashboard'
+import ErreurNonAdmin from './pages/ErreurNonAdmin'
 
 import Navbar from './components/Navbar/Navbar'
 import './App.css'
-import Loader from './components/Loader/Loader'
+
+import LoaderPage from './components/Loader/LoaderPage'
+import LoaderArticle from './components/Loader/LoaderArticle'
 
 import { v4 } from 'uuid'
 
-
 function App() {
-
-  const uuid = v4();
-  console.log(typeof uuid);
-
   return (
     <>
       <header>
         <Navbar />
       </header>
       <div className="App">
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<LoaderPage />}>
           <Routes>
             <Route path="/" element={<Accueil />} />
             <Route path="/boutique" element={<Boutique />} />

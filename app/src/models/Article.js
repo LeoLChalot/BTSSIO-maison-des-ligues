@@ -11,7 +11,7 @@ class Article {
   }
 
   static async getAllArticles() {
-    console.log('serveur : getAllArticles')
+    console.log({serveur : 'getAllArticles'})
     try {
       const { data } = await axios.post(
         'http://localhost:3000/m2l/boutique/article'
@@ -26,7 +26,7 @@ class Article {
 
   static async getArticlesByCategoryId(categoryId) {
     const category = String(categoryId)
-    console.log('serveur : getArticlesByCategoryId')
+    console.log({serveur : 'getArticlesByCategoryId'})
     try {
       const { data } = await axios.post(
         `http://localhost:3000/m2l/boutique/article`,

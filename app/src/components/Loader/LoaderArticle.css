@@ -1,0 +1,82 @@
+
+.card {
+  width: 100%;
+  max-width: 200px;
+  padding: 14px;
+  background-color: #fafafa;
+  font-family: '@microsoft yahei light', sans-serif;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 60px -8px hsl(210, 14%, 80%);
+  border: 1px solid rgb(213, 218, 223);
+}
+
+.cover {
+  height: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.cover img {
+  display: block;
+  width: 100%;
+  opacity: 0.95;
+}
+
+/* add to img on load event */
+.animate {
+  animation: animate 1s ease;
+}
+@keyframes animate {
+  from {
+    transform: rotateX(20deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.content {
+  position: relative;
+  color: #333;
+  margin-top: 8px;
+}
+.content small {
+  display: block;
+  margin: 8px 0;
+  color: grey;
+}
+
+/* sleleton elements */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(210, 15%, 88%),
+    hsl(210, 15%, 95%),
+    hsl(210, 15%, 88%)
+  );
+  background-size: 200%;
+  animation: loader 1s infinite reverse;
+}
+h2.skeleton {
+  width: 50%;
+  height: 1em;
+}
+small.skeleton {
+  height: 1rem;
+  width: 4rem;
+}
+p.skeleton {
+  height: 3em;
+}
+
+/* skeleton animation */
+@keyframes loader {
+  from {
+    background-position: -100% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}

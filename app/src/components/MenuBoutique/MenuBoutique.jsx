@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { v4 } from 'uuid'
 import Categorie from '../../models/Categorie'
-import './Menu.css'
+import './MenuBoutique.css'
 
-const AsideMenu = ({ setCategorie }) => {
+const MenuBoutique = ({ setCategorie }) => {
   const [categories, setCategories] = useState([])
 
   const fetchCategories = async () => {
@@ -25,15 +25,19 @@ const AsideMenu = ({ setCategorie }) => {
         </ul>
         <h3>Par catégories</h3>
         <ul>
-          {categories.map((category) => (
-            <li key={v4()} onClick={() => setCategorie(category.id_categorie)}>
-              {category.nom}
-            </li>
-          ))}
+          {categories?.length > 0 &&
+            categories.map((category) => (
+              <li
+                key={v4()}
+                onClick={() => setCategorie(category.id_categorie)}
+              >
+                {category.nom}
+              </li>
+            ))}
         </ul>
       </aside>
     </>
   )
 }
 
-export default AsideMenu
+export default MenuBoutique

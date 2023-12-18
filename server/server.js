@@ -1,13 +1,15 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const PORT = 3000;
-const cors = require('./middleware/cors');
+// const cors = require('./middleware/cors');
 const routesBoutique = require('./routes/boutique');
 const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
+// const auth = require('./middleware/auth');
 
 app.use(express.json());
-app.use(cors);
+app.use(cors());
 
 // ? Router inscription / connexion
 app.use('/m2l/user', routesUsers);

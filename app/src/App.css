@@ -1,18 +1,19 @@
 .App {
-	margin: 0;
-	padding: 0;
-	width: 100vw;
-	overflow: hidden;
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	perspective: 100vmin;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  perspective: 100vmin;
 }
 
 .container {
   position: relative;
   width: 100%;
 }
+
 
 @media screen and (max-width: 768px) {
   .App {
@@ -31,7 +32,6 @@
     top: 0;
     left: 0;
   }
-
 }
 
 @media screen and (min-width: 769px) {

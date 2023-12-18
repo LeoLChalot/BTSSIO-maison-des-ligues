@@ -11,8 +11,7 @@ const Dashboard = () => {
 
   const authCheck = async (oauth_token) => {
     try {
-      console.log(oauth_token)
-      await axios.get(
+      const {data} = await axios.get(
         `http://localhost:3000/m2l/admin/`,
         {
           headers: {
@@ -20,9 +19,11 @@ const Dashboard = () => {
             'Authorization': `Bearer ${oauth_token}`,
           }
         }
-      ).then((res) => {
-        console.log(res)
-      })
+      )
+      if (data.status != "admin") {
+        navigate('/')
+      }
+    
     } catch (error) {
       console.error(error)
       navigate('/')
@@ -31,7 +32,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     authCheck(ls.getItem('oauth_token'))
-  }, [])
+  }, [ls.getItem('isAuth')])
 
   return (
     <>

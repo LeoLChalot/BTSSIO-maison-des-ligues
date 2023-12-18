@@ -7,7 +7,6 @@ const bcrypt = require('bcryptjs');
 const UserDAO = require('./../models/UserDAO');
 const PanierDAO = require('./../models/PanierDAO');
 
-
 router.post('/inscription', async (req, res) => {
    const { prenom, nom, pseudo, email, mot_de_passe } = req.body;
 
@@ -35,15 +34,29 @@ router.post('/connexion', async (req, res) => {
       const user = await UserDAO.connectUser(login, mot_de_passe);
       if (user) {
          const isAdmin = user.is_admin == true;
-         console.log(isAdmin);
+
+         // Générer le token d'accès
          const payload = {
             id: user.id_utilisateur,
             status: isAdmin ? 'admin' : 'user',
          };
          const token = jwt.sign(payload, 'RANDOM_TOKEN_SECRET', {
-            expiresIn: '1h', // Set expiration to 100 years
+            expiresIn: '1h',
          });
-         console.log({token: token});
+
+         // Générer le token de rafraîchissement
+         const refreshPayload = {
+            id: user.id_utilisateur,
+            status: isAdmin ? 'admin' : 'user',
+         };
+         const refreshToken = jwt.sign(
+            refreshPayload,
+            'RANDOM_REFRESH_TOKEN_SECRET',
+            {
+               expiresIn: '7d', // Durée de validité du refreshToken
+            }
+         );
+         console.log({ token: token, refreshToken: refreshToken });
 
          const panier = await PanierDAO.getPanier(user.id_utilisateur);
          if (panier.length == 0) {
@@ -51,7 +64,7 @@ router.post('/connexion', async (req, res) => {
          }
 
          console.log(panier);
-         console.log(user)
+         console.log(user);
 
          res.status(200).json({
             msg: 'Connexion réussie - Création / Récupération du panier',

@@ -54,6 +54,10 @@ class UserDAO {
          if (!validPassword) {
             return null;
          }
+
+         
+
+
          ConnexionDAO.disconnect();
          return user;
       } catch (error) {

@@ -19,8 +19,6 @@ const FormConnexion = () => {
   const handleFormData = async (e) => {
     e.preventDefault()
 
-    console.log(login, password)
-
     try {
       const userData = await axios.post(
         `http://localhost:3000/m2l/user/connexion`,
@@ -29,11 +27,9 @@ const FormConnexion = () => {
           mot_de_passe: password,
         }
       )
-      console.log(userData.data)
 
       if (userData.status == 200) {
         const userInfos = userData.data
-        console.log(userInfos)
 
         localStorage.clear()
         const ls = localStorage
@@ -52,7 +48,7 @@ const FormConnexion = () => {
           role: ls.getItem('isAdmin'),
         }
 
-        console.table(user)
+        console.table({user})
         navigate(`/profil/${ls.getItem('pseudo')}`)
       }
     } catch (err) {

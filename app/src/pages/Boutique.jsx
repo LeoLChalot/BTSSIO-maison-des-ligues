@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from 'react'
-
-import './page.css'
-import ArticleCard from '../components/Articles/ArticleCard'
-
-import AsideMenu from '../components/MenuBoutique/Menu'
+import React, { lazy, useEffect, useState, Suspense } from 'react'
 import { v4 } from 'uuid'
 
+const ArticleCard = lazy(() => import('../components/Articles/ArticleCard'))
+import MenuBoutique from '../components/MenuBoutique/MenuBoutique'
+import LoaderArticle from '../components/Loader/LoaderArticle'
 import Article from '../models/Article'
+
+import './page.css'
 
 const Boutique = () => {
   const [articles, setArticles] = useState([])
   const [categorie, setCategorie] = useState(null)
-
-  console.log(categorie)
 
   const validateUUIDv4 = (uuid) => {
     const regex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     return regex.test(uuid)
   }
+
   const fetchArticles = async (id_categorie) => {
     if (id_categorie === null) {
       await Article.getAllArticles().then((listArticles) => {
@@ -32,21 +31,24 @@ const Boutique = () => {
       )
     }
   }
+
   useEffect(() => {
     fetchArticles(categorie)
   }, [categorie])
 
   return (
     <>
-      <AsideMenu setCategorie={setCategorie} />
+      <MenuBoutique setCategorie={setCategorie} />
       <main id="page-boutique">
-        {articles?.length ? (
-          articles.map((article) => (
-            <ArticleCard key={v4()} article={article} />
-          ))
-        ) : (
-          <p>Aucun article</p>
-        )}
+        <Suspense key={v4()} fallback={<LoaderArticle />}>
+          {articles?.length ? (
+            articles.map((article) => (
+              <ArticleCard key={v4()} article={article} />
+            ))
+          ) : (
+            <p>Aucun article</p>
+          )}
+        </Suspense>
       </main>
     </>
   )
