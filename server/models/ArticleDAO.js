@@ -3,12 +3,22 @@ const { v4: uuidv4 } = require('uuid');
 const ConnexionDAO = require('./ConnexionDAO');
 
 class ArticleDAO {
-   constructor(id, nom, description, prix, quantite, categorie_id) {
-      this.id = id;
+   constructor(
+      id_article,
+      nom,
+      photo,
+      description,
+      prix,
+      quantite,
+      categorie_id
+   ) {
+      this.id = id_article;
       this.nom = nom;
+      this.photo = photo;
       this.description = description;
       this.prix = prix;
       this.quantite = quantite;
+
       this.categorie_id = categorie_id;
    }
 
@@ -54,9 +64,18 @@ class ArticleDAO {
 
    async addArticle() {
       try {
-         const values = [this.id, this.nom, this.description, this.prix, this.quantite, this.categorie_id];
+         const values = [
+            this.id,
+            this.nom,
+            this.photo,
+            this.description,
+            this.prix,
+            this.quantite,
+            this.categorie_id,
+         ];
          const connexion = ConnexionDAO.connect();
-         const query = 'INSERT INTO articles (id_article, nom, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?)';
+         const query =
+            'INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?, ?)';
          const result = await connexion.promise().query(query, values);
          ConnexionDAO.disconnect();
          return result;
@@ -92,27 +111,17 @@ class ArticleDAO {
       return result;
    }
 
-   static async deleteArticleById(articleId) {
-      try {
-         const connexion = ConnexionDAO.connect();
-         let query = `SELECT quantite FROM articles WHERE id_article = ?`;
-         let result = await connexion.promise().query(getNumber, [articleId]);
-         let quantite = result[0][0].quantite;
-         if (quantite === 0) {
-            return;
-         } else {
-            quantite = quantite - 1;
-            query = 'UPDATE articles SET quantite = ? WHERE id_article = ?';
-            result = await connexion
-               .promise()
-               .query(query, [quantite, articleId]);
-         }
-         ConnexionDAO.disconnect();
-         return result;
-      } catch (error) {
-         console.error('Error deleting article:', error);
-         throw error;
-      }
+   static async deleteArticle(id_article) {
+       try {
+           const connexion = ConnexionDAO.connect();
+           const query = 'DELETE FROM articles WHERE id_article = ?';
+           const result = await connexion.promise().query(query, [id_article]);
+           ConnexionDAO.disconnect();
+           return result;
+       } catch (error) {
+           console.error('Error deleting article:', error);
+           throw error;
+       }
    }
 
    // Getter methods

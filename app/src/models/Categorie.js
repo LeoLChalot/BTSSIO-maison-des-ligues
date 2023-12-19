@@ -8,7 +8,7 @@ class Categorie {
   static async getAllCategories() {
     console.log('getAllCategories')
     try {
-      const {data} = await axios.get(
+      const { data } = await axios.get(
         'http://localhost:3000/m2l/boutique/categorie'
       )
       return data
@@ -18,21 +18,30 @@ class Categorie {
     }
   }
 
-  static async getCategoryById(id_categorie) {
-    try {
-      const {data} = await axios.get(
-        `http://localhost:3000/m2l/boutique/categorie/${id_categorie}`
-      )
-      return data
-    } catch (error) {
-      console.error('Error retrieving category:', error)
-      throw error
-    }
+  // Categorie
+// ...
+
+static async getCategoryById(id_categorie) {
+  try {
+    const { data } = await axios.get(
+      `http://localhost:3000/m2l/boutique/categorie?idcat=${id_categorie}`
+    );
+    console.log({ Categorie: data });
+
+    // Retournez toutes les données de la catégorie
+    return data;
+  } catch (error) {
+    console.error('Error retrieving category:', error);
+    throw error;
   }
+}
+
+// ...
+
 
   static async getCategoryByName(nom) {
     try {
-      const {data} = await axios.get(
+      const { data } = await axios.get(
         `http://localhost:3000/m2l/boutique/categorie/${nom}`
       )
       return data
@@ -44,9 +53,9 @@ class Categorie {
 
   static async addCategory(nom) {
     try {
-      const {data} = await axios.post(
+      const { data } = await axios.post(
         'http://localhost:3000/m2l/boutique/categorie',
-        {nom}
+        { nom }
       )
       return data
     } catch (error) {
@@ -57,7 +66,7 @@ class Categorie {
 
   static async deleteCategory(id_category) {
     try {
-      const {data} = await axios.delete(
+      const { data } = await axios.delete(
         `http://localhost:3000/m2l/boutique/categorie/${id_category}`
       )
       return data

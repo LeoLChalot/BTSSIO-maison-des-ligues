@@ -9,7 +9,6 @@ const ArticleCard = ({ article }) => {
 
   const description = article.description.slice(0, 20)
 
-  const url = `/boutique/${article.id_article}`
   return (
     <div className="card">
       {/* <img
@@ -22,7 +21,7 @@ const ArticleCard = ({ article }) => {
         <p className="card-text">{
           description
         }...</p>
-        <Link className='link-button' to={url} >Voir plus</Link>
+        <Link className='link-button' to={`/article/${article.id_article}`}>{article.nom}</Link>
       </div>
     </div>
     

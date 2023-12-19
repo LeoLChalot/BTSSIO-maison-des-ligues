@@ -1,138 +1,75 @@
-import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import axios from 'axios'
-import './FormArticle.css'
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import './FormArticle.css';
+
 const FormArticle = () => {
-  const [nom, setNom] = useState('')
-  const [photo, setPhoto] = useState('')
-  const [description, setDescription] = useState('')
-  const [prix, setPrix] = useState(0)
-  const [quantite, setQuantite] = useState(0)
-  const [categorie, setCategorie] = useState('')
-  const [categories, setCategories] = useState([])
-  const [error, setError] = useState('')
-
-  const uploadPhoto = async (photo) => {
-    try {
-      const formData = new FormData()
-      formData.append('photo', photo)
-
-      const response = await axios
-        .post('http://localhost:3000/m2l/uploadFile', formData, {
-          headers: {
-            'Content-Type': 'Multipart/form-data',
-          },
-        })
-        .then((res) => console.log(res))
-        .catch((err) => console.error(err))
-
-      const fileName = await response.data.fileName
-      return fileName
-    } catch (error) {
-      console.error('Error uploading photo:', error)
-      throw error
-    }
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const fileName = await uploadPhoto(photo)
-    console.log(fileName)
-  }
+  const { register, handleSubmit, setValue } = useForm();
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3000/m2l/categories')
-        setCategories(data)
+        const { data } = await axios.get('http://localhost:3000/m2l/boutique/categorie');
+        setCategories(data);
       } catch (error) {
-        console.error('Error retrieving categories:', error)
-        throw error
+        console.error('Error retrieving categories:', error);
       }
+    };
+    fetchCategories();
+  }, []);
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append('photo', data.photo[0]);
+
+    // Ajouter les autres champs du formulaire au formData
+    Object.keys(data).forEach((key) => {
+      if (key !== 'photo') {
+        formData.append(key, data[key]);
+      }
+    });
+
+    try {
+      const response = await axios.post('http://localhost:3000/m2l/boutique/article', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'article :", error);
     }
-    fetchCategories()
-  }, [])
+  };
 
   return (
-    <form
-      className="form"
-      onSubmit={(e) => handleSubmit(e)}
-      encType="multipart/form-data"
-    >
-      <div className="input-group">
-        <label htmlFor="nom">Nom:</label>
-        <input
-          type="text"
-          id="nom"
-          value={nom}
-          onChange={(e) => setNom(e.target.value)}
-        />
-      </div>
-      <hr />
-      <div className="input-group">
-        <label htmlFor="description">Description:</label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-      </div>
-      <hr />
-      <div className="input-group">
-        <label htmlFor="prix">Prix:</label>
-        <input
-          type="number"
-          id="prix"
-          value={prix}
-          onChange={(e) => setPrix(parseFloat(e.target.value))}
-        />
-      </div>
-      <hr />
-      <div className="input-group">
-        <label htmlFor="quantite">Quantité:</label>
-        <input
-          type="number"
-          id="quantite"
-          value={quantite}
-          onChange={(e) => setQuantite(parseInt(e.target.value))}
-        />
-      </div>
-      <hr />
-      <div className="input-group">
-        <label htmlFor="photo">Photo:</label>
-        <input
-          type="file"
-          id="photo"
-          accept="image/*"
-          onChange={(e) => setPhoto(e.target.files[0])}
-        />
-      </div>
-      <hr />
-      <div className="input-group">
-        <label htmlFor="categories">Categorie:</label>
-        <select
-          id="categories"
-          value={categorie}
-          onChange={(e) => {
-            setCategorie(e.target.value)
-            console.log(categorie)
-          }}
-        >
-          <option value="">-- Choisir --</option>
-          {/* Render categories from the database */}
-          {categories.map((category) => (
-            <option key={category.id_categorie} value={category.id_categorie}>
-              {category.nom}
-            </option>
-          ))}
-        </select>
-      </div>
-      <hr />
-      <div className="input-group">
-        <button>Envoyer</button>
-      </div>
+    <form className="form" onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+      <label htmlFor="nom">Nom:</label>
+      <input {...register('nom')} />
+      <label htmlFor="description">Description:</label>
+      <textarea {...register('description')} />
+      <label htmlFor="prix">Prix:</label>
+      <input type="number" {...register('prix')} />
+      <label htmlFor="quantite">Quantité:</label>
+      <input type="number" {...register('quantite')} />
+      <label htmlFor="categorie">Catégorie:</label>
+      <select {...register('categorie')} defaultValue={categories.length > 0 ? categories[0].id_categorie : ''}>
+        {categories.map((cat) => (
+          <option key={cat.id_categorie} value={cat.id_categorie}>
+            {cat.nom}
+          </option>
+        ))}
+      </select>
+      <input
+        type="file"
+        onChange={(e) => {
+          setValue('photo', e.target.files);
+        }}
+      />
+      <button type="submit">Ajouter l'article</button>
     </form>
-  )
-}
+  );
+};
 
-export default FormArticle
+export default FormArticle;

@@ -17,6 +17,8 @@ import LoaderPage from './components/Loader/LoaderPage'
 import LoaderArticle from './components/Loader/LoaderArticle'
 
 import { v4 } from 'uuid'
+import ArticleDetail from './components/Articles/ArticleDetail'
+import Erreur404 from './pages/Erreurs/Erreur404'
 
 function App() {
   return (
@@ -29,10 +31,12 @@ function App() {
           <Routes>
             <Route path="/" element={<Accueil />} />
             <Route path="/boutique" element={<Boutique />} />
+            <Route path="/article/:id" element={<ArticleDetail />} />
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/inscription" element={<Inscription />} />
             <Route path="/profil/:pseudo" element={<Profil />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="*" element={<Erreur404 />} />
           </Routes>
         </Suspense>
       </div>

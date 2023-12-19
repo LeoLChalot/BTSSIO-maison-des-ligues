@@ -3,15 +3,37 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+// const upload = multer({ dest: 'uploads/' });
 
 const CategorieDAO = require('../models/CategorieDAO');
 const ArticleDAO = require('../models/ArticleDAO');
 
-// Affiche toutes les catégories
+// GET categories or single category by id
 router.get('/categorie', async (req, res) => {
-   const categories = await CategorieDAO.getAllCategories();
-   return res.status(200).json(categories);
+   const idcat = req.query.idcat;
+
+   if (!idcat) {
+      // Get all categories if no idcat is specified
+      try {
+         const categories = await CategorieDAO.getAllCategories();
+         res.status(200).json(categories);
+      } catch (error) {
+         res.status(500).json({ message: 'Erreur lors de la récupération des catégories' });
+      }
+   } else {
+      // Get single category by id if idcat is specified
+      try {
+         console.log({idcategory : idcat});
+         const category = await CategorieDAO.getCategoryById(idcat);
+         if (category) {
+            res.status(200).json(category);
+         } else {
+            res.status(404).json({ message: 'Catégorie non trouvée' });
+         }
+      } catch (error) {
+         res.status(500).json({ message: 'Erreur lors de la récupération de la catégorie' });
+      }
+   }
 });
 
 // POST catégorie
@@ -112,9 +134,9 @@ router.delete('/categorie', async (req, res) => {
 });
 
 // Affiche tous les articles
-router.post('/article', async (req, res) => {
-   console.log(req.body)
-   const key = Object.keys(req.body);
+router.get('/article', async (req, res) => {
+   console.log(req.query);
+   const key = Object.keys(req.query);
    console.log(key);
    if (key.length === 0) {
       console.log('all');
@@ -125,20 +147,20 @@ router.post('/article', async (req, res) => {
          console.error('Error fetching articles:', error);
          res.status(500).send('Internal Server Error');
       }
-   } else if (key.length === 1 && key[0] === 'id_article') {
-      console.log('id_article');
+   } else if (key.length === 1 && key[0] === 'idart') {
+      console.log('idart');
       try {
-         const articles = await ArticleDAO.getArticleById(req.body.id_article);
-         res.status(200).json(articles);
+         const article = await ArticleDAO.getArticleById(req.query.idart);
+         res.status(200).json(article);
       } catch (error) {
          console.error('Error fetching article:', error);
          res.status(500).send('Internal Server Error');
       }
-   } else if (key.length === 1 && key[0] === 'id_categorie') {
-      console.log('id_categorie');
+   } else if (key.length === 1 && key[0] === 'idcat') {
+      console.log('idcat');
       try {
          const articles = await ArticleDAO.getArticlesByCategoryId(
-            req.body.id_categorie
+            req.query.idcat
          );
          res.status(200).json(articles);
       } catch (error) {
@@ -150,29 +172,50 @@ router.post('/article', async (req, res) => {
    }
 });
 
+// Définir le dossier de destination pour les images téléchargées
+const storage = multer.diskStorage({
+   destination: function (req, file, cb) {
+      cb(null, 'images');
+   },
+   filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + '.jpg'); // Vous pouvez choisir un autre format de nommage
+   },
+});
+
+const upload = multer({ storage: storage });
+
 // Créer la route de type POST avec le middleware multer
-router.post('/article', async (req, res) => {
+router.post('/article', upload.single('photo'), (req, res) => {
    try {
-      // Récupérer les données de l'article à partir de la requête
-      const { nom, description, prix, quantite, categorie_id } = req.body;
+      // Les informations du formulaire sont disponibles dans req.body
+      const articleData = {
+         id_article: uuidv4(),
+         nom: req.body.nom,
+         description: req.body.description,
+         prix: req.body.prix,
+         quantite: req.body.quantite,
+         categorie_id: req.body.categorie,
+         // Le chemin du fichier image dans req.file
+         photo: req.file.path,
+      };
 
-      // Créer un nouvel objet Article avec les données récupérées
-      const newArticle = new ArticleDAO(
-         uuidv4(),
-         nom,
-         description,
-         prix,
-         quantite,
-         categorie_id
-         // photo: req.file.filename, // Utiliser le nom du fichier téléchargé comme photo de l'article
+      // Create article using ArticleDAO
+      const createArticle = new ArticleDAO(
+         articleData.id_article,
+         articleData.nom,
+         articleData.photo,
+         articleData.description,
+         articleData.prix,
+         articleData.quantite,
+         articleData.categorie_id
       );
-
-      console.log(newArticle);
-
-      // Sauvegarder l'article dans la base de données
-      if (newArticle.addArticle()) {
+      console.log(createArticle);
+      if (createArticle) {
+         createArticle.addArticle();
          res.status(201).json({
-            message: "L'article a été ajouté avec succès",
+            success: true,
+            message: 'Article ajouté avec succès',
+            article: articleData,
          });
       } else {
          res.status(500).json({
@@ -207,10 +250,10 @@ router.put('/article', async (req, res) => {
 });
 
 // DELETE article
-router.delete('/article', async (req, res) => {
+router.delete('/article/:id', async (req, res) => {
    try {
-      const { id_article } = req.query;
-      await ArticleDAO.deleteArticleById(id_article);
+      const { id } = req.params;
+      await ArticleDAO.deleteArticle(id);
       res.status(201).json('Article supprimé !');
    } catch (error) {
       console.error('Error deleting article:', error);

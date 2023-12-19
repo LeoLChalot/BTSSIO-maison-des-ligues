@@ -7,10 +7,15 @@ import LoaderArticle from '../components/Loader/LoaderArticle'
 import Article from '../models/Article'
 
 import './page.css'
+import { useParams } from 'react-router-dom'
 
 const Boutique = () => {
   const [articles, setArticles] = useState([])
   const [categorie, setCategorie] = useState(null)
+
+  
+
+  
 
   const validateUUIDv4 = (uuid) => {
     const regex =
@@ -40,15 +45,14 @@ const Boutique = () => {
     <>
       <MenuBoutique setCategorie={setCategorie} />
       <main id="page-boutique">
-        <Suspense key={v4()} fallback={<LoaderArticle />}>
-          {articles?.length ? (
-            articles.map((article) => (
-              <ArticleCard key={v4()} article={article} />
-            ))
-          ) : (
-            <p>Aucun article</p>
-          )}
-        </Suspense>
+        {}
+        {articles?.length ? (
+          articles.map((article) => (
+            <ArticleCard key={v4()} article={article} />
+          ))
+        ) : (
+          <p>Aucun article</p>
+        )}
       </main>
     </>
   )
