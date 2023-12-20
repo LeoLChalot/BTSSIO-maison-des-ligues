@@ -45,7 +45,7 @@ class UserDAO {
          if (result[0].length === 0) {
             return null;
          }
-
+         
          const user = result[0][0];
          const validPassword = await bcrypt.compare(
             password,
@@ -54,9 +54,6 @@ class UserDAO {
          if (!validPassword) {
             return null;
          }
-
-         
-
 
          ConnexionDAO.disconnect();
          return user;

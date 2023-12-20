@@ -1,6 +1,8 @@
 /* ArticleDetail.css */
 
 .article-detail {
+  width: 100%;
+  max-width: 800px;
   display: flex;
   margin: 20px;
 }

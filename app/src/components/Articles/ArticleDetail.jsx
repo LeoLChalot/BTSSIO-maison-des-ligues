@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import Categorie from '../../models/Categorie'
+import Panier from '../../models/Panier'
 import './ArticleDetail.css'
 
 const ArticleDetail = () => {
@@ -39,6 +40,10 @@ const ArticleDetail = () => {
       console.error('Error fetching article:', error)
     }
   }
+
+  const ajout_panier = async (article) => {
+    console.log('article', article)
+  } 
   
 
   useEffect(() => {
@@ -53,10 +58,10 @@ const ArticleDetail = () => {
         <img src={article.photo} alt={article.nom} />
       </div>
       <div className="article-info">
-        <h2>{article.nom}</h2>
+        <h2 style={{textAlign: 'left'}}>{article.nom}</h2>
         <p>{article.description}</p>
         <p>Prix: {article.prix} €</p>
-        <p>Quantité disponible: {article.quantite}</p>
+        <p>Quantité disponible: {article.quantite === 0 ? 'Indisponible' : article.quantite}</p>
         <p>Catégorie: {categorie.nom}</p>
         <button>Ajouter au panier</button>
       </div>

@@ -34,7 +34,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(2 * var(--font-size));
+    height: 3rem;
     display: flex;
     flex-direction: row;
     justify-content: center;

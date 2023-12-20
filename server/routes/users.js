@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const UserDAO = require('./../models/UserDAO');
+const OauthDAO = require('./../models/OauthDAO');
 const PanierDAO = require('./../models/PanierDAO');
 
 router.post('/inscription', async (req, res) => {
@@ -33,48 +34,33 @@ router.post('/connexion', async (req, res) => {
    if (login && mot_de_passe) {
       const user = await UserDAO.connectUser(login, mot_de_passe);
       if (user) {
-         const isAdmin = user.is_admin == true;
 
          // Générer le token d'accès
-         const payload = {
-            id: user.id_utilisateur,
-            status: isAdmin ? 'admin' : 'user',
-         };
-         const token = jwt.sign(payload, 'RANDOM_TOKEN_SECRET', {
-            expiresIn: '1h',
-         });
-
-         // Générer le token de rafraîchissement
-         const refreshPayload = {
-            id: user.id_utilisateur,
-            status: isAdmin ? 'admin' : 'user',
-         };
-         const refreshToken = jwt.sign(
-            refreshPayload,
-            'RANDOM_REFRESH_TOKEN_SECRET',
-            {
-               expiresIn: '7d', // Durée de validité du refreshToken
-            }
-         );
-         console.log({ token: token, refreshToken: refreshToken });
-
+         const token = OauthDAO.generateAccessToken(user);
+         const refreshToken = await OauthDAO.generateRefreshToken(user);
          const panier = await PanierDAO.getPanier(user.id_utilisateur);
          if (panier.length == 0) {
             const panier = await PanierDAO.createPanier(user.id_utilisateur);
          }
 
-         console.log(panier);
-         console.log(user);
+         console.log({
+            msg: 'Connexion OK',
+            id_utilisateur: user.id_utilisateur,
+            token: token.slice(0, 30) + "...",
+            refreshToken: refreshToken.slice(0, 30) + "...",
+            panier: panier,
+         });
 
          res.status(200).json({
             msg: 'Connexion réussie - Création / Récupération du panier',
             token,
-            status: isAdmin ? 'admin' : 'user',
+            status: user.is_admin ? 'admin' : 'user',
             id_utilisateur: user.id_utilisateur,
             email: user.email,
             pseudo: user.pseudo,
             id_panier: panier[0].id_panier,
          });
+
       } else {
          res.status(400).json({ msg: 'Email et mot de passe requis' });
       }

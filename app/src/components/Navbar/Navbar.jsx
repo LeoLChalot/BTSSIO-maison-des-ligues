@@ -28,13 +28,26 @@ const Navbar = () => {
         <Link to="/boutique" className="link">
           Boutique
         </Link>
-        {ls.getItem('isAuth') != '1' && (
+        {ls.getItem('isAuth') != '1' ? (
           <>
             <Link to="/connexion" className="link">
               Connexion
             </Link>
             <Link to="/inscription" className="link">
               Inscription
+            </Link>
+          </>
+        ):
+        (
+          <>
+            <Link to={'/profil/' + ls.getItem('pseudo')} className="link">
+              Profil
+            </Link>
+            <Link to={'/panier'} className="link">
+              Panier
+            </Link>
+            <Link to="#" onClick={deconnexion} className="link">
+              Déconnexion
             </Link>
           </>
         )}
@@ -44,17 +57,7 @@ const Navbar = () => {
             Dashboard
           </Link>
         )}
-        {ls.getItem('isAuth') == '1' && (
 
-          <>
-            <Link to={'/profil/' + ls.getItem('pseudo')} className="link">
-              Profil
-            </Link>
-            <Link to="#" onClick={deconnexion} className="link">
-              Déconnexion
-            </Link>
-          </>
-        )}
       </div>
     </>
   )
