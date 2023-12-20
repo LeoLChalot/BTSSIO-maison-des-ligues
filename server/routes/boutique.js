@@ -172,13 +172,20 @@ router.get('/article', async (req, res) => {
    }
 });
 
+const MIME_TYPES = {
+   'image/jpg': 'jpg',
+   'image/jpeg': 'jpg',
+   'image/png': 'png',
+};
 // Définir le dossier de destination pour les images téléchargées
 const storage = multer.diskStorage({
    destination: function (req, file, cb) {
       cb(null, 'images');
    },
    filename: function (req, file, cb) {
-      cb(null, file.fieldname + '-' + Date.now() + '.jpg'); // Vous pouvez choisir un autre format de nommage
+      const name = file.originalname.split(' ').join('_');
+      const extension = MIME_TYPES[file.mimetype];
+      cb(null, name + Date.now() + '.' + extension);
    },
 });
 

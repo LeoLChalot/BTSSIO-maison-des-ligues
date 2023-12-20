@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import './FormArticle.css';
 
+
 const FormArticle = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [categories, setCategories] = useState([]);
@@ -23,7 +24,6 @@ const FormArticle = () => {
     const formData = new FormData();
     formData.append('photo', data.photo[0]);
 
-    // Ajouter les autres champs du formulaire au formData
     Object.keys(data).forEach((key) => {
       if (key !== 'photo') {
         formData.append(key, data[key]);
@@ -50,11 +50,11 @@ const FormArticle = () => {
       <label htmlFor="description">Description:</label>
       <textarea {...register('description')} />
       <label htmlFor="prix">Prix:</label>
-      <input type="number" {...register('prix')} />
+      <input type="number" {...register('prix')} step={0.01} />
       <label htmlFor="quantite">Quantité:</label>
       <input type="number" {...register('quantite')} />
       <label htmlFor="categorie">Catégorie:</label>
-      <select {...register('categorie')} defaultValue={categories.length > 0 ? categories[0].id_categorie : ''}>
+      <select {...register('categorie')} defaultValue={categories[0]?.id_categorie}>
         {categories.map((cat) => (
           <option key={cat.id_categorie} value={cat.id_categorie}>
             {cat.nom}
