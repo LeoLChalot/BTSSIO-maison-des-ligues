@@ -14,11 +14,10 @@ class ArticleDAO {
    ) {
       this.id = id_article;
       this.nom = nom;
-      this.photo = photo;
+      this.photo = photo ? photo : '';
       this.description = description;
       this.prix = prix;
       this.quantite = quantite;
-
       this.categorie_id = categorie_id;
    }
 
@@ -63,6 +62,7 @@ class ArticleDAO {
    }
 
    async addArticle() {
+      const connexion = ConnexionDAO.connect();
       try {
          const values = [
             this.id,
@@ -73,15 +73,17 @@ class ArticleDAO {
             this.quantite,
             this.categorie_id,
          ];
-         const connexion = ConnexionDAO.connect();
-         const query =
-            'INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?, ?)';
-         const result = await connexion.promise().query(query, values);
-         ConnexionDAO.disconnect();
-         return result;
+
+            const query =
+               'INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?, ?)';
+            const result = await connexion.promise().query(query, values);
+            return result;
+      
       } catch (error) {
          console.error('Error adding article:', error);
          throw error;
+      } finally {
+         ConnexionDAO.disconnect();
       }
    }
 
@@ -112,16 +114,16 @@ class ArticleDAO {
    }
 
    static async deleteArticle(id_article) {
-       try {
-           const connexion = ConnexionDAO.connect();
-           const query = 'DELETE FROM articles WHERE id_article = ?';
-           const result = await connexion.promise().query(query, [id_article]);
-           ConnexionDAO.disconnect();
-           return result;
-       } catch (error) {
-           console.error('Error deleting article:', error);
-           throw error;
-       }
+      try {
+         const connexion = ConnexionDAO.connect();
+         const query = 'DELETE FROM articles WHERE id_article = ?';
+         const result = await connexion.promise().query(query, [id_article]);
+         ConnexionDAO.disconnect();
+         return result;
+      } catch (error) {
+         console.error('Error deleting article:', error);
+         throw error;
+      }
    }
 
    // Getter methods

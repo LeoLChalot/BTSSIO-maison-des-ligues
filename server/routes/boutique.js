@@ -194,6 +194,9 @@ const upload = multer({ storage: storage });
 // Créer la route de type POST avec le middleware multer
 router.post('/article', upload.single('photo'), (req, res) => {
    try {
+      if (req.file) {
+        articleData.photo = req.file.path;
+      }
       // Les informations du formulaire sont disponibles dans req.body
       const articleData = {
          id_article: uuidv4(),
@@ -203,7 +206,7 @@ router.post('/article', upload.single('photo'), (req, res) => {
          quantite: req.body.quantite,
          categorie_id: req.body.categorie,
          // Le chemin du fichier image dans req.file
-         photo: req.file.path,
+         photo: req.file ? req.file.path : null,
       };
 
       // Create article using ArticleDAO

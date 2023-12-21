@@ -22,7 +22,10 @@ const FormArticle = () => {
 
   const onSubmit = async (data) => {
     const formData = new FormData();
-    formData.append('photo', data.photo[0]);
+    if(data.photo){
+      formData.append('photo', data.photo[0]);
+    }
+    // formData.append('photo', data.photo[0]);
 
     Object.keys(data).forEach((key) => {
       if (key !== 'photo') {
