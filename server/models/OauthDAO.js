@@ -64,9 +64,30 @@ class OauthDAO {
       return true;
    }
 
-   static verifyToken(token, secret = 'RANDOM_TOKEN_SECRET') {
+   static verifyToken(req, res, secret = 'RANDOM_TOKEN_SECRET') {
+      const authorizationHeader = req.header('Authorization');
+      console.log(authorizationHeader);
+
+      if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Invalid authorization header' });
+      }
+      const token = authorizationHeader.replace('Bearer ', '');
+      if (!token) {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Authorization token not found' });
+      }
       try {
-         return jwt.verify(token, secret);
+         const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+         req.user = decoded;
+         if (req.user.status !== 'admin') {
+            return res
+               .status(401).send(false);
+         } else {
+            return res.status(200).send(true);
+         }
       } catch (err) {
          throw new Error(
             err.name === 'TokenExpiredError' ? 'Token expired' : 'Invalid token'

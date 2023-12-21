@@ -6,7 +6,7 @@ const multer = require('multer');
 // const upload = multer({ dest: 'uploads/' });
 
 const CategorieDAO = require('../models/CategorieDAO');
-const ArticleDAO = require('../models/ArticleDAO');
+const OauthDAO = require('../models/OauthDAO');
 
 // GET categories or single category by id
 router.get('/categorie', async (req, res) => {
@@ -18,12 +18,14 @@ router.get('/categorie', async (req, res) => {
          const categories = await CategorieDAO.getAllCategories();
          res.status(200).json(categories);
       } catch (error) {
-         res.status(500).json({ message: 'Erreur lors de la récupération des catégories' });
+         res.status(500).json({
+            message: 'Erreur lors de la récupération des catégories',
+         });
       }
    } else {
       // Get single category by id if idcat is specified
       try {
-         console.log({idcategory : idcat});
+         console.log({ idcategory: idcat });
          const category = await CategorieDAO.getCategoryById(idcat);
          if (category) {
             res.status(200).json(category);
@@ -31,7 +33,9 @@ router.get('/categorie', async (req, res) => {
             res.status(404).json({ message: 'Catégorie non trouvée' });
          }
       } catch (error) {
-         res.status(500).json({ message: 'Erreur lors de la récupération de la catégorie' });
+         res.status(500).json({
+            message: 'Erreur lors de la récupération de la catégorie',
+         });
       }
    }
 });
@@ -79,28 +83,7 @@ router.post('/categorie', async (req, res) => {
 
 // DELETE catégorie
 router.delete('/categorie', async (req, res) => {
-   const authorizationHeader = req.header('Authorization');
-   console.log(authorizationHeader);
-
-   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      return res
-         .status(401)
-         .json({ success: false, message: 'Invalid authorization header' });
-   }
-   const token = authorizationHeader.replace('Bearer ', '');
-   if (!token) {
-      return res
-         .status(401)
-         .json({ success: false, message: 'Authorization token not found' });
-   }
-   try {
-      const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-      req.user = decoded;
-      if (req.user.status !== 'admin') {
-         return res
-            .status(401)
-            .json({ success: false, message: 'Unauthorized' });
-      }
+   if (OauthDAO.verifyToken(req, res)) {
       try {
          const { id_categorie } = req.body;
          const categorie = await CategorieDAO.getCategoryById(id_categorie);
@@ -124,12 +107,10 @@ router.delete('/categorie', async (req, res) => {
          console.error('Error adding category:', error);
          res.status(500).send('Internal Server Error');
       }
-   } catch (err) {
-      console.error(err);
-      return res.status(401).json({
-         success: false,
-         message: `Invalid token ${authorizationHeader}`,
-      });
+   } else {
+      return res
+         .status(401)
+         .json({ success: false, message: 'Unauthorized' });
    }
 });
 
@@ -195,7 +176,7 @@ const upload = multer({ storage: storage });
 router.post('/article', upload.single('photo'), (req, res) => {
    try {
       if (req.file) {
-        articleData.photo = req.file.path;
+         articleData.photo = req.file.path;
       }
       // Les informations du formulaire sont disponibles dans req.body
       const articleData = {

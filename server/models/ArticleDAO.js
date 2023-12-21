@@ -14,7 +14,7 @@ class ArticleDAO {
    ) {
       this.id = id_article;
       this.nom = nom;
-      this.photo = photo ? photo : '';
+      this.photo = photo ? photo : 'images\\no-image.png';
       this.description = description;
       this.prix = prix;
       this.quantite = quantite;
