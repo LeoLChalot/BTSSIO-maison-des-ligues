@@ -10,6 +10,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 const routesBoutique = require('./routes/boutique');
 const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
+const routesPanier = require('./routes/panier');
 // const auth = require('./middleware/auth');
 
 app.use(express.json());
@@ -23,6 +24,9 @@ app.use('/m2l/boutique', routesBoutique);
 
 // ? Router Admin
 app.use('/m2l/admin', routesAdmin);
+
+// ? Router Panier
+app.use('/m2l/panier', routesPanier);
 
 // ? Router Error 400
 app.use((req, res, next) => {

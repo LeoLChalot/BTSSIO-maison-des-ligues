@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 
 const ConnexionDAO = require('./ConnexionDAO')
+const ArticleDAO = require('./ArticleDAO');
 
 class PanierDAO {
   constructor() {

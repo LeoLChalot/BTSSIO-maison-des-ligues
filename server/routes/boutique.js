@@ -6,6 +6,7 @@ const multer = require('multer');
 // const upload = multer({ dest: 'uploads/' });
 
 const CategorieDAO = require('../models/CategorieDAO');
+const ArticleDAO = require('../models/ArticleDAO');
 const OauthDAO = require('../models/OauthDAO');
 
 // GET categories or single category by id
