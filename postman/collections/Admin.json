@@ -1,0 +1,333 @@
+{
+	"info": {
+		"_postman_id": "08cac29e-c61a-4f31-b4b2-537b68eab77c",
+		"name": "Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "27944123-08cac29e-c61a-4f31-b4b2-537b68eab77c"
+	},
+	"item": [
+		{
+			"name": "gettoken",
+			"id": "3af26f41-6733-4592-bd11-414e75d6db9d",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdhN…zMzB9.ZkWK8tyY51feJj_ldakrAZfp-Tp8lIrkwu-yla-UxJo",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/m2l/admin/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"admin",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users",
+			"id": "788243c3-0a17-4eb7-b056-c534184fca7b",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/m2l/admin/user?pseudo=leolchalot",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"admin",
+						"user"
+					],
+					"query": [
+						{
+							"key": "pseudo",
+							"value": "leolchalot"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "categorie",
+			"id": "f285017f-6b21-40fe-ab77-b1a8b6883bb5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdhNDYwOWYzLWI4MjUtNGFiYi05NzNmLTk0NzczODRmNDY3ZCIsInJvbGUiOjEsInN0YXR1cyI6ImFkbWluIiwiaWF0IjoxNzAxOTQ2NzE1LCJleHAiOjQ4NTc3MDY3MTV9.Iqq6RqJLnCeIlq0IeJsfytLd8sY7ADQT7DaeW2djcPg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nom\" : \"Nom de la catégorie\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/categorie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"categorie"
+					]
+				},
+				"description": "La requête POST pour ajouter une nouvelle catégorie nécessite une autorisation fournie par le token d'authentification lors de la connexion"
+			},
+			"response": []
+		},
+		{
+			"name": "article",
+			"id": "490db3f6-a198-466e-9f19-16b43a435a7a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdhNDYwOWYzLWI4MjUtNGFiYi05NzNmLTk0NzczODRmNDY3ZCIsInJvbGUiOjEsInN0YXR1cyI6ImFkbWluIiwiaWF0IjoxNzAxOTQ2NzE1LCJleHAiOjQ4NTc3MDY3MTV9.Iqq6RqJLnCeIlq0IeJsfytLd8sY7ADQT7DaeW2djcPg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nom\" : \"Article 3\",\r\n    \"description\" : \"Matos de zinzin\",\r\n    \"prix\": \"9.99\",\r\n    \"quantite\" : \"200\",\r\n    \"categorie_id\" : \"3f2ac5bf-f743-4fc2-a872-dc644dca420c\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/article",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"article"
+					]
+				},
+				"description": "La requête POST pour ajouter une nouvelle catégorie nécessite une autorisation fournie par le token d'authentification lors de la connexion"
+			},
+			"response": []
+		},
+		{
+			"name": "categorie",
+			"id": "8162be22-7b00-4fca-b3cf-1d033b28c2bc",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdhNDYwOWYzLWI4MjUtNGFiYi0mLTk0NzczODRmNDY3ZCIsInN0YXR1cyI6ImFkbWluIiwiaWF0IjoxNzAzMTU1ODMwLCJleHAiOjE3MDMxNTk0MzB9.8sJA27_fFsf-BFXC5ZSmtpWkT56lyoNtVQyEiJhA2aM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_categorie\": \"3f2ac5bf-f743-4fc2-a872-dc644dca420c\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/categorie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"categorie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "article",
+			"id": "acb7a6b1-5e3e-4f5c-9bec-5b311dd97aa6",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/categorie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"categorie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Article",
+			"id": "8f4dee58-397b-46a9-b09d-b7f28c3e72ce",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nom\": \"Nouvel Article 5\",\r\n    \"description\": \"Nouvelle description\",\r\n    \"prix\": 89.9,\r\n    \"quantite\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/article?id=3deae68f-de41-49bc-9a41-76f2cf7d6515",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"article"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3deae68f-de41-49bc-9a41-76f2cf7d6515"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "jwt",
+		"jwt": [
+			{
+				"key": "payload",
+				"value": "{\r\n    \"id\": \"7a4609f3-b825-4abb-973f-9477384f467d\",\r\n    \"status\": \"admin\"\r\n}",
+				"type": "string"
+			},
+			{
+				"key": "secret",
+				"value": "RANDOM_TOKEN_SECRET",
+				"type": "string"
+			},
+			{
+				"key": "algorithm",
+				"value": "HS256",
+				"type": "string"
+			},
+			{
+				"key": "isSecretBase64Encoded",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "headerPrefix",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "queryParamKey",
+				"value": "token",
+				"type": "string"
+			},
+			{
+				"key": "header",
+				"value": "{}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a088982f-5242-4f82-8932-3ae8014fd438",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "23aa6179-ff68-44fa-8eb9-5d7f9cf9005d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

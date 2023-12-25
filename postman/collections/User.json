@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "c51c578a-4adb-48f7-ba6a-148b5f5a89d0",
+		"name": "User",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "27944123-c51c578a-4adb-48f7-ba6a-148b5f5a89d0"
+	},
+	"item": [
+		{
+			"name": "categories",
+			"id": "d1468822-c92e-4b02-bf61-d840969a4239",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/categorie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"categorie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "articles",
+			"id": "b2ee9b92-d67f-47eb-8108-8adcf9cb2272",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_categorie\": \"b9a2e2eb-3847-4b27-8f9c-c8d1c4c813d5\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/boutique/article",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"boutique",
+						"article"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "inscription",
+			"id": "bb45521e-91fe-42bc-8cdd-316cbbaf38a5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"\",\r\n    \"mot_de_passe\": \"@\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/user/connexion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"user",
+						"connexion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "connexion",
+			"id": "b7547cdd-46b8-44d2-8084-dde4056978e9",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\": \"leolchalot\",\r\n    \"mot_de_passe\": \"@3A42f6be3e6\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/user/connexion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"user",
+						"connexion"
+					]
+				},
+				"description": "La requête de connexion permet l'authentification et l'attribution d'un token d'accès (JSON web token)"
+			},
+			"response": []
+		},
+		{
+			"name": "ajout article panier",
+			"id": "d7d1daa5-33c0-4589-8739-e54b884fdada",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_panier\": \"633cf961-0a41-44a9-8d21-55b7267c1374\",\r\n    \"id_article\": \"2d569129-91df-4ba4-834d-1bff4cd299b0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/user/articlePanier",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"user",
+						"articlePanier"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "suppression article panier",
+			"id": "a2f96fde-fc5d-4a74-b9da-39ac2207991f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_panier\": \"633cf961-0a41-44a9-8d21-55b7267c1374\",\r\n    \"id_article\": \"2d569129-91df-4ba4-834d-1bff4cd299b0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/user/articlePanier",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"user",
+						"articlePanier"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirm panier",
+			"id": "535d159f-8a2e-4d16-a4f8-ea0675874cab",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id_panier\": \"633cf961-0a41-44a9-8d21-55b7267c1374\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/m2l/user/ajoutPanier",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"m2l",
+						"user",
+						"ajoutPanier"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
