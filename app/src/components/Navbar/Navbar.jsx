@@ -9,9 +9,12 @@ const Navbar = () => {
   const navigate = useNavigate()
 
   const deconnexion = () => {
-    ls.setItem('isAuth', '0')
     localStorage.clear()
     navigate('/')
+  }
+
+  window.onunload = function () {
+    deconnexion()
   }
 
   return (
@@ -37,8 +40,7 @@ const Navbar = () => {
               Inscription
             </Link>
           </>
-        ):
-        (
+        ) : (
           <>
             <Link to={'/profil/' + ls.getItem('pseudo')} className="link">
               Profil
@@ -57,7 +59,6 @@ const Navbar = () => {
             Dashboard
           </Link>
         )}
-
       </div>
     </>
   )

@@ -67,7 +67,8 @@ router.post('/categorie', async (req, res) => {
       }
       try {
          const { nom } = req.body;
-         await CategorieDAO.addCategory(nom);
+         const categorie = new CategorieDAO(nom);
+         await categorie.addCategory();
          res.status(201).json('Categorie ajoutée !');
       } catch (error) {
          console.error('Error adding category:', error);
@@ -88,17 +89,11 @@ router.delete('/categorie', async (req, res) => {
       try {
          const { id_categorie } = req.body;
          const categorie = await CategorieDAO.getCategoryById(id_categorie);
-         if (id_categorie === undefined) {
-            return res
-               .status(401)
-               .json({ success: false, message: 'no id_category' });
-         }
          if (!categorie) {
             return res
-               .status(401)
-               .json({ success: false, message: 'Categorie not found' });
+               .status(404)
+               .json({ success: false, message: 'Categorie non trouvée' });
          }
-
          await CategorieDAO.deleteCategory(id_categorie);
          res.status(201).json({
             success: true,
