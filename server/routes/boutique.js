@@ -3,7 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' });
+const auth = require('../middleware/auth');
 
 const CategorieDAO = require('../models/CategorieDAO');
 const ArticleDAO = require('../models/ArticleDAO');
@@ -104,9 +104,7 @@ router.delete('/categorie', async (req, res) => {
          res.status(500).send('Internal Server Error');
       }
    } else {
-      return res
-         .status(401)
-         .json({ success: false, message: 'Unauthorized' });
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
    }
 });
 
@@ -169,24 +167,28 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Créer la route de type POST avec le middleware multer
-router.post('/article', upload.single('photo'), (req, res) => {
+router.post('/article', upload.single('photo'), async (req, res) => {
    try {
-      if (req.file) {
-         articleData.photo = req.file.path;
-      }
+      // console.log({ body: req.body });
+      console.log(req.file);
+
+      // if (req.file) {
+      //    articleData.photo = req.file.path;
+      // }
       // Les informations du formulaire sont disponibles dans req.body
+      
       const articleData = {
          nom: req.body.nom,
+         photo: req.file ? req.file.path : null,
          description: req.body.description,
          prix: req.body.prix,
          quantite: req.body.quantite,
          categorie_id: req.body.categorie,
-         // Le chemin du fichier image dans req.file
-         photo: req.file ? req.file.path : null,
       };
 
       // Create article using ArticleDAO
       const createArticle = new ArticleDAO(
+         uuidv4(),
          articleData.nom,
          articleData.photo,
          articleData.description,
@@ -194,19 +196,14 @@ router.post('/article', upload.single('photo'), (req, res) => {
          articleData.quantite,
          articleData.categorie_id
       );
-      console.log(createArticle);
-      if (createArticle) {
-         createArticle.addArticle();
-         res.status(201).json({
-            success: true,
-            message: 'Article ajouté avec succès',
-            article: articleData,
-         });
-      } else {
-         res.status(500).json({
-            message: "Une erreur est survenue lors de l'ajout de l'article",
-         });
-      }
+
+      const result = await createArticle.addArticle();
+      res.status(201).json({
+         success: true,
+         message: 'Article ajouté avec succès',
+         article: articleData,
+         result: result,
+      });
    } catch (error) {
       res.status(500).json({
          message: "Une erreur est survenue lors de l'ajout de l'article",
@@ -215,7 +212,7 @@ router.post('/article', upload.single('photo'), (req, res) => {
 });
 
 // PUT article
-router.put('/article', upload.single('photo'),async  (req, res) => {
+router.put('/article', upload.single('photo'), async (req, res) => {
    const id = req.query.id;
    try {
       if (req.file) {
@@ -233,41 +230,40 @@ router.put('/article', upload.single('photo'),async  (req, res) => {
 
       const updatedArticle = await ArticleDAO.getArticleById(id);
       console.log(updatedArticle);
-      if(articleData.nom !== null) {
+      if (articleData.nom !== null) {
          updatedArticle.setNom(articleData.nom);
       }
-      if(articleData.photo !== null) {
+      if (articleData.photo !== null) {
          updatedArticle.setPhoto(articleData.photo);
       }
-      if(articleData.description !== null) {
+      if (articleData.description !== null) {
          updatedArticle.setDescription(articleData.description);
       }
-      if(articleData.prix !== null) {
+      if (articleData.prix !== null) {
          updatedArticle.setPrix(articleData.prix);
       }
-      if(articleData.quantite !== null) {
+      if (articleData.quantite !== null) {
          updatedArticle.setQuantite(articleData.quantite);
       }
-      if(articleData.categorie_id !== null) {
+      if (articleData.categorie_id !== null) {
          updatedArticle.setCategorie(articleData.categorie_id);
       }
 
       const result = await updatedArticle.updateArticle();
 
-      if(result) {
+      if (result) {
          res.status(201).json({
             success: true,
             message: 'Article mis à jour avec succès',
             article: updatedArticle,
-            result: result
+            result: result,
          });
       } else {
          res.status(500).json({
-            message: "Une erreur est survenue lors de la mise à jour de l'article",
+            message:
+               "Une erreur est survenue lors de la mise à jour de l'article",
          });
       }
-
-
    } catch (error) {
       res.status(500).json({
          message: "Une erreur est survenue lors de l'ajout de l'article",
@@ -277,13 +273,44 @@ router.put('/article', upload.single('photo'),async  (req, res) => {
 
 // DELETE article
 router.delete('/article/:id', async (req, res) => {
+   let id = req.params.id;
+
    try {
-      const { id } = req.params;
-      await ArticleDAO.deleteArticle(id);
-      res.status(201).json('Article supprimé !');
+      if (id.startsWith('all-')) {
+         id = id.slice(4); // remove 'all-' prefix
+         const article = await ArticleDAO.getArticleById(id);
+
+         if (article) {
+            const result = await article.delete('all');
+            console.log(result);
+            res.status(200).json({
+               success: result.success,
+               message: result.message,
+            });
+         } else {
+            res.status(404).json({
+               message: 'Article avec id ' + id + ' non trouvé',
+            });
+         }
+      } else {
+         const article = await ArticleDAO.getArticleById(id);
+         if (article) {
+            const result = await article.delete();
+            console.log(result);
+            res.status(200).json({
+               success: result.success,
+               message: result.message,
+            });
+         } else {
+            res.status(404).json({
+               message: 'Article avec id ' + id + ' non trouvé',
+            });
+         }
+      }
    } catch (error) {
-      console.error('Error deleting article:', error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).json({
+         message: "Une erreur est survenue lors de la suppression de l'article",
+      });
    }
 });
 

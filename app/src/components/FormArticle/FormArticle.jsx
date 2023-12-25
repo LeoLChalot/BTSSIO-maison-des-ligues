@@ -7,6 +7,7 @@ import './FormArticle.css';
 const FormArticle = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [categories, setCategories] = useState([]);
+  const ls = localStorage
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -23,6 +24,7 @@ const FormArticle = () => {
   const onSubmit = async (data) => {
     const formData = new FormData();
     if(data.photo){
+      console.log(data.photo[0])
       formData.append('photo', data.photo[0]);
     }
     // formData.append('photo', data.photo[0]);

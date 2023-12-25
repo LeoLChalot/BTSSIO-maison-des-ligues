@@ -55,8 +55,8 @@ class CategorieDAO {
    async addCategory() {
          try {
             const connexion = ConnexionDAO.connect();
-            const sql = 'INSERT INTO categories (nom) VALUES (?)';
-            const result = await connexion.promise().query(sql, [this.nom]);
+            const sql = 'INSERT INTO categories (id_categorie, nom) VALUES (?, ?)';
+            const result = await connexion.promise().query(sql, [this.id_category, this.nom]);
             return result;
          } catch (error) {
             console.error('Error adding category:', error);

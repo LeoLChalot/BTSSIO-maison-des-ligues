@@ -23,19 +23,22 @@ const ArticleDetail = () => {
   const fetchArticle = async (id) => {
     try {
       const { data } = await axios.get(`${serverBaseUrl}/m2l/boutique/article?idart=${id}`)
-      const photoPath = data[0].photo
+      console.log(data)
+      const photoPath = data.photo
+      console.log(photoPath)
       const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
-      getCategory(data[0].categorie_id)
+      getCategory(data.categorie_id)
       setArticle({
-        id: data[0].id_article,
-        nom: data[0].nom,
-        description: data[0].description,
-        prix: data[0].prix,
-        quantite: data[0].quantite,
+        id: data.id_article,
+        nom: data.nom,
+        description: data.description,
+        prix: data.prix,
+        quantite: data.quantite,
         photo: photoUrl,
         categorie: categorie,
-        categorie_id: data[0].categorie_id,
+        categorie_id: data.categorie_id,
       })
+
     } catch (error) {
       console.error('Error fetching article:', error)
     }

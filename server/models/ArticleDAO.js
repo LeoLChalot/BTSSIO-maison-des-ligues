@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const ConnexionDAO = require('./ConnexionDAO');
+const { json } = require('express');
 
 class ArticleDAO {
    constructor(id, nom, photo, description, prix, quantite, categorie_id) {
@@ -30,15 +31,15 @@ class ArticleDAO {
       try {
          const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles WHERE id_article = ?';
-         const result = await connexion.promise().query(query, [id_article]);
+         const data = await connexion.promise().query(query, [id_article]);
          const article = new ArticleDAO(
             id_article,
-            result[0][0].nom,
-            result[0][0].photo,
-            result[0][0].description,
-            result[0][0].prix,
-            result[0][0].quantite,
-            result[0][0].categorie_id
+            data[0][0].nom,
+            data[0][0].photo,
+            data[0][0].description,
+            data[0][0].prix,
+            data[0][0].quantite,
+            data[0][0].categorie_id
          );
          return article;
       } catch (error) {
@@ -54,8 +55,16 @@ class ArticleDAO {
          const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles WHERE categorie_id = ?';
          const data = await connexion.promise().query(query, [categoryId]);
-         console.log(data);
-         return data[0];
+         const article = new ArticleDAO(
+            data[0][0].id_article,
+            data[0][0].nom,
+            data[0][0].photo,
+            data[0][0].description,
+            data[0][0].prix,
+            data[0][0].quantite,
+            categoryId
+         );
+         return article;
       } catch (error) {
          console.error('Error fetching articles by category id:', error);
          throw error;
@@ -113,14 +122,35 @@ class ArticleDAO {
       }
    }
 
-   static async deleteArticle(id_article) {
+   async delete(option) {
+      const connexion = ConnexionDAO.connect();
       try {
-         const connexion = ConnexionDAO.connect();
-         const query = 'DELETE FROM articles WHERE id_article = ?';
-         const result = await connexion.promise().query(query, [id_article]);
-         return result;
+         if (option === 'all') {
+            const query = 'DELETE FROM articles WHERE id_article = ?';
+            const values = [this.id_article];
+            await connexion.promise().query(query, values);
+            return { success: true, message: 'Tous les articles suprimés.' };
+         }
+
+         const selectQuery =
+            'SELECT quantite FROM articles WHERE id_article = ?';
+         const selectValues = [this.id_article];
+         const [rows] = await connexion
+            .promise()
+            .query(selectQuery, selectValues);
+         const quantity = rows[0]?.quantite;
+
+         if (quantity > 0) {
+            const updateQuery =
+               'UPDATE articles SET quantite = quantite - 1 WHERE id_article = ?';
+            const updateValues = [this.id_article];
+            await connexion.promise().query(updateQuery, updateValues);
+            return { success: true, message: 'Un article suprimé.' };
+         } else {
+            return { success: false, message: 'Article en rupture.' };
+         }
       } catch (error) {
-         console.error('Error deleting article:', error);
+         console.error('Error deleting or decrementing article:', error);
          throw error;
       } finally {
          ConnexionDAO.disconnect();
