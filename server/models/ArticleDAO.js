@@ -11,7 +11,7 @@ class ArticleDAO {
       quantite,
       categorie_id
    ) {
-      this.id = id_article;
+      this.id = uuidv4();
       this.nom = nom;
       this.photo = photo ? photo : 'images\\no-image.png';
       this.description = description;
