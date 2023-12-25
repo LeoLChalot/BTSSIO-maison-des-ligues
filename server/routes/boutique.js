@@ -176,7 +176,6 @@ router.post('/article', upload.single('photo'), (req, res) => {
       }
       // Les informations du formulaire sont disponibles dans req.body
       const articleData = {
-         id_article: uuidv4(),
          nom: req.body.nom,
          description: req.body.description,
          prix: req.body.prix,
@@ -188,7 +187,6 @@ router.post('/article', upload.single('photo'), (req, res) => {
 
       // Create article using ArticleDAO
       const createArticle = new ArticleDAO(
-         articleData.id_article,
          articleData.nom,
          articleData.photo,
          articleData.description,
@@ -217,22 +215,63 @@ router.post('/article', upload.single('photo'), (req, res) => {
 });
 
 // PUT article
-router.put('/article', async (req, res) => {
-   const updatedArticle = {
-      id_article: req.body.id_article,
-      nom: req.body.nom,
-      photo: req.body.photo,
-      description: req.body.description,
-      prix: req.body.prix,
-      quantite: req.body.quantite,
-      categorie_id: req.body.categorie_id,
-   };
+router.put('/article', upload.single('photo'),async  (req, res) => {
+   const id = req.query.id;
    try {
-      const result = await ArticleDAO.updateArticleById(updatedArticle);
-      res.status(201).json(result);
+      if (req.file) {
+         articleData.photo = req.file.path;
+      }
+      // Les informations du formulaire sont disponibles dans req.body
+      const articleData = {
+         nom: req.body.nom ? req.body.nom : null,
+         photo: req.file ? req.file.path : null,
+         description: req.body.description ? req.body.description : null,
+         prix: req.body.prix ? req.body.prix : null,
+         quantite: req.body.quantite ? req.body.quantite : null,
+         categorie_id: req.body.categorie_id ? req.body.categorie : null,
+      };
+
+      const updatedArticle = await ArticleDAO.getArticleById(id);
+      console.log(updatedArticle);
+      if(articleData.nom !== null) {
+         updatedArticle.setNom(articleData.nom);
+      }
+      if(articleData.photo !== null) {
+         updatedArticle.setPhoto(articleData.photo);
+      }
+      if(articleData.description !== null) {
+         updatedArticle.setDescription(articleData.description);
+      }
+      if(articleData.prix !== null) {
+         updatedArticle.setPrix(articleData.prix);
+      }
+      if(articleData.quantite !== null) {
+         updatedArticle.setQuantite(articleData.quantite);
+      }
+      if(articleData.categorie_id !== null) {
+         updatedArticle.setCategorie(articleData.categorie_id);
+      }
+
+      const result = await updatedArticle.updateArticle();
+
+      if(result) {
+         res.status(201).json({
+            success: true,
+            message: 'Article mis à jour avec succès',
+            article: updatedArticle,
+            result: result
+         });
+      } else {
+         res.status(500).json({
+            message: "Une erreur est survenue lors de la mise à jour de l'article",
+         });
+      }
+
+
    } catch (error) {
-      console.error('Error editing article:', error);
-      res.status(500).send('Internal Server Error');
+      res.status(500).json({
+         message: "Une erreur est survenue lors de l'ajout de l'article",
+      });
    }
 });
 

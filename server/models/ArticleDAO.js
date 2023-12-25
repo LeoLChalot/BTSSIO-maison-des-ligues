@@ -2,16 +2,8 @@ const { v4: uuidv4 } = require('uuid');
 const ConnexionDAO = require('./ConnexionDAO');
 
 class ArticleDAO {
-   constructor(
-      id_article,
-      nom,
-      photo,
-      description,
-      prix,
-      quantite,
-      categorie_id
-   ) {
-      this.id = uuidv4();
+   constructor(id, nom, photo, description, prix, quantite, categorie_id) {
+      this.id_article = id ? id : uuidv4();
       this.nom = nom;
       this.photo = photo ? photo : 'images\\no-image.png';
       this.description = description;
@@ -39,7 +31,16 @@ class ArticleDAO {
          const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles WHERE id_article = ?';
          const result = await connexion.promise().query(query, [id_article]);
-         return result[0];
+         const article = new ArticleDAO(
+            id_article,
+            result[0][0].nom,
+            result[0][0].photo,
+            result[0][0].description,
+            result[0][0].prix,
+            result[0][0].quantite,
+            result[0][0].categorie_id
+         );
+         return article;
       } catch (error) {
          console.error('Error fetching articles:', error);
          throw error;
@@ -67,7 +68,7 @@ class ArticleDAO {
       const connexion = ConnexionDAO.connect();
       try {
          const values = [
-            this.id,
+            this.id_article,
             this.nom,
             this.photo,
             this.description,
@@ -88,17 +89,17 @@ class ArticleDAO {
       }
    }
 
-   async updateArticle(article) {
+   async updateArticle() {
       const connexion = ConnexionDAO.connect();
       try {
          const values = [
-            article.nom,
-            article.photo,
-            article.description,
-            article.prix,
-            article.quantite,
-            article.categorie_id,
-            article.id,
+            this.nom,
+            this.photo,
+            this.description,
+            this.prix,
+            this.quantite,
+            this.categorie_id,
+            this.id_article,
          ];
          const query =
             'UPDATE articles SET nom = ?, photo = ?, description = ?, prix = ?, quantite = ?, categorie_id = ? WHERE id_article = ?';
@@ -131,8 +132,8 @@ class ArticleDAO {
       return this.id;
    }
 
-   getTitle() {
-      return this.title;
+   getNom() {
+      return this.nom;
    }
 
    getDescription() {
@@ -148,16 +149,28 @@ class ArticleDAO {
       this.id = id;
    }
 
-   setTitle(title) {
-      this.title = title;
+   setNom(nom) {
+      this.nom = nom;
+   }
+
+   setPhoto(photo) {
+      this.photo = photo;
    }
 
    setDescription(description) {
       this.description = description;
    }
 
-   setPrice(price) {
-      this.price = price;
+   setPrix(prix) {
+      this.prix = prix;
+   }
+
+   setQuantite(quantite) {
+      this.quantite = quantite;
+   }
+
+   setCategorie(categorie_id) {
+      this.categorie_id = categorie_id;
    }
 }
 
