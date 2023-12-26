@@ -35,7 +35,7 @@ class UserDAO {
       }
    }
 
-   static async connectUser(login, password) {
+   static async login(login, password) {
       try {
          const connexion = ConnexionDAO.connect();
          const query =

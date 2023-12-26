@@ -32,22 +32,21 @@ router.post('/connexion', async (req, res) => {
    const { login, mot_de_passe } = req.body;
 
    if (login && mot_de_passe) {
-      const user = await UserDAO.connectUser(login, mot_de_passe);
+      const user = await UserDAO.login(login, mot_de_passe);
       if (user) {
 
          // Générer le token d'accès
          const token = OauthDAO.generateAccessToken(user);
          const refreshToken = await OauthDAO.generateRefreshToken(user);
+
+         // Récupérer le panier
          const panier = await PanierDAO.getPanier(user.id_utilisateur);
-         if (panier.length == 0) {
-            const panier = await PanierDAO.createPanier(user.id_utilisateur);
-         }
 
          console.log({
             msg: 'Connexion OK',
             id_utilisateur: user.id_utilisateur,
-            token: token.slice(0, 30) + "...",
-            refreshToken: refreshToken.slice(0, 30) + "...",
+            token: token.slice(0, 15) + "...",
+            refreshToken: refreshToken.slice(0, 15) + "...",
             panier: panier,
          });
 
@@ -58,7 +57,7 @@ router.post('/connexion', async (req, res) => {
             id_utilisateur: user.id_utilisateur,
             email: user.email,
             pseudo: user.pseudo,
-            id_panier: panier[0].id_panier,
+            id_panier: panier.getId(),
          });
 
       } else {
