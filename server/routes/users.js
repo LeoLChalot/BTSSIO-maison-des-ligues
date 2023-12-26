@@ -15,13 +15,14 @@ router.post('/inscription', async (req, res) => {
    const cryptedPassword = await bcrypt.hash(mot_de_passe, randomSalt);
 
    if (prenom && nom && pseudo && email && mot_de_passe) {
-      const user = await UserDAO.createUser(
+      const user = new UserDAO(
          prenom,
          nom,
          pseudo,
          email,
          cryptedPassword
       );
+      user.addUser();
       res.status(200).json(user);
    } else {
       res.status(400).end('Informations erronées');
@@ -66,33 +67,6 @@ router.post('/connexion', async (req, res) => {
    }
 });
 
-router.post('/articlePanier', async (req, res) => {
-   const { id_panier, id_article } = req.body;
-   console.log(id_panier, id_article);
-   if (id_panier && id_article) {
-      const panier = await PanierDAO.addArticleToPanier(id_panier, id_article);
-      res.status(200).json(panier);
-   }
-});
-router.delete('/articlePanier', async (req, res) => {
-   const { id_panier, id_article } = req.body;
-   console.log(id_panier, id_article);
-   if (id_panier && id_article) {
-      const panier = await PanierDAO.deleteArticleFromPanier(
-         id_panier,
-         id_article
-      );
-      res.status(200).json(panier);
-   }
-});
 
-router.post('/confirmPanier', async (req, res) => {
-   const { id_panier } = req.body;
-   console.log(id_panier);
-   if (id_panier) {
-      const panier = await PanierDAO.confirmPanier(id_panier);
-      res.status(200).json(panier);
-   }
-});
 
 module.exports = router;

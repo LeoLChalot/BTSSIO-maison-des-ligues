@@ -37,7 +37,7 @@ router.get('/categorie', async (req, res) => {
          res.status(500).json({
             message: 'Erreur lors de la récupération de la catégorie',
          });
-      }
+      } 
    }
 });
 

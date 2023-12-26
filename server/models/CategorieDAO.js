@@ -23,19 +23,19 @@ class CategorieDAO {
       }
    }
 
-   static async getCategoryById(id_categorie) {
-      try {
-         const connexion = ConnexionDAO.connect();
-         const sql = 'SELECT * FROM categories WHERE id_categorie = ?';
-         const data = await connexion.promise().query(sql, [id_categorie]);
-         return data[0].length > 0 ? data[0][0] : false;
-      } catch (error) {
-         console.error('Error retrieving category:', error);
-         throw error;
-      }finally {
-         ConnexionDAO.disconnect();
-      }
+static async getCategoryById(id_categorie) {
+   try {
+      const connexion =  ConnexionDAO.connect();
+      const sql = 'SELECT * FROM categories WHERE id_categorie = ?';
+      const [rows] = await connexion.promise().query(sql, [id_categorie]);
+      return rows.length > 0 ? rows[0] : false;
+   } catch (error) {
+      console.error('Error retrieving category:', error);
+      throw error;
+   } finally {
+      ConnexionDAO.disconnect();
    }
+}
 
    static async getCategoryByName(nom) {
       try {
@@ -53,18 +53,20 @@ class CategorieDAO {
    }
 
    async addCategory() {
-         try {
-            const connexion = ConnexionDAO.connect();
-            const sql = 'INSERT INTO categories (id_categorie, nom) VALUES (?, ?)';
-            const result = await connexion.promise().query(sql, [this.id_category, this.nom]);
-            return result;
-         } catch (error) {
-            console.error('Error adding category:', error);
-            throw error;
-         }finally {
-            ConnexionDAO.disconnect();
-         }
+      try {
+         const connexion = ConnexionDAO.connect();
+         const sql = 'INSERT INTO categories (id_categorie, nom) VALUES (?, ?)';
+         const result = await connexion
+            .promise()
+            .query(sql, [this.id_category, this.nom]);
+         return result;
+      } catch (error) {
+         console.error('Error adding category:', error);
+         throw error;
+      } finally {
+         ConnexionDAO.disconnect();
       }
+   }
    static async deleteCategory(id_category) {
       try {
          const connexion = ConnexionDAO.connect();

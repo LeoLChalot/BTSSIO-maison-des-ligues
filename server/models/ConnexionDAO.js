@@ -1,11 +1,11 @@
+require('dotenv').config();
+const mysql = require('mysql2');
 class ConnexionDAO {
   constructor() {
      this.connection = null;
   }
 
   static connect() {
-     require('dotenv').config();
-     const mysql = require('mysql2');
      this.connection = mysql.createConnection({
         host: process.env.DB_HOST,
         database: process.env.DB_NAME,

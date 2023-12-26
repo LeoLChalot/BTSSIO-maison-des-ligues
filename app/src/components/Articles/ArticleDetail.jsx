@@ -1,7 +1,7 @@
 // Importez useState et useEffect
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Categorie from '../../models/Categorie'
 import Panier from '../../models/Panier'
 import './ArticleDetail.css'
@@ -10,6 +10,7 @@ const ArticleDetail = () => {
   const { id } = useParams()
   const [article, setArticle] = useState({})
   const [categorie, setCategorie] = useState('')
+  const navigate = useNavigate()
   const serverBaseUrl = 'http://localhost:3000'
 
   const getCategory = async (categorie_id) => {
@@ -22,7 +23,9 @@ const ArticleDetail = () => {
   }
   const fetchArticle = async (id) => {
     try {
-      const { data } = await axios.get(`${serverBaseUrl}/m2l/boutique/article?idart=${id}`)
+      const { data } = await axios.get(
+        `${serverBaseUrl}/m2l/boutique/article?idart=${id}`
+      )
       console.log(data)
       const photoPath = data.photo
       console.log(photoPath)
@@ -35,25 +38,35 @@ const ArticleDetail = () => {
         prix: data.prix,
         quantite: data.quantite,
         photo: photoUrl,
-        categorie: categorie,
+        categorie: categorie.nom,
         categorie_id: data.categorie_id,
       })
-
     } catch (error) {
       console.error('Error fetching article:', error)
     }
   }
 
-  const ajout_panier = async (article) => {
-    console.log('article', article)
-  } 
-  
+  const ajouterAuPanier = async (id_article) => {
+    // Vérifiez si l'utilisateur est connecté
+    console.log({token : localStorage.getItem('oauth_token')})
+    if (localStorage.getItem('oauth_token')) {
+      try {
+        // make an API call to add the article to the cart
+        await axios.post(`http://localhost:3000/m2l/panier/add`, {
+          articleId: id_article,
+          userId: localStorage.getItem('id_utilisateur'),
+        })
+        alert('Article ajouté au panier')
+      } catch (error) {
+        console.error('Error adding article to cart:', error)
+      }
+    }
+  }
 
   useEffect(() => {
     // Utilisez la catégorie directement de l'objet article ici
     fetchArticle(id)
   }, [id])
-
 
   return (
     <div className="article-detail">
@@ -61,12 +74,15 @@ const ArticleDetail = () => {
         <img src={article.photo} alt={article.nom} />
       </div>
       <div className="article-info">
-        <h2 style={{textAlign: 'left'}}>{article.nom}</h2>
+        <h2 style={{ textAlign: 'left' }}>{article.nom}</h2>
         <p>{article.description}</p>
         <p>Prix: {article.prix} €</p>
-        <p>Quantité disponible: {article.quantite === 0 ? 'Indisponible' : article.quantite}</p>
-        <p>Catégorie: {categorie.nom}</p>
-        <button>Ajouter au panier</button>
+        <p>
+          Quantité disponible:{' '}
+          {article.quantite === 0 ? 'Indisponible' : article.quantite}
+        </p>
+        <p>Catégorie: {article.categorie}</p>
+        <button onClick={() => ajouterAuPanier(article.id)}>Ajouter au panier</button>
       </div>
     </div>
   )

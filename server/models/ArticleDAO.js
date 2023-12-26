@@ -55,16 +55,7 @@ class ArticleDAO {
          const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles WHERE categorie_id = ?';
          const data = await connexion.promise().query(query, [categoryId]);
-         const article = new ArticleDAO(
-            data[0][0].id_article,
-            data[0][0].nom,
-            data[0][0].photo,
-            data[0][0].description,
-            data[0][0].prix,
-            data[0][0].quantite,
-            categoryId
-         );
-         return article;
+         return data[0];
       } catch (error) {
          console.error('Error fetching articles by category id:', error);
          throw error;

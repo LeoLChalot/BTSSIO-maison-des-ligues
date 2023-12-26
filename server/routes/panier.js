@@ -31,39 +31,69 @@ router.get('/', async (req, res) => {
    }
 });
 
-router.post('/validate', async (req, res) => {
-   const id_panier = req.body.id_panier;
-   const id_utilisateur = req.body.id_utilisateur;
+router.post('/add', async (req, res) => {
+   const { articleId, userId } = req.body;
 
-   if (id_panier) {
-      // Update the "waiting" value to "ordered" in the basket
-      
-      const panier = await PanierDAO.confirmPanier(id_panier);
+   console.log({ 'article ID': articleId, 'user ID': userId });
 
-      // Create a new entry in the orders table
-      const date = new Date();
-      const newCommande = new CommandeDAO(
-         id_panier,
-         id_utilisateur,
-         panier.getTotalPrix(),
-         date
-      );
-      newCommande.addCommande();
-
-      if (panier && newCommande) {
-         res.status(200).json({
-            msg: 'Panier validé et commande créée',
-            panier: panier,
-            commande: newCommande,
-         });
-      } else {
-         res.status(400).json({
-            msg: 'Erreur lors de la validation du panier ou de la création de la commande',
-         });
-      }
-   } else {
-      res.status(400).json({ msg: 'Identifiant du panier requis' });
+   if (!articleId || !userId) {
+      return res
+         .status(400)
+         .json({ msg: "Identifiant de l'article et de l'utilisateur requis" });
    }
+
+   try {
+      const panier = await PanierDAO.getPanier(userId);
+      console.log({ panier: panier });
+      const article = await ArticleDAO.getArticleById(articleId);
+      console.log({ article: article });
+
+      const result = await panier.ajouterArticle(article);
+      console.log({ "resultat de l'ajout": result });
+      res.status(201).json({
+         success: true,
+         message: 'Article ajouté au panier',
+      });
+   } catch (error) {
+      res.status(500).json({
+         message:
+            "Une erreur est survenue lors de l'ajout de l'article au panier",
+      });
+   }
+});
+
+router.post('/valider', async (req, res) => {
+   const { id_panier, id_utilisateur } = req.body;
+
+   if (!id_panier) {
+      return res.status(400).json({ msg: 'Identifiant du panier requis' });
+   }
+
+   const panier = new PanierDAO(id_panier, id_utilisateur);
+
+   panier.confirmPanier();
+
+   if (!panier) {
+      return res
+         .status(400)
+         .json({ msg: 'Erreur lors de la validation du panier' });
+   }
+
+   const date = new Date();
+   const newCommande = new CommandeDAO(
+      id_panier,
+      id_utilisateur,
+      panier.getTotalPrix(),
+      date
+   );
+
+   await newCommande.addCommande();
+
+   return res.status(200).json({
+      msg: 'Panier validé et commande créée',
+      panier: panier,
+      commande: newCommande,
+   });
 });
 
 module.exports = router;
