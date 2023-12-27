@@ -44,6 +44,7 @@ const Dashboard = () => {
           <h1>Dashboard</h1>
         </div>
         <div className="dashbord-components">
+          {/* Ajout <FormCategorie /> */}
           <FormArticle />
           <ArticlesList />
         </div>

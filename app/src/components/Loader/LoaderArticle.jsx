@@ -3,7 +3,7 @@ import './LoaderArticle.css'
 const LoaderArticle = () => {
   return (
     <>
-      <div className="card">
+      <div className="loader">
         <div className="cover skeleton">
           <img id="cover" src="" />
         </div>

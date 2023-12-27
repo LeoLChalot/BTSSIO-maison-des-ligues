@@ -36,13 +36,18 @@ const FormArticle = () => {
     });
 
     try {
-      const response = await axios.post('http://localhost:3000/m2l/boutique/article', formData, {
+      const {data} = await axios.post('http://localhost:3000/m2l/boutique/article', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log(response.data);
+      // Clear the form fields after successful submission
+      Object.keys(data).forEach((key) => {
+        setValue(key, "");
+      });
+
+      alert(data.message);
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'article :", error);
     }

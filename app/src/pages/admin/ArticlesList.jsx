@@ -3,19 +3,23 @@ import axios from 'axios'
 import './ArticlesList.css'
 
 const ArticlesList = () => {
+  const [modif, setModif] = useState(false)
   const [articles, setArticles] = useState([])
 
   useEffect(() => {
     // Appeler une fonction pour récupérer la liste des articles
     fetchArticles()
-  }, [])
+    setModif(false)
+  }, [modif])
 
   const fetchArticles = async () => {
     try {
       const { data } = await axios.get(
         'http://localhost:3000/m2l/boutique/article'
       )
+      console.log(data)
       setArticles(data)
+      // setModif(true)
     } catch (error) {
       console.error('Error fetching articles:', error)
     }
@@ -26,7 +30,9 @@ const ArticlesList = () => {
       // Appeler une fonction pour supprimer l'article
       const {data} = await axios.delete(
         `http://localhost:3000/m2l/boutique/article/${id_article}`
-      ).then(() => console.log(data.message))
+      ).then(() => {
+        setModif(true)
+        console.log(data.message)})
       // Mettre à jour la liste des articles après suppression
       fetchArticles()
     } catch (error) {
@@ -52,12 +58,12 @@ const ArticlesList = () => {
         <tbody>
           {articles.map((article) => (
             <tr key={article.id_article}>
-              <td>{article.id_article}</td>
+              <td>{article.id_article.slice(0, 15) + "..."}</td>
               <td>{article.nom}</td>
-              <td>{article.description}</td>
-              <td>{article.prix}</td>
+              <td>{article.description.slice(0, 30) + "..."}</td>
+              <td>{article.prix} €</td>
               <td>{article.quantite}</td>
-              <td>{article.categorie_id}</td>
+              <td>{article.categorie_id.slice(0, 15) + "..."}</td>
               <td>
                 <button onClick={() => handleDeleteArticle(article.id_article)}>
                   -1

@@ -19,12 +19,12 @@ main{
 
 
   main {
-    width: calc(100% - 300px);
+
     display: flex;
     flex-wrap: wrap;
     padding: 1em 0;
     justify-content: flex-start;
-    align-items: first baseline;
+    align-items: stretch;
     gap: 10px;
   }
   
