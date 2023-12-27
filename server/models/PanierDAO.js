@@ -128,8 +128,6 @@ class PanierDAO {
          const [rows] = await connexion
             .promise()
             .query(query, [this.id_panier]);
-         ConnexionDAO.disconnect();
-
          for (let row of rows) {
             const articleId = row.id_article;
             const article = await ArticleDAO.getArticleById(articleId);
@@ -140,6 +138,8 @@ class PanierDAO {
       } catch (error) {
          console.error('Error adding articles from panier_produits:', error);
          throw error;
+      } finally {
+         ConnexionDAO.disconnect();
       }
    }
 

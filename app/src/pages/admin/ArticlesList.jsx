@@ -24,9 +24,9 @@ const ArticlesList = () => {
   const handleDeleteArticle = async (id_article) => {
     try {
       // Appeler une fonction pour supprimer l'article
-      await axios.delete(
+      const {data} = await axios.delete(
         `http://localhost:3000/m2l/boutique/article/${id_article}`
-      )
+      ).then(() => console.log(data.message))
       // Mettre à jour la liste des articles après suppression
       fetchArticles()
     } catch (error) {
@@ -60,7 +60,13 @@ const ArticlesList = () => {
               <td>{article.categorie_id}</td>
               <td>
                 <button onClick={() => handleDeleteArticle(article.id_article)}>
+                  -1
+                </button>
+                <button onClick={() => handleDeleteArticle(`all-${article.id_article}`)}>
                   Supprimer
+                </button>
+                <button onClick={() => handleDeleteArticle(article.id_article)}>
+                  Editer
                 </button>
               </td>
             </tr>

@@ -30,7 +30,7 @@ const ArticleDetail = () => {
       const photoPath = data.photo
       console.log(photoPath)
       const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
-      getCategory(data.categorie_id)
+      const categorie = await Categorie.getCategoryById(data.categorie_id)
       setArticle({
         id: data.id_article,
         nom: data.nom,
@@ -60,6 +60,9 @@ const ArticleDetail = () => {
       } catch (error) {
         console.error('Error adding article to cart:', error)
       }
+    }else {
+      alert('Veuillez vous connecter pour ajouter un article au panier')
+      navigate('/connexion')
     }
   }
 

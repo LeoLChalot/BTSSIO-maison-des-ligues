@@ -19,6 +19,7 @@ import LoaderArticle from './components/Loader/LoaderArticle'
 import { v4 } from 'uuid'
 import ArticleDetail from './components/Articles/ArticleDetail'
 import Erreur404 from './pages/Erreurs/Erreur404'
+import Panier from './pages/Panier'
 
 function App() {
   return (
@@ -32,11 +33,13 @@ function App() {
             <Route path="/" element={<Accueil />} />
             <Route path="/boutique" element={<Boutique />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/panier" element={<Panier />} />
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/inscription" element={<Inscription />} />
             <Route path="/profil/:pseudo" element={<Profil />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<Erreur404 />} />
+            <Route path="/unauthorized" element={<ErreurNonAdmin />} />
           </Routes>
         </Suspense>
       </div>

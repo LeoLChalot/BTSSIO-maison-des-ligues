@@ -1,11 +1,11 @@
 import axios from 'axios'
 class Article {
-  constructor(id, title, description, photo, price, quantite, id_category) {
+  constructor(id, nom, description, photo, prix, quantite, id_category) {
     this.id = id
-    this.title = title
+    this.nom = nom
     this.description = description
     this.photo = photo
-    this.price = price
+    this.prix = prix
     this.quantite = quantite
     this.id_category = id_category
   }
@@ -52,23 +52,33 @@ class Article {
 
   static async updateArticle(updatedArticle) {}
 
-  static async deleteArticleById(articleId) {}
+  static async deleteArticleById(articleId) {
+    console.log({ serveur: 'deleteArticleById' })
+    try {
+      const { data } = await axios.delete(
+        `http://localhost:3000/m2l/boutique/article/${articleId}`
+      )
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   // Getter methods
   getId() {
     return this.id
   }
 
-  getTitle() {
-    return this.title
+  getnom() {
+    return this.nom
   }
 
   getDescription() {
     return this.description
   }
 
-  getPrice() {
-    return this.price
+  getprix() {
+    return this.prix
   }
 
   // Setter methods
@@ -76,16 +86,16 @@ class Article {
     this.id = id
   }
 
-  setTitle(title) {
-    this.title = title
+  setnom(nom) {
+    this.nom = nom
   }
 
   setDescription(description) {
     this.description = description
   }
 
-  setPrice(price) {
-    this.price = price
+  setprix(prix) {
+    this.prix = prix
   }
 }
 

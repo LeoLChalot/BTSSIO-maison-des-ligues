@@ -25,14 +25,16 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error(error)
-      navigate('/')
     }
   }
 
   useEffect(() => {
-    if (!authCheck(ls.getItem('oauth_token'))) {
-      return <ErreurNonAdmin />
+    if (ls.getItem('oauth_token')) {
+      authCheck(ls.getItem('oauth_token'))
+    }else{
+      navigate('/unauthorized')
     }
+    
   }, [ls.getItem('isAuth')])
 
   return (
