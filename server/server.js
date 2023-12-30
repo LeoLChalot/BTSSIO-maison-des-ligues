@@ -5,13 +5,10 @@ const app = express();
 const PORT = 3000;
 // Définir le dossier images comme dossier statique
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
-// const cors = require('./middleware/cors');
 const routesBoutique = require('./routes/boutique');
 const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
 const routesPanier = require('./routes/panier');
-// const auth = require('./middleware/auth');
 
 app.use(express.json());
 app.use(cors());

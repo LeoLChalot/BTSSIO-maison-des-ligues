@@ -17,19 +17,19 @@ class PanierDAO {
       try {
          const [rows] = await connexion.query(getPanier, [id_utilisateur]);
          if (rows.length > 0) {
-            console.log({ 'Panier existant': rows });
             const panier = new PanierDAO(
                rows[0].id_panier,
                rows[0].id_utilisateur
             );
             await panier._addArticlesFromPanierProduits(connexion);
+            console.log({ 'Récupération du panier' : true});
             return panier;
          } else {
             const [rows] = await connexion.query(createPanier, [
                uuidv4(),
                id_utilisateur,
             ]);
-            console.log({ 'Panier Créé': 'OK' });
+            console.log({ 'Panier Créé' : true});
             const panier = new PanierDAO(this.id_panier, id_utilisateur);
             await panier._addArticlesFromPanierProduits(connexion);
             return panier;

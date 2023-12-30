@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import Article from '../../models/Article'
 import './ArticlesList.css'
 
 const ArticlesList = () => {
@@ -17,8 +18,8 @@ const ArticlesList = () => {
       const { data } = await axios.get(
         'http://localhost:3000/m2l/boutique/article'
       )
-      console.log(data)
-      setArticles(data)
+      console.log({data: data[0]})
+      setArticles(data[0])
       // setModif(true)
     } catch (error) {
       console.error('Error fetching articles:', error)

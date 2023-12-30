@@ -16,4 +16,5 @@ aside ul li {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 4px;
+  font-size: 0.9rem;
 }

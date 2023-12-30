@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const connection = require('../database/connexion');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const ConnexionDAO = require('../models/ConnexionDAO');
@@ -48,7 +46,7 @@ router.post('/connexion', async (req, res) => {
             const panier = await PanierDAO.getPanier(connexion, user.id_utilisateur);
 
             console.log({
-               msg: 'Connexion OK',
+               msg: `Login ${user.email} - OK`,
                id_utilisateur: user.id_utilisateur,
                token: token.slice(0, 15) + '...',
                refreshToken: refreshToken.slice(0, 15) + '...',
@@ -56,7 +54,7 @@ router.post('/connexion', async (req, res) => {
             });
 
             res.status(200).json({
-               msg: 'Connexion réussie - Création / Récupération du panier',
+               msg: `Login ${user.email} - OK`,
                token,
                status: user.is_admin ? 'admin' : 'user',
                id_utilisateur: user.id_utilisateur,
