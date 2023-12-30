@@ -14,7 +14,7 @@ class UserDAO {
       this.mot_de_passe = password;
    }
 
-   static async addUser() {
+   static async addUser(connexion) {
       try {
          const values = [
             this.id_utilisateur,
@@ -24,25 +24,21 @@ class UserDAO {
             this.email,
             this.password,
          ];
-         const connexion = ConnexionDAO.connect();
          const query =
             'INSERT INTO utilisateurs (id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)';
-         const result = await connexion.promise().query(query, values);
+         const result = await connexion.query(query, values);
          return result;
       } catch (error) {
          console.error('Error creating user:', error);
          throw error;
-      }finally {
-         ConnexionDAO.disconnect();
       }
    }
 
-static async login(login, password) {
+static async login(connexion, login, password) {
    try {
-      const connexion = ConnexionDAO.connect();
       const query =
          'SELECT * FROM utilisateurs WHERE pseudo = ? OR email = ?';
-      const [rows] = await connexion.promise().query(query, [login, login]);
+      const [rows] = await connexion.query(query, [login, login]);
 
       if (rows.length === 0) {
          return null;
@@ -67,7 +63,7 @@ static async getAllUsers() {
       const connexion = ConnexionDAO.connect();
       const query =
          'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs';
-      const [rows] = await ConnexionDAO.promise().query(query);
+      const [rows] = await ConnexionDAO.query(query);
       return rows;
    } catch (error) {
       console.error('Error fetching users:', error);

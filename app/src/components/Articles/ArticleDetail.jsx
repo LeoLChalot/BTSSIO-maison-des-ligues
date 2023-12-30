@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import Categorie from '../../models/Categorie'
+import Article from '../../models/Article'
 import Panier from '../../models/Panier'
 import './ArticleDetail.css'
 
@@ -13,22 +14,12 @@ const ArticleDetail = () => {
   const navigate = useNavigate()
   const serverBaseUrl = 'http://localhost:3000'
 
-  const getCategory = async (categorie_id) => {
-    try {
-      const category = await Categorie.getCategoryById(categorie_id)
-      setCategorie(category)
-    } catch (error) {
-      console.error('Error retrieving category:', error)
-    }
-  }
   const fetchArticle = async (id) => {
     try {
       const { data } = await axios.get(
         `${serverBaseUrl}/m2l/boutique/article?idart=${id}`
       )
-      console.log(data)
       const photoPath = data.photo
-      console.log(photoPath)
       const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
       const categorie = await Categorie.getCategoryById(data.categorie_id)
       setArticle({
@@ -48,7 +39,6 @@ const ArticleDetail = () => {
 
   const ajouterAuPanier = async (id_article) => {
     // Vérifiez si l'utilisateur est connecté
-    console.log({token : localStorage.getItem('oauth_token')})
     if (localStorage.getItem('oauth_token')) {
       try {
         // make an API call to add the article to the cart

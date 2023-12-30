@@ -10,8 +10,9 @@ class OauthDAO {
       return jwt.sign(payload, 'RANDOM_TOKEN_SECRET', { expiresIn: '1h' });
    }
 
-   static async generateRefreshToken(user) {
+   static async generateRefreshToken(connexion, user) {
       const existingRefreshToken = await OauthDAO.findRefreshToken(
+         connexion,
          user.id_utilisateur
       );
 
@@ -26,41 +27,33 @@ class OauthDAO {
             'RANDOM_REFRESH_TOKEN_SECRET',
             { expiresIn: '7d' }
          );
-         await OauthDAO.addRefreshToken(user.id_utilisateur, refreshToken);
+         await OauthDAO.addRefreshToken(connexion, user.id_utilisateur, refreshToken);
          return refreshToken;
       }
       return existingRefreshToken;
    }
 
-   static async findRefreshToken(userId) {
-      const connexion = ConnexionDAO.connect();
-      // Implement your logic here to find the refresh token for a user by their ID.
-      // This is usually done by querying your database. The specific implementation will depend on the database you are using.
-      // Here is a placeholder implementation:
+   static async findRefreshToken(connexion, userId) {
       try {
          const query = 'SELECT * FROM oauth WHERE id_utilisateur = ?';
          const values = [userId];
-         const result = await connexion.promise().query(query, values);
+         const result = await connexion.query(query, values);
 
          if (result.length > 0 && result[0][0]) {
             return result[0][0].refresh_token;
          }
          return null;
-      } finally {
-         ConnexionDAO.disconnect();
+      } catch (error) {
+         console.error('Error finding refresh token:', error);
+         throw error;
       }
    }
 
-   static async addRefreshToken(userId, refreshToken) {
-      const connexion = ConnexionDAO.connect();
-      // Implement your logic here to add a refresh token for a user by their ID.
-      // This is usually done by inserting/updating a record in your database. The specific implementation will depend on the database you are using.
-      // Here is a placeholder implementation:
+   static async addRefreshToken(connexion, userId, refreshToken) {
       const query =
          'INSERT INTO oauth (id_utilisateur, refresh_token) VALUES (?, ?)';
       const values = [userId, refreshToken];
-      await connexion.promise().query(query, values);
-      ConnexionDAO.disconnect();
+      await connexion.query(query, values);
       return true;
    }
 

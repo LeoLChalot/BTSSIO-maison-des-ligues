@@ -10,7 +10,6 @@ const ArticleCard = ({ article }) => {
 
   const description = article.description
   const photoPath = article.photo
-  console.log(photoPath)
   const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
 
   return (

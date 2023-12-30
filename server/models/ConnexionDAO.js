@@ -1,39 +1,33 @@
 require('dotenv').config();
-const mysql = require('mysql2');
-class ConnexionDAO {
-  constructor() {
-     this.connection = null;
-  }
+const mysql = require('mysql2/promise');
 
-  static connect() {
-     this.connection = mysql.createConnection({
+class ConnexionDAO {
+  static pool;
+
+  static createPool() {
+    if (!this.pool) {
+      this.pool = mysql.createPool({
         host: process.env.DB_HOST,
         database: process.env.DB_NAME,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
-     });
-
-     this.connection.connect((err) => {
-        if (err) {
-           console.log('Erreur de connexion : ' + err.stack);
-           return;
-        } else {
-           console.log(`Connexion réussie à la BDD : ${process.env.DB_NAME}!`);
-        }
-     });
-     return this.connection;
+        connectionLimit: 10, // ajustez selon vos besoins
+      });
+    }
+    return this.pool;
   }
 
-  static disconnect() {
-     this.connection.end((err) => {
-        if (err) {
-           console.log('Erreur lors de la déconnexion : ' + err.stack);
-           return;
-        } else {
-           console.log('Déconnexion réussie de la BDD !');
-        }
-     });
+  static async connect() {
+    const pool = this.createPool();
+    const connection = await pool.getConnection();
+    return connection;
+  }
+
+  static disconnect(connection) {
+    if (connection) {
+      connection.release();
+    }
   }
 }
 
-module.exports = ConnexionDAO
+module.exports = ConnexionDAO;

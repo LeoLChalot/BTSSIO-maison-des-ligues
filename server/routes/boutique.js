@@ -5,154 +5,17 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const auth = require('../middleware/auth');
 
+const ConnexionDAO = require('../models/ConnexionDAO');
 const CategorieDAO = require('../models/CategorieDAO');
 const ArticleDAO = require('../models/ArticleDAO');
 const OauthDAO = require('../models/OauthDAO');
-
-// GET categories or single category by id
-router.get('/categorie', async (req, res) => {
-   const idcat = req.query.idcat;
-
-   if (!idcat) {
-      // Get all categories if no idcat is specified
-      try {
-         const categories = await CategorieDAO.getAllCategories();
-         res.status(200).json(categories);
-      } catch (error) {
-         res.status(500).json({
-            message: 'Erreur lors de la récupération des catégories',
-         });
-      }
-   } else {
-      // Get single category by id if idcat is specified
-      try {
-         console.log({ idcategory: idcat });
-         const category = await CategorieDAO.getCategoryById(idcat);
-         if (category) {
-            res.status(200).json(category);
-         } else {
-            res.status(404).json({ message: 'Catégorie non trouvée' });
-         }
-      } catch (error) {
-         res.status(500).json({
-            message: 'Erreur lors de la récupération de la catégorie',
-         });
-      } 
-   }
-});
-
-// POST catégorie
-router.post('/categorie', async (req, res) => {
-   const authorizationHeader = req.header('Authorization');
-   console.log(authorizationHeader);
-
-   if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      return res
-         .status(401)
-         .json({ success: false, message: 'Invalid authorization header' });
-   }
-   const token = authorizationHeader.replace('Bearer ', '');
-   if (!token) {
-      return res
-         .status(401)
-         .json({ success: false, message: 'Authorization token not found' });
-   }
-   try {
-      const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-      req.user = decoded;
-      if (req.user.status !== 'admin') {
-         return res
-            .status(401)
-            .json({ success: false, message: 'Unauthorized' });
-      }
-      try {
-         const { nom } = req.body;
-         const categorie = new CategorieDAO(nom);
-         await categorie.addCategory();
-         res.status(201).json('Categorie ajoutée !');
-      } catch (error) {
-         console.error('Error adding category:', error);
-         res.status(500).send('Internal Server Error');
-      }
-   } catch (err) {
-      console.error(err);
-      return res.status(401).json({
-         success: false,
-         message: `Invalid token ${authorizationHeader}`,
-      });
-   }
-});
-
-// DELETE catégorie
-router.delete('/categorie', async (req, res) => {
-   if (OauthDAO.verifyToken(req, res)) {
-      try {
-         const { id_categorie } = req.body;
-         const categorie = await CategorieDAO.getCategoryById(id_categorie);
-         if (!categorie) {
-            return res
-               .status(404)
-               .json({ success: false, message: 'Categorie non trouvée' });
-         }
-         await CategorieDAO.deleteCategory(id_categorie);
-         res.status(201).json({
-            success: true,
-            message: 'Categorie supprimée !',
-         });
-      } catch (error) {
-         console.error('Error adding category:', error);
-         res.status(500).send('Internal Server Error');
-      }
-   } else {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-   }
-});
-
-// Affiche tous les articles
-router.get('/article', async (req, res) => {
-   console.log(req.query);
-   const key = Object.keys(req.query);
-   console.log(key);
-   if (key.length === 0) {
-      console.log('all');
-      try {
-         const articles = await ArticleDAO.getAllArticles();
-         res.status(200).json(articles);
-      } catch (error) {
-         console.error('Error fetching articles:', error);
-         res.status(500).send('Internal Server Error');
-      }
-   } else if (key.length === 1 && key[0] === 'idart') {
-      console.log('idart');
-      try {
-         const article = await ArticleDAO.getArticleById(req.query.idart);
-         res.status(200).json(article);
-      } catch (error) {
-         console.error('Error fetching article:', error);
-         res.status(500).send('Internal Server Error');
-      }
-   } else if (key.length === 1 && key[0] === 'idcat') {
-      console.log('idcat');
-      try {
-         const articles = await ArticleDAO.getArticlesByCategoryId(
-            req.query.idcat
-         );
-         res.status(200).json(articles);
-      } catch (error) {
-         console.error('Error fetching article:', error);
-         res.status(500).send('Internal Server Error');
-      }
-   } else {
-      res.status(400).json({ message: 'Bad request' });
-   }
-});
 
 const MIME_TYPES = {
    'image/jpg': 'jpg',
    'image/jpeg': 'jpg',
    'image/png': 'png',
 };
-// Définir le dossier de destination pour les images téléchargées
+
 const storage = multer.diskStorage({
    destination: function (req, file, cb) {
       cb(null, 'images');
@@ -166,17 +29,153 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Créer la route de type POST avec le middleware multer
-router.post('/article', upload.single('photo'), async (req, res) => {
+router.get('/categorie', async (req, res) => {
+   let connexion;
    try {
-      // console.log({ body: req.body });
-      console.log(req.file);
+      connexion = await ConnexionDAO.connect();
+      const idcat = req.query.idcat;
+      if (!idcat) {
+         const categories = await CategorieDAO.getAllCategories(connexion);
+         res.status(200).json(categories);
+      } else {
+         const category = await CategorieDAO.getCategoryById(connexion, idcat);
+         if (category) {
+            res.status(200).json(category);
+         } else {
+            res.status(404).json({ message: 'Catégorie non trouvée' });
+         }
+      }
+   } catch (error) {
+      res.status(500).json({
+         message: 'Erreur lors de la récupération des catégories',
+      });
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
+   }
+});
 
-      // if (req.file) {
-      //    articleData.photo = req.file.path;
-      // }
-      // Les informations du formulaire sont disponibles dans req.body
-      
+router.post('/categorie', async (req, res) => {
+   let connexion;
+   try {
+      connexion = await ConnexionDAO.connect();
+      const authorizationHeader = req.header('Authorization');
+      console.log(authorizationHeader);
+
+      if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Invalid authorization header' });
+      }
+      const token = authorizationHeader.replace('Bearer ', '');
+      if (!token) {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Authorization token not found' });
+      }
+      const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+      req.user = decoded;
+      if (req.user.status !== 'admin') {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Unauthorized' });
+      }
+      try {
+         const { nom } = req.body;
+         const categorie = new CategorieDAO(nom);
+         await categorie.addCategory(connexion);
+         res.status(201).json('Categorie ajoutée !');
+      } catch (error) {
+         console.error('Error adding category:', error);
+         res.status(500).send('Internal Server Error');
+      }
+   } catch (err) {
+      console.error(err);
+      return res.status(401).json({
+         success: false,
+         message: `Invalid token ${authorizationHeader}`,
+      });
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
+   }
+});
+
+router.delete('/categorie', async (req, res) => {
+   let connexion;
+   try {
+      connexion = await ConnexionDAO.connect();
+      if (OauthDAO.verifyToken(req, res)) {
+         const { id_categorie } = req.body;
+         const categorie = await CategorieDAO.getCategoryById(
+            connexion,
+            id_categorie
+         );
+         if (!categorie) {
+            return res
+               .status(404)
+               .json({ success: false, message: 'Categorie non trouvée' });
+         }
+         await CategorieDAO.deleteCategory(connexion, id_categorie);
+         res.status(201).json({
+            success: true,
+            message: 'Categorie supprimée !',
+         });
+      } else {
+         return res
+            .status(401)
+            .json({ success: false, message: 'Unauthorized' });
+      }
+   } catch (error) {
+      console.error('Error adding category:', error);
+      res.status(500).send('Internal Server Error');
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
+   }
+});
+
+router.get('/article', async (req, res) => {
+   let connexion;
+   try {
+      connexion = await ConnexionDAO.connect();
+      const key = Object.keys(req.query);
+      connexion = await ConnexionDAO.connect();
+      if (key.length === 0) {
+         const articles = await ArticleDAO.getAllArticles(connexion);
+         res.status(200).json(articles);
+      } else if (key.length === 1 && key[0] === 'idart') {
+         const article = await ArticleDAO.getArticleById(
+            connexion,
+            req.query.idart
+         );
+         res.status(200).json(article);
+      } else if (key.length === 1 && key[0] === 'idcat') {
+         const articles = await ArticleDAO.getArticlesByCategoryId(
+            connexion,
+            req.query.idcat
+         );
+         res.status(200).json(articles);
+      } else {
+         res.status(400).json({ message: 'Bad request' });
+      }
+   } catch (error) {
+      console.error('Error connecting to database:', error);
+      res.status(500).send('Internal Server Error');
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
+   }
+});
+
+router.post('/article', upload.single('photo'), async (req, res) => {
+   let connexion;
+   try {
+      connexion = await ConnexionDAO.connect();
       const articleData = {
          nom: req.body.nom,
          photo: req.file ? req.file.path : null,
@@ -197,7 +196,7 @@ router.post('/article', upload.single('photo'), async (req, res) => {
          articleData.categorie_id
       );
 
-      const result = await createArticle.addArticle();
+      const result = await createArticle.addArticle(connexion);
       res.status(201).json({
          success: true,
          message: 'Article ajouté avec succès',
@@ -208,13 +207,18 @@ router.post('/article', upload.single('photo'), async (req, res) => {
       res.status(500).json({
          message: "Une erreur est survenue lors de l'ajout de l'article",
       });
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
    }
 });
 
-// PUT article
 router.put('/article', upload.single('photo'), async (req, res) => {
-   const id = req.query.id;
+   let connexion;
    try {
+      connexion = await ConnexionDAO.connect();
+      const id = req.query.id;
       if (req.file) {
          articleData.photo = req.file.path;
       }
@@ -228,7 +232,7 @@ router.put('/article', upload.single('photo'), async (req, res) => {
          categorie_id: req.body.categorie_id ? req.body.categorie : null,
       };
 
-      const updatedArticle = await ArticleDAO.getArticleById(id);
+      const updatedArticle = await ArticleDAO.getArticleById(connexion, id);
       console.log(updatedArticle);
       if (articleData.nom !== null) {
          updatedArticle.setNom(articleData.nom);
@@ -249,7 +253,7 @@ router.put('/article', upload.single('photo'), async (req, res) => {
          updatedArticle.setCategorie(articleData.categorie_id);
       }
 
-      const result = await updatedArticle.updateArticle();
+      const result = await updatedArticle.updateArticle(connexion);
 
       if (result) {
          res.status(201).json({
@@ -268,20 +272,24 @@ router.put('/article', upload.single('photo'), async (req, res) => {
       res.status(500).json({
          message: "Une erreur est survenue lors de l'ajout de l'article",
       });
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
    }
 });
 
-// DELETE article
 router.delete('/article/:id', async (req, res) => {
-   let id = req.params.id;
-
+   let connexion;
    try {
+      connexion = await ConnexionDAO.connect();
+      let id = req.params.id;
       if (id.startsWith('all-')) {
          id = id.slice(4); // remove 'all-' prefix
-         const article = await ArticleDAO.getArticleById(id);
+         const article = await ArticleDAO.getArticleById(connexion, id);
 
          if (article) {
-            const result = await article.delete('all');
+            const result = await article.delete(connexion, 'all');
             console.log(result);
             res.status(200).json({
                success: result.success,
@@ -293,9 +301,9 @@ router.delete('/article/:id', async (req, res) => {
             });
          }
       } else {
-         const article = await ArticleDAO.getArticleById(id);
+         const article = await ArticleDAO.getArticleById(connexion, id);
          if (article) {
-            const result = await article.delete();
+            const result = await article.delete(connexion);
             console.log(result);
             res.status(200).json({
                success: result.success,
@@ -311,6 +319,10 @@ router.delete('/article/:id', async (req, res) => {
       res.status(500).json({
          message: "Une erreur est survenue lors de la suppression de l'article",
       });
+   } finally {
+      if (connexion) {
+         ConnexionDAO.disconnect(connexion);
+      }
    }
 });
 

@@ -11,19 +11,17 @@ class Article {
   }
 
   static async getAllArticles() {
-    console.log({ serveur: 'getAllArticles' })
     try {
       const { data } = await axios.get(
         'http://localhost:3000/m2l/boutique/article'
       )
-      return data
+      return data[0]
     } catch (error) {
       console.error(error)
     }
   }
 
   static async getArticleById(id_article) {
-    console.log({ serveur: 'getArticleById' })
     try {
       const { data } = await axios.get(
         `http://localhost:3000/m2l/boutique/article?idart=${id_article}`
@@ -35,13 +33,10 @@ class Article {
   }
 
   static async getArticlesByCategoryId(categoryId) {
-    const category = String(categoryId)
-    console.log({ serveur: 'getArticlesByCategoryId' })
     try {
       const { data } = await axios.get(
         `http://localhost:3000/m2l/boutique/article?idcat=${categoryId}`
       )
-      console.log(data)
       return data
     } catch (error) {
       console.error(error)
@@ -53,7 +48,6 @@ class Article {
   static async updateArticle(updatedArticle) {}
 
   static async deleteArticleById(articleId) {
-    console.log({ serveur: 'deleteArticleById' })
     try {
       const { data } = await axios.delete(
         `http://localhost:3000/m2l/boutique/article/${articleId}`

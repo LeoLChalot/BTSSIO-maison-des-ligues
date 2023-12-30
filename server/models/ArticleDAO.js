@@ -13,59 +13,51 @@ class ArticleDAO {
       this.categorie_id = categorie_id;
    }
 
-   static async getAllArticles() {
+   static async getAllArticles(connexion) {
       try {
-         const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles ORDER BY nom';
-         const result = await connexion.promise().query(query);
-         return result[0];
+         const data = await connexion.query(query);
+         return data;
       } catch (error) {
          console.error('Error fetching articles:', error);
          throw error;
-      } finally {
-         ConnexionDAO.disconnect();
       }
    }
 
-   static async getArticleById(id_article) {
+   static async getArticleById(connexion, id_article) {
       try {
-         const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles WHERE id_article = ?';
-         const data = await connexion.promise().query(query, [id_article]);
-         const article = new ArticleDAO(
+         const data = await connexion.query(query, [id_article]);
+         const article = data[0][0];
+
+         const newArticle = new ArticleDAO(
             id_article,
-            data[0][0].nom,
-            data[0][0].photo,
-            data[0][0].description,
-            data[0][0].prix,
-            data[0][0].quantite,
-            data[0][0].categorie_id
+            article.nom,
+            article.photo,
+            article.description,
+            article.prix,
+            article.quantite,
+            article.categorie_id
          );
-         return article;
+         return newArticle;
       } catch (error) {
          console.error('Error fetching articles:', error);
          throw error;
-      } finally {
-         ConnexionDAO.disconnect();
       }
    }
 
-   static async getArticlesByCategoryId(categoryId) {
+   static async getArticlesByCategoryId(connexion, categoryId) {
       try {
-         const connexion = ConnexionDAO.connect();
          const query = 'SELECT * FROM articles WHERE categorie_id = ?';
-         const data = await connexion.promise().query(query, [categoryId]);
+         const data = await connexion.query(query, [categoryId]);
          return data[0];
       } catch (error) {
          console.error('Error fetching articles by category id:', error);
          throw error;
-      } finally {
-         ConnexionDAO.disconnect();
       }
    }
 
-   async addArticle() {
-      const connexion = ConnexionDAO.connect();
+   async addArticle(connexion) {
       try {
          const values = [
             this.id_article,
@@ -79,18 +71,15 @@ class ArticleDAO {
 
          const query =
             'INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?, ?)';
-         const result = await connexion.promise().query(query, values);
+         const result = await connexion.query(query, values);
          return result;
       } catch (error) {
          console.error('Error adding article:', error);
          throw error;
-      } finally {
-         ConnexionDAO.disconnect();
       }
    }
 
-   async updateArticle() {
-      const connexion = ConnexionDAO.connect();
+   async updateArticle(connexion) {
       try {
          const values = [
             this.nom,
@@ -103,31 +92,26 @@ class ArticleDAO {
          ];
          const query =
             'UPDATE articles SET nom = ?, photo = ?, description = ?, prix = ?, quantite = ?, categorie_id = ? WHERE id_article = ?';
-         const result = await connexion.promise().query(query, values);
+         const result = await connexion.query(query, values);
          return result;
       } catch (error) {
          console.error('Error updating article:', error);
          throw error;
-      } finally {
-         ConnexionDAO.disconnect();
       }
    }
 
-   async delete(option) {
-      const connexion = ConnexionDAO.connect();
+   async delete(connexion, option) {
       try {
          if (option === 'all') {
             const query = 'DELETE FROM articles WHERE id_article = ?';
             const values = [this.id_article];
-            await connexion.promise().query(query, values);
+            await connexion.query(query, values);
             return { success: true, message: 'Tous les articles suprimés.' };
          }
-
          const selectQuery =
             'SELECT quantite FROM articles WHERE id_article = ?';
          const selectValues = [this.id_article];
          const [rows] = await connexion
-            .promise()
             .query(selectQuery, selectValues);
          const quantity = rows[0]?.quantite;
 
@@ -135,7 +119,7 @@ class ArticleDAO {
             const updateQuery =
                'UPDATE articles SET quantite = quantite - 1 WHERE id_article = ?';
             const updateValues = [this.id_article];
-            await connexion.promise().query(updateQuery, updateValues);
+            await connexion.query(updateQuery, updateValues);
             return { success: true, message: 'Un article suprimé.' };
          } else {
             return { success: false, message: 'Article en rupture.' };
@@ -143,8 +127,6 @@ class ArticleDAO {
       } catch (error) {
          console.error('Error deleting or decrementing article:', error);
          throw error;
-      } finally {
-         ConnexionDAO.disconnect();
       }
    }
 
