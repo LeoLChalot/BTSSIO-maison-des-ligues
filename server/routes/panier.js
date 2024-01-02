@@ -47,16 +47,18 @@ router.post('/add', async (req, res) => {
       const { articleId, userId } = req.body;
       if (!articleId || !userId) {
          return res.status(400).json({
-            msg: "Identifiant de l'article et de l'utilisateur requis",
+            msg: "Identifiant de l'article ou de l'utilisateur requis",
          });
       }
       const panier = await PanierDAO.getPanier(connexion, userId);
       const article = await ArticleDAO.getArticleById(connexion, articleId);
-      const result = await panier.ajouterArticle(connexion, article);
-      console.log({ "resultat de l'ajout": result });
+      const ajout = await panier.ajouterArticle(connexion, article);
+
+      console.log({ "resultat de l'ajout": ajout });
       res.status(201).json({
          success: true,
          message: 'Article ajouté au panier',
+         article: article,
       });
    } catch (error) {
       console.error('Error connecting to database:', error);

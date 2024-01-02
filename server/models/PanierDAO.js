@@ -12,8 +12,15 @@ class PanierDAO {
    }
 
    static async getPanier(connexion, id_utilisateur) {
-      const getPanier = 'SELECT * FROM panier WHERE id_utilisateur = ?';
-      const createPanier = 'INSERT INTO panier (id_panier, id_utilisateur) VALUES (?, ?)';
+      const getPanier = `
+      SELECT * 
+      FROM panier 
+      WHERE id_utilisateur = ?
+      `;
+      const createPanier = `
+      INSERT INTO panier (id_panier, id_utilisateur) 
+      VALUES (?, ?)
+      `;
       try {
          const [rows] = await connexion.query(getPanier, [id_utilisateur]);
          if (rows.length > 0) {
@@ -22,14 +29,14 @@ class PanierDAO {
                rows[0].id_utilisateur
             );
             await panier._addArticlesFromPanierProduits(connexion);
-            console.log({ 'Récupération du panier' : true});
+            console.log({ 'Récupération du panier': true });
             return panier;
          } else {
             const [rows] = await connexion.query(createPanier, [
                uuidv4(),
                id_utilisateur,
             ]);
-            console.log({ 'Panier Créé' : true});
+            console.log({ 'Panier Créé': true });
             const panier = new PanierDAO(this.id_panier, id_utilisateur);
             await panier._addArticlesFromPanierProduits(connexion);
             return panier;
@@ -41,29 +48,35 @@ class PanierDAO {
    }
 
    async ajouterArticle(connexion, article) {
-      if (article) {
-         console.log({ 'Article added to panier': article });
-         this.articles.push(article);
+      const query = `
+      INSERT INTO panier_produits (id, id_panier, id_article)
+      VALUES (?, ?, ?)
+   `;
+      try {
          const id = uuidv4();
-         const query =
-            'INSERT INTO panier_produits (id, id_panier, id_article) VALUES (?, ?, ?)';
-         try {
-            const result = await connexion.query(query, [
-               id,
-               this.id_panier,
-               article.id_article,
-            ]);
-            return result;
-         } catch (error) {
-            console.error('Error creating panier:', error);
-            throw error;
-         }
+         this.articles.push(article);
+         const result = await connexion.query(query, [
+            id,
+            this.id_panier,
+            article.id_article,
+         ]);
+         console.log({ 'Article added to panier': article });
+         return result;
+      } catch (error) {
+         console.error('Error creating panier:', error);
+         throw error;
       }
    }
 
    async confirmPanier(connexion) {
-      const queryOrder =
-         'INSERT INTO commandes (id_commande, id_utilisateur, total) VALUES (?, ?, ?)';
+      const queryOrder = `
+      INSERT INTO commandes (id_commande, id_utilisateur, total) 
+      VALUES (?, ?, ?)
+      `;
+      const queryDeletePanier = `
+      DELETE FROM panier 
+      WHERE id_panier = ?
+      `;
       try {
          const orderResult = await connexion.query(queryOrder, [
             this.id_panier,
@@ -71,7 +84,6 @@ class PanierDAO {
             this.getTotalPrix(),
          ]);
          if (orderResult) {
-            const queryDeletePanier = 'DELETE FROM panier WHERE id_panier = ?';
             const deleteResult = await connexion.query(queryDeletePanier, [
                this.id_panier,
             ]);
@@ -92,8 +104,11 @@ class PanierDAO {
    }
 
    static async deleteArticleFromPanier(connexion, id_panier, id_article) {
-      const query =
-         'DELETE FROM panier_produits WHERE id_panier = ? AND id_article = ?';
+      const query = `
+      DELETE FROM panier_produits 
+      WHERE id_panier = ? 
+      AND id_article = ?
+      `;
       try {
          const result = await connexion.query(query, [id_panier, id_article]);
          return result;
@@ -104,7 +119,11 @@ class PanierDAO {
    }
 
    async _addArticlesFromPanierProduits(connexion) {
-      const getArticles = 'SELECT * FROM panier_produits WHERE id_panier = ?';
+      const getArticles = `
+      SELECT * 
+      FROM panier_produits 
+      WHERE id_panier = ?
+      `;
       try {
          const [rows] = await connexion.query(getArticles, [this.id_panier]);
          if (rows.length > 0) {
@@ -144,7 +163,7 @@ class PanierDAO {
       for (let i = 0; i < this.articles.length; i++) {
          total += this.articles[i].prix; // calculer le prix total du panier
       }
-      total = Math.round(total * 100) / 100; // Round total to two decimal places
+      total = Math.round(total * 100) / 100; // Arrondi le résultat à deux décimales
       return total;
    }
 }
