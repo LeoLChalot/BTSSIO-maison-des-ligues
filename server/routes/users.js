@@ -10,13 +10,11 @@ const PanierDAO = require('./../models/PanierDAO');
 router.post('/inscription', async (req, res) => {
    const { prenom, nom, pseudo, email, mot_de_passe } = req.body;
 
-   const randomSalt = await bcrypt.genSalt(15);
-   const cryptedPassword = await bcrypt.hash(mot_de_passe, randomSalt);
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
       if (prenom && nom && pseudo && email && mot_de_passe) {
-         const user = new UserDAO(prenom, nom, pseudo, email, cryptedPassword);
+         const user = new UserDAO(prenom, nom, pseudo, email, mot_de_passe);
          user.addUser(connexion);
          res.status(200).json(user);
       } else {
@@ -47,7 +45,6 @@ router.post('/connexion', async (req, res) => {
 
             console.log({
                msg: `Login ${user.email} - OK`,
-               id_utilisateur: user.id_utilisateur,
                token: token.slice(0, 15) + '...',
                refreshToken: refreshToken.slice(0, 15) + '...',
                panier: panier,

@@ -21,27 +21,23 @@ const Boutique = () => {
 
   const fetchArticles = async (id_categorie) => {
     if (id_categorie === null) {
-      await Article.getAllArticles().then((listArticles) => {
-        setArticles(listArticles)
-      })
+      const result = await Article.getAllArticles()
+      setArticles(result)
     } else if (validateUUIDv4(id_categorie)) {
-      await Article.getArticlesByCategoryId(id_categorie).then(
-        (listArticles) => {
-          setArticles(listArticles)
-        }
-      )
+      const result = await Article.getArticlesByCategoryId(id_categorie)
+      setArticles(result)
     }
   }
 
   useEffect(() => {
     fetchArticles(categorie)
+    console.log(categorie)
   }, [categorie])
 
   return (
     <>
       <MenuBoutique setCategorie={setCategorie} />
       <main id="page-boutique">
-        {}
         {articles?.length ? (
           articles.map((article) => (
             <ArticleCard key={v4()} article={article} />

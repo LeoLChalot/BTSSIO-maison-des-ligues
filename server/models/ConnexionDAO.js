@@ -11,7 +11,7 @@ class ConnexionDAO {
         database: process.env.DB_NAME,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
-        connectionLimit: 10, // ajustez selon vos besoins
+        connectionLimit: 20, // ajustez selon vos besoins
       });
     }
     return this.pool;

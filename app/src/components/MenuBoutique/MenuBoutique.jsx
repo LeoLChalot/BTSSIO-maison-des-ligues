@@ -8,13 +8,14 @@ const MenuBoutique = ({ setCategorie }) => {
   const [categories, setCategories] = useState([])
 
   const fetchCategories = async () => {
-    await Categorie.getAllCategories().then((listCategories) => {
-      setCategories(listCategories)
-    })
+    const listCategories = await Categorie.getAllCategories()
+    console.log(listCategories)
+    setCategories(listCategories)
   }
 
   useEffect(() => {
     fetchCategories()
+    console.log(categories)
   }, [])
 
   return (

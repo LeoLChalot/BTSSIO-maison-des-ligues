@@ -61,7 +61,7 @@ class PanierDAO {
             article.id_article,
          ]);
          console.log({ 'Article added to panier': article });
-         return result;
+         return true;
       } catch (error) {
          console.error('Error creating panier:', error);
          throw error;

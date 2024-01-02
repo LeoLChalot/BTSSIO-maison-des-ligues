@@ -143,6 +143,7 @@ router.get('/article', async (req, res) => {
    try {
       connexion = await ConnexionDAO.connect();
       const key = Object.keys(req.query);
+      console.log(key);
       connexion = await ConnexionDAO.connect();
       if (key.length === 0) {
          const articles = await ArticleDAO.getAllArticles(connexion);

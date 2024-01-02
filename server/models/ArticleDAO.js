@@ -15,7 +15,11 @@ class ArticleDAO {
 
    static async getAllArticles(connexion) {
       try {
-         const query = 'SELECT * FROM articles ORDER BY nom';
+         const query = `
+         SELECT * 
+         FROM articles 
+         ORDER BY nom
+         `;
          const data = await connexion.query(query);
          return data;
       } catch (error) {
@@ -26,7 +30,11 @@ class ArticleDAO {
 
    static async getArticleById(connexion, id_article) {
       try {
-         const query = 'SELECT * FROM articles WHERE id_article = ?';
+         const query = `
+         SELECT * 
+         FROM articles 
+         WHERE id_article = ?
+         `;
          const data = await connexion.query(query, [id_article]);
          const article = data[0][0];
 
@@ -48,7 +56,11 @@ class ArticleDAO {
 
    static async getArticlesByCategoryId(connexion, categoryId) {
       try {
-         const query = 'SELECT * FROM articles WHERE categorie_id = ?';
+         const query = `
+         SELECT * 
+         FROM articles 
+         WHERE categorie_id = ?
+         `;
          const data = await connexion.query(query, [categoryId]);
          return data[0];
       } catch (error) {
@@ -69,8 +81,10 @@ class ArticleDAO {
             this.categorie_id,
          ];
 
-         const query =
-            'INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) VALUES(?, ?, ?, ?, ?, ?, ?)';
+         const query = `
+         INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) 
+         VALUES(?, ?, ?, ?, ?, ?, ?)
+         `;
          const result = await connexion.query(query, values);
          return result;
       } catch (error) {

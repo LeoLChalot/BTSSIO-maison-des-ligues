@@ -51,23 +51,20 @@ const FormInscription = () => {
 
   async function handleFormData(e) {
     e.preventDefault()
-
-    let id = v4()
     // prenom = FormData.get('prenom')
     setPrenom(e.target['prenom'].value)
     setNom(e.target['nom'].value)
     setPseudo(e.target['pseudo'].value)
     setEmail(e.target['email'].value)
     setPasswordCheck(e.target['password-check'].value)
-    let pass = await bcrypt.hash(passwordCheck, 10)
+    let passwordHash = await bcrypt.hash(passwordCheck, 10)
 
     const user = {
-      id_utilisateur: id,
       prenom: prenom,
       nom: nom,
       pseudo: pseudo,
       email: email,
-      passwordHash: pass,
+      passwordHash: passwordHash,
     }
     console.table(user)
 
@@ -75,12 +72,11 @@ const FormInscription = () => {
       const inscription = await axios.post(
         `http://localhost:3000/m2l/user/inscription`,
         {
-          id_utilisateur: id,
-          prenom: prenom,
-          nom: nom,
-          pseudo: pseudo,
-          email: email,
-          mot_de_passe: pass,
+          prenom: user.prenom,
+          nom: user.nom,
+          pseudo: user.pseudo,
+          email: user.email,
+          mot_de_passe: user.passwordHash,
         }
       )
 

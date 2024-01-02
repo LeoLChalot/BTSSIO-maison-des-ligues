@@ -6,32 +6,31 @@ const ConnexionDAO = require('./ConnexionDAO');
 
 class UserDAO {
    constructor(
-      id_utilisateur = uuidv4(),
-      firstName,
-      lastName,
+      prenom,
+      nom,
       pseudo,
       email,
-      password
+      cryptedPassword
    ) {
       this.id_utilisateur = uuidv4();
-      this.prenom = firstName;
-      this.nom = lastName;
+      this.prenom = prenom;
+      this.nom = nom;
       this.pseudo = pseudo;
       this.email = email;
-      this.mot_de_passe = password;
+      this.mot_de_passe = cryptedPassword;
    }
 
-   static async addUser(connexion) {
+   async addUser(connexion) {
       const query =
          'INSERT INTO utilisateurs (id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)';
       try {
          const values = [
             this.id_utilisateur,
-            this.firstName,
-            this.lastName,
+            this.prenom,
+            this.nom,
             this.pseudo,
             this.email,
-            this.password,
+            this.mot_de_passe,
          ];
 
          const result = await connexion.query(query, values);

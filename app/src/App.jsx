@@ -8,7 +8,7 @@ import Connexion from './pages/Connexion'
 import Inscription from './pages/Inscription'
 import Profil from './pages/Profil'
 import Dashboard from './pages/admin/Dashboard'
-import ErreurNonAdmin from './pages/ErreurNonAdmin'
+import ErreurNonAdmin from './pages/Erreurs/ErreurNonAdmin'
 
 import Navbar from './components/Navbar/Navbar'
 import './App.css'

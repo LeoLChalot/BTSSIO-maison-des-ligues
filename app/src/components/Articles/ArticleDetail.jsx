@@ -10,15 +10,16 @@ import './ArticleDetail.css'
 const ArticleDetail = () => {
   const { id } = useParams()
   const [article, setArticle] = useState({})
-  const [categorie, setCategorie] = useState('')
   const navigate = useNavigate()
   const serverBaseUrl = 'http://localhost:3000'
 
   const fetchArticle = async (id) => {
+    console.log({'fetchArticle': id})
     try {
       const { data } = await axios.get(
         `${serverBaseUrl}/m2l/boutique/article?idart=${id}`
       )
+      console.log({"data" : data})
       const photoPath = data.photo
       const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
       const categorie = await Categorie.getCategoryById(data.categorie_id)
@@ -47,6 +48,7 @@ const ArticleDetail = () => {
           userId: localStorage.getItem('id_utilisateur'),
         })
         alert('Article ajouté au panier')
+        navigate('/boutique')
       } catch (error) {
         console.error('Error adding article to cart:', error)
       }
@@ -59,7 +61,9 @@ const ArticleDetail = () => {
   useEffect(() => {
     // Utilisez la catégorie directement de l'objet article ici
     fetchArticle(id)
-  }, [id])
+    console.log(article)
+    console.log(id)
+  }, [])
 
   return (
     <div className="article-detail">

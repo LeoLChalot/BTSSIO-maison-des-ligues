@@ -10,7 +10,20 @@ const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
 const routesPanier = require('./routes/panier');
 
+const whiteList = ['http://localhost:3000', 'http://localhost:5173'];
+const corsOptions = {
+   origin: function (origin, callback) {
+      if (whiteList.indexOf(origin) !== -1 || !origin) {
+         callback(null, true);
+      } else {
+         callback(new Error('Not allowed by CORS'));
+      }
+   },
+   optionsSuccessStatus: 200,
+}
+
 app.use(express.json());
+// app.use(cors(corsOptions));
 app.use(cors());
 
 // ? Router inscription / connexion

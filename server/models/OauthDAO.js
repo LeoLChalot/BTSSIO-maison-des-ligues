@@ -4,7 +4,7 @@ const { json } = require('express');
 class OauthDAO {
    static generateAccessToken(user) {
       const payload = {
-         id: user.id_utilisateur,
+         user_email: user.mail,
          status: user.is_admin ? 'admin' : 'user',
       };
       return jwt.sign(payload, 'RANDOM_TOKEN_SECRET', { expiresIn: '1h' });

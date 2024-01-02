@@ -5,7 +5,7 @@ import axios from 'axios'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import FormArticle from '../../components/FormArticle/FormArticle'
 import AsideMenu from '../../components/AsideMenu/AsideMenu'
-import ErreurNonAdmin from '../ErreurNonAdmin'
+import ErreurNonAdmin from '../Erreurs/ErreurNonAdmin'
 import ArticlesList from './ArticlesList'
 
 const Dashboard = () => {
@@ -31,10 +31,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (ls.getItem('oauth_token')) {
       authCheck(ls.getItem('oauth_token'))
-    }else{
+    } else {
       navigate('/unauthorized')
     }
-    
+
   }, [ls.getItem('isAuth')])
 
   return (
