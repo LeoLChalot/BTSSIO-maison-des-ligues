@@ -1,3 +1,109 @@
+# API - M2L
+
+  
+
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Web Client](#web-client)
+3. [Application Protocol Interface](#api)
+4. [Database](#database)
+5.  [Abstract Protocol Flow](#abstract-protocol-flow)
+
+
+
+## <a  id="project-overview"></a>1 Project Overview
+
+For this project, we had to develop a web application made up of three complementary parts: 
+- A Web interface
+- An API
+- A database
+
+## <a  id="web-client"></a>2 Web Client
+
+## <a  id="api"></a>3 Application Protocol Interface
+
+## <a  id="database"></a>4 Database
+
+```mermaid
+classDiagram
+      class Articles{ 
+	      +String nom
+	      +String photo
+	      +String description
+	      +Float prix
+	      +Int quantite
+	  }
+      class Categories{ 
+	      +String nom 
+	  }
+      class Utilisateurs{ 
+	      +String prenom
+	      +String nom
+	      +String pseudo
+	      +String email
+	      +String mot_de_passe 
+	      +String photo_de_profil
+	      +Bool is_admin
+	      +Date register_date
+	  }
+      class Commandes{ 
+	      +Date date
+	      +Float total 
+	  }
+      class Details_Commandes{ 
+	      +Int quantite 
+	  }
+      class Paniers{ 
+	      +Float prix
+	      +Date date
+	      +String status
+	  }
+      class Paniers_Produits{ }
+      class Oauth{ 
+	      +String refresh_token
+	  }
+      
+      Articles "0..*" -- "0..1" Paniers
+      Categories "1" -- "0..*" Articles
+      
+      Paniers "1" -- "*" Paniers_Produits
+      
+      
+      Utilisateurs "1" -- "1" Oauth
+      Utilisateurs "1" -- "1" Paniers
+      Utilisateurs "1" -- "0..*" Commandes
+      
+      Commandes "1" -- "1" Details_Commandes
+      Commandes "1" -- "1" Paniers
+      
+```
+
+
+## <a  id="abstract-protocol-flow"></a>5 Abstract Protocol Flow
+```mermaid
+sequenceDiagram
+
+participant User
+participant Client
+participant API
+participant Database
+
+User->>Client: Log in
+Client->>API: Sending Credentials
+API->>Database: Credentials verification
+alt Valid Credentials
+Database-->API: << User informations + access_token >>
+API->>Client: << User informations + access_token >>
+else Invalid Credentials
+Database-->API: --
+API-->Client: << Error Login >>
+end
+
+```
+> Written with [StackEdit](https://stackedit.io/).
+
+
 # Réalisation de l'atelier professionnel (AP3)
 
 ## Solution Légère - Association "Maison des Ligues de Lorraine (M2L)
