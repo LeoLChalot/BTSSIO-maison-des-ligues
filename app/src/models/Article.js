@@ -1,6 +1,6 @@
 import axios from 'axios'
 class Article {
-  constructor(id, nom, description, photo, prix, quantite, id_category) {
+  constructor(id = uuidv4(), nom, description, photo, prix, quantite, id_category) {
     this.id = id
     this.nom = nom
     this.description = description
