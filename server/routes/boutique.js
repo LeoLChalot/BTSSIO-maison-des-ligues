@@ -138,6 +138,7 @@ router.delete('/categorie', async (req, res) => {
    }
 });
 
+
 router.get('/article', async (req, res) => {
    let connexion;
    try {

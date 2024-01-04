@@ -14,7 +14,13 @@ router.post('/inscription', async (req, res) => {
    try {
       connexion = await ConnexionDAO.connect();
       if (prenom && nom && pseudo && email && mot_de_passe) {
-         const user = new UserDAO(prenom, nom, pseudo, email, mot_de_passe);
+         const user = new UserDAO(
+            (prenom = prenom),
+            (nom = nom),
+            (pseudo = pseudo),
+            (email = email),
+            (mot_de_passe = mot_de_passe)
+         );
          user.addUser(connexion);
          res.status(200).json(user);
       } else {
@@ -40,8 +46,14 @@ router.post('/connexion', async (req, res) => {
          if (user) {
             // Générer le token d'accès
             const token = OauthDAO.generateAccessToken(user);
-            const refreshToken = await OauthDAO.generateRefreshToken(connexion, user);
-            const panier = await PanierDAO.getPanierByUser(connexion, user.id_utilisateur);
+            const refreshToken = await OauthDAO.generateRefreshToken(
+               connexion,
+               user
+            );
+            const panier = await PanierDAO.getPanierByUser(
+               connexion,
+               user.id_utilisateur
+            );
 
             console.log({
                msg: `Login ${user.email} - OK`,

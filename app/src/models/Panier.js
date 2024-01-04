@@ -21,7 +21,7 @@ class Panier {
         },
       }
     )
-    console.log(data.panier)
+    console.log(data)
     return data
   }
 

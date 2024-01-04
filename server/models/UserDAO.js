@@ -31,6 +31,7 @@ class UserDAO {
       const query =
          'INSERT INTO utilisateurs (id_utilisateur, prenom, nom, pseudo, email, mot_de_passe) VALUES(?, ?, ?, ?, ?, ?)';
       try {
+         console.log(this.id_utilisateur);
          const values = [
             this.id_utilisateur,
             this.prenom,

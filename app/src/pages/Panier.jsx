@@ -10,9 +10,10 @@ const PagePanier = () => {
 
   const getPanier = async (pseudo) => {
     try {
-      console.log('getPanier')
+      // console.log('getPanier')
       const oauth = ls.getItem('oauth_token')
-      const {data}  = await Panier.getPanier(oauth, pseudo)
+      console.log(oauth)
+      const data = await Panier.getPanier(oauth, pseudo)
       console.log(data)
 
       if (data && data.panier) {

@@ -47,6 +47,7 @@ class ArticleDAO {
             article.quantite,
             article.categorie_id
          );
+         console.log(newArticle);
          return newArticle;
       } catch (error) {
          console.error('Error fetching articles:', error);
