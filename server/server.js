@@ -3,8 +3,12 @@ const cors = require('cors');
 const path = require('path');
 const app = express();
 const PORT = 3000;
-// Définir le dossier images comme dossier statique
+
+const auth = require('./middleware/is-auth');
+const admin = require('./middleware/is-admin');
+
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 const routesBoutique = require('./routes/boutique');
 const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
@@ -21,11 +25,10 @@ const corsOptions = {
       }
    },
    optionsSuccessStatus: 200,
-}
+};
 
 app.use(express.json());
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
 
 // ? Router inscription / connexion
 app.use('/m2l/user', routesUsers);
@@ -37,7 +40,7 @@ app.use('/m2l/boutique', routesBoutique);
 app.use('/m2l/admin', routesAdmin);
 
 // ? Router Panier
-app.use('/m2l/panier', routesPanier);
+app.use('/m2l/panier', auth, routesPanier);
 
 // ? Router Tests
 app.use('/m2l/tests', routesTests);

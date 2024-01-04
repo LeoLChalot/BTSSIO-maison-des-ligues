@@ -9,12 +9,19 @@ class Panier {
     this.nombreArticles = this.articles.length
   }
 
-  static async getPanier(pseudo) {
+  static async getPanier(oauth, pseudo) {
+    console.log('getPanier')
     // Implement the logic to create a new cart
-    const { data } = await axios.get(
-      `http://localhost:3000/m2l/panier/${pseudo}`
+    const data = await axios.get(
+      `http://localhost:3000/m2l/panier/${pseudo}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${oauth}`,
+        },
+      }
     )
-    // console.log(data)
+    console.log(data.panier)
     return data
   }
 

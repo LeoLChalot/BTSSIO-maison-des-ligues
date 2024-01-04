@@ -81,6 +81,8 @@ class ArticleDAO {
             this.categorie_id,
          ];
 
+         console.log(values);
+
          const query = `
          INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) 
          VALUES(?, ?, ?, ?, ?, ?, ?)

@@ -29,13 +29,11 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    if (ls.getItem('oauth_token')) {
-      authCheck(ls.getItem('oauth_token'))
-    } else {
+    console.log(ls.getItem('isAdmin'))
+    if (ls.getItem('isAdmin') != 'admin') {
       navigate('/unauthorized')
     }
-
-  }, [ls.getItem('isAuth')])
+  }, [ls.getItem('isAdmin')])
 
   return (
     <>

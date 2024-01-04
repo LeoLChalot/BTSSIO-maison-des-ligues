@@ -6,7 +6,7 @@ const sendError = (res, message) => {
 
 module.exports = (req, res, next) => {
    const authorizationHeader = req.header('Authorization');
-   
+
    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
       return sendError(res, 'Invalid authorization header');
    }
@@ -15,11 +15,11 @@ module.exports = (req, res, next) => {
    if (!token) {
       return sendError(res, 'Authorization token not found');
    }
-
    try {
       const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
       req.user = decoded;
-      if (req.user && req.user.status === 'admin') {
+      if (req.user) {
+         console.log(req.user);
          next();
       } else {
          return sendError(res, 'Access denied. User is not an admin.');

@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../database/connexion');
-const auth = require('../middleware/auth');
+const auth = require('../middleware/is-auth');
 const jwt = require('jsonwebtoken');
 
 const ConnexionDAO = require('../models/ConnexionDAO');
 const UserDAO = require('./../models/UserDAO');
 
-router.use(auth);
+// router.use(auth);
 
 router.get('/', async (req, res) => {
    try {

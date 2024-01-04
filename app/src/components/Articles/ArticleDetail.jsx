@@ -13,41 +13,63 @@ const ArticleDetail = () => {
   const [categorie, setCategorie] = useState({})
   const navigate = useNavigate()
   const serverBaseUrl = 'http://localhost:3000'
+  const ls = localStorage
 
-const fetchArticle = async (id) => {
-  try {
-    const { data } = await axios.get(`${serverBaseUrl}/m2l/boutique/article?idart=${id}`);
-    const photoPath = data.photo;
-    const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`;
-    const selectedCategorie = await Categorie.getCategoryById(data.categorie_id);
-    setCategorie(selectedCategorie);
-    const selectedArticle = new Article(data.id_article, data.nom, data.description, photoUrl, data.prix, data.quantite, data.categorie_id);
-    setArticle(selectedArticle);
-  } catch (error) {
-    console.error('Error fetching article:', error);
+  const fetchArticle = async (id) => {
+    try {
+      const { data } = await axios.get(
+        `${serverBaseUrl}/m2l/boutique/article?idart=${id}`
+      )
+      const photoPath = data.photo
+      const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
+      const selectedCategorie = await Categorie.getCategoryById(
+        data.categorie_id
+      )
+      setCategorie(selectedCategorie)
+      const selectedArticle = new Article(
+        data.id_article,
+        data.nom,
+        data.description,
+        photoUrl,
+        data.prix,
+        data.quantite,
+        data.categorie_id
+      )
+      setArticle(selectedArticle)
+    } catch (error) {
+      console.error('Error fetching article:', error)
+    }
   }
-};
 
-const ajouterAuPanier = async (id_article) => {
-  // Check if the user is logged in
-  if (!localStorage.getItem('oauth_token')) {
-    alert('Veuillez vous connecter pour ajouter un article au panier');
-    navigate('/connexion');
-    return;
-  }
-  try {
-    // Make an API call to add the article to the cart
-    await axios.post('http://localhost:3000/m2l/panier/add', {
-      articleId: id_article,
-      userId: localStorage.getItem('id_utilisateur'),
-    });
+  const ajouterAuPanier = async (id_article) => {
+    // Check if the user is logged in
+    if (!localStorage.getItem('oauth_token')) {
+      alert('Veuillez vous connecter pour ajouter un article au panier')
+      navigate('/connexion')
+      return
+    }
+    try {
+      const oauth_token = ls.getItem('oauth_token')
+      const userId = localStorage.getItem('id_utilisateur')
+      console.log(oauth_token)
+      // Make an API call to add the article to the cart
+      const response = await axios.post('http://localhost:3000/m2l/panier/add', {
+        articleId: id_article,
+        userId: userId,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${oauth_token}`,
+        },
+      })
 
-    alert('Article ajouté au panier');
-    navigate('/boutique');
-  } catch (error) {
-    console.error('Error adding article to cart:', error);
+
+      alert('Article ajouté au panier')
+      navigate('/boutique')
+    } catch (error) {
+      console.error('Error adding article to cart:', error)
+    }
   }
-}
 
   useEffect(() => {
     fetchArticle(id)
@@ -67,7 +89,9 @@ const ajouterAuPanier = async (id_article) => {
           {article.quantite === 0 ? 'Indisponible' : article.quantite}
         </p>
         <p>Catégorie: {categorie.nom}</p>
-        <button onClick={() => ajouterAuPanier(article.id)}>Ajouter au panier</button>
+        <button onClick={() => ajouterAuPanier(article.id)}>
+          Ajouter au panier
+        </button>
       </div>
     </div>
   )

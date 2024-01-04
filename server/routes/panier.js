@@ -9,8 +9,6 @@ const PanierDAO = require('../models/PanierDAO');
 const UserDAO = require('../models/UserDAO');
 const CommandeDAO = require('../models/CommandeDAO');
 
-const auth = require('../middleware/auth');
-
 router.get('/:pseudo', async (req, res) => {
    let connexion;
    // res.send('Ceci est le panier');
@@ -24,7 +22,10 @@ router.get('/:pseudo', async (req, res) => {
          if (user) {
             const id_utilisateur = user.getId();
             // res.send('User Id : ' + id_utilisateur);
-            const panier = await PanierDAO.getPanierByUser(connexion, id_utilisateur);
+            const panier = await PanierDAO.getPanierByUser(
+               connexion,
+               id_utilisateur
+            );
             // res.send('Panier : ' + panier);
             if (panier) {
                res.status(200).json({
@@ -37,7 +38,7 @@ router.get('/:pseudo', async (req, res) => {
                });
             }
          }
-      }else {
+      } else {
          res.status(400).json({ msg: 'Identifiant utilisateur requis' });
       }
    } catch (error) {
@@ -51,8 +52,8 @@ router.get('/:pseudo', async (req, res) => {
 });
 
 router.get('/detail', async (req, res) => {
-      res.send("Détail du panier")
-})
+   res.send('Détail du panier');
+});
 
 router.post('/add', async (req, res) => {
    let connexion;

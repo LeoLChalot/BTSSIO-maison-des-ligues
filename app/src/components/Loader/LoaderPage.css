@@ -1,4 +1,4 @@
-.loader {
+.loaderPage {
   width: 48px;
   height: 48px;
   display: inline-block;
@@ -7,8 +7,8 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
-.loader::after,
-.loader::before {
+.loaderPage::after,
+.loaderPage::before {
   content: '';
   width: 48px;
   height: 48px;
@@ -19,7 +19,7 @@
   box-sizing: border-box;
   animation: rotation 2s ease-in-out infinite;
 }
-.loader::after {
+.loaderPage::after {
   border-color: #ff3d00;
   animation-delay: 1s;
 }

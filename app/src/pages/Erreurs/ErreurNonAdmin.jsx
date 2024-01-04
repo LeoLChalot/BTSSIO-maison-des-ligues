@@ -5,7 +5,7 @@ const ErreurNonAdmin = () => {
     <div id="error">
       <div className="message">
         <h1>Accès refusé</h1>
-        <p>
+        <p style={{ textAlign: 'center' }}>
           Vous n'avez pas les autorisations nécessaires pour accéder à cette
           page.
         </p>
