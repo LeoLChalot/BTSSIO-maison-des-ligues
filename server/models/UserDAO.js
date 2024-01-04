@@ -6,18 +6,25 @@ const ConnexionDAO = require('./ConnexionDAO');
 
 class UserDAO {
    constructor(
+      id = uuidv4(),
       prenom,
       nom,
       pseudo,
       email,
-      cryptedPassword
+      mot_de_passe,
+      photo = null,
+      is_admin = false,
+      register_date = null
    ) {
-      this.id_utilisateur = uuidv4();
+      this.id_utilisateur = id;
       this.prenom = prenom;
       this.nom = nom;
       this.pseudo = pseudo;
       this.email = email;
-      this.mot_de_passe = cryptedPassword;
+      this.mot_de_passe = mot_de_passe;
+      this.photo = photo;
+      this.is_admin = is_admin;
+      this.register_date = register_date;
    }
 
    async addUser(connexion) {
@@ -64,8 +71,7 @@ class UserDAO {
    }
 
    static async getAllUsers(connexion) {
-      const query =
-         'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs';
+      const query = 'SELECT * FROM utilisateurs';
       try {
          const [rows] = await connexion.query(query);
          return rows;
@@ -76,8 +82,7 @@ class UserDAO {
    }
 
    static async getUserByEmail(connexion, email) {
-      const query =
-         'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE email = ?';
+      const query = 'SELECT * FROM utilisateurs WHERE email = ?';
       try {
          const [rows] = await connexion.query(query, [email]);
          return rows;
@@ -88,11 +93,22 @@ class UserDAO {
    }
 
    static async getUserByPseudo(connexion, pseudo) {
-      const query =
-         'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE pseudo = ?';
+      const query = 'SELECT * FROM utilisateurs WHERE pseudo = ?';
       try {
          const [rows] = await connexion.query(query, [pseudo]);
-         return rows;
+         const user = new UserDAO(
+            rows[0].id_utilisateur,
+            rows[0].prenom,
+            rows[0].nom,
+            rows[0].pseudo,
+            rows[0].email,
+            rows[0].mot_de_passe,
+            rows[0].photo,
+            rows[0].is_admin,
+            rows[0].register_date
+         );
+         console.log(user);
+         return user;
       } catch (error) {
          console.error('Error fetching user by pseudo:', error);
          throw error;
@@ -100,8 +116,7 @@ class UserDAO {
    }
 
    static async getUserById(connexion, id) {
-      const query =
-         'SELECT prenom, nom, pseudo, email, register_date FROM utilisateurs WHERE id = ?';
+      const query = 'SELECT * FROM utilisateurs WHERE id = ?';
       try {
          const [rows] = await connexion.query(query, [id]);
          return rows;
@@ -122,12 +137,16 @@ class UserDAO {
       }
    }
 
-   getFirstName() {
-      return this.firstName;
+   getId() {
+      return this.id_utilisateur;
    }
 
-   getLastName() {
-      return this.lastName;
+   getPrenom() {
+      return this.prenom;
+   }
+
+   getNom() {
+      return this.nom;
    }
 
    getPseudo() {
@@ -138,17 +157,17 @@ class UserDAO {
       return this.email;
    }
 
-   getPassword() {
-      return this.password;
+   getMotDePasse() {
+      return this.mot_de_passe;
    }
 
    // Setter methods
-   setFirstName(firstName) {
-      this.firstName = firstName;
+   setPrenom(prenom) {
+      this.prenom = prenom;
    }
 
-   setLastName(lastName) {
-      this.lastName = lastName;
+   setNom(nom) {
+      this.nom = nom;
    }
 
    setPseudo(pseudo) {
@@ -159,8 +178,8 @@ class UserDAO {
       this.email = email;
    }
 
-   setPassword(password) {
-      this.password = bcrypt.hashSync(password, 10);
+   setMotDePasse(mot_de_passe) {
+      this.mot_de_passe = bcrypt.hashSync(mot_de_passe, 10);
    }
 }
 

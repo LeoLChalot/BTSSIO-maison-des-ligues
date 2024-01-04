@@ -41,13 +41,14 @@ router.post('/connexion', async (req, res) => {
             // Générer le token d'accès
             const token = OauthDAO.generateAccessToken(user);
             const refreshToken = await OauthDAO.generateRefreshToken(connexion, user);
-            const panier = await PanierDAO.getPanier(connexion, user.id_utilisateur);
+            const panier = await PanierDAO.getPanierByUser(connexion, user.id_utilisateur);
 
             console.log({
                msg: `Login ${user.email} - OK`,
                token: token.slice(0, 15) + '...',
                refreshToken: refreshToken.slice(0, 15) + '...',
                panier: panier,
+               user: user,
             });
 
             res.status(200).json({

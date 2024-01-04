@@ -1,23 +1,21 @@
+import axios from 'axios'
+
 class Panier {
-  constructor() {
-    this.id_panier = null
+  constructor(id_panier = null, pseudo) {
+    this.id_panier = id_panier
+    this.pseudo = pseudo
     this.articles = [] // Array to store the items in the cart
-    this.totalPrix = 0
+    this.prix = 0
     this.nombreArticles = this.articles.length
   }
 
-  static getPanier(id_utilisateur) {
+  static async getPanier(pseudo) {
     // Implement the logic to create a new cart
-    fetch(`http://localhost:3000/panier/${id_utilisateur}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // now you have access to the panier data
-        this.id_panier = data.id_panier
-        this.articles = data.articles
-        this.totalPrix = data.totalPrix
-        this.nombreArticles = this.articles.length
-      })
-      .catch((error) => console.error('Error:', error))
+    const { data } = await axios.get(
+      `http://localhost:3000/m2l/panier/${pseudo}`
+    )
+    console.log(data)
+    return data
   }
 
   addArticleToPanier(id_panier, id_article) {
@@ -42,6 +40,29 @@ class Panier {
 
   getTotalPrix() {
     // Implement the logic to get the total price of the cart
+  }
+
+  getId() {
+    return this.id_panier
+  }
+  setId(id) {
+    this.id_panier = id
+  }
+  setPseudo(pseudo) {
+    this.pseudo = pseudo
+  }
+
+  getPseudo() {
+    return this.pseudo
+  }
+  setArticles(articles) {
+    this.articles = articles
+  }
+  getArticles() {
+    return this.articles
+  }
+  setPrix(prix) {
+    this.prix = prix
   }
 }
 

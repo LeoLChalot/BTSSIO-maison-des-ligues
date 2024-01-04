@@ -11,7 +11,7 @@ class PanierDAO {
       this.nombreArticles = 0;
    }
 
-   static async getPanier(connexion, id_utilisateur) {
+   static async getPanierByUser(connexion, id_utilisateur) {
       const getPanier = `
       SELECT * 
       FROM panier 
@@ -29,7 +29,6 @@ class PanierDAO {
                rows[0].id_utilisateur
             );
             await panier._addArticlesFromPanierProduits(connexion);
-            console.log({ 'Récupération du panier': true });
             return panier;
          } else {
             const [rows] = await connexion.query(createPanier, [
@@ -43,6 +42,46 @@ class PanierDAO {
          }
       } catch (error) {
          console.error('Error creating panier:', error);
+         throw error;
+      }
+   }
+
+   static async getPanierById(connexion, id_panier) {
+      const getPanier = `
+      SELECT * 
+      FROM panier 
+      WHERE id_panier = ?
+      `;
+      try {
+         const [rows] = await connexion.query(getPanier, [id_panier]);
+         if (rows.length > 0) {
+            const panier = new PanierDAO(
+               rows[0].id_panier,
+               rows[0].id_utilisateur
+            );
+            await panier._addArticlesFromPanierProduits(connexion);
+            console.log(panier)
+            return panier;
+         }
+      } catch (error) {
+         console.error('Error creating panier:', error);
+         throw error;
+      }
+   }
+
+   async getArticles(connexion) {
+      const fetchArticles = `
+      SELECT *
+      FROM panier_produits
+      WHERE id_panier = ?
+      `;
+      try {
+         const [rows] = await connexion.query(fetchArticles, [
+            this.id_panier,
+         ]);
+         return rows;
+      } catch (error) {
+         console.error('Error fetching articles:', error);
          throw error;
       }
    }

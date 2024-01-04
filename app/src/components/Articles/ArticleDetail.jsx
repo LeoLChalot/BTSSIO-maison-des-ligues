@@ -10,7 +10,7 @@ import './ArticleDetail.css'
 const ArticleDetail = () => {
   const { id } = useParams()
   const [article, setArticle] = useState({})
-  const [categorie, setCategorie] = useState(null)
+  const [categorie, setCategorie] = useState({})
   const navigate = useNavigate()
   const serverBaseUrl = 'http://localhost:3000'
 
@@ -50,10 +50,7 @@ const ajouterAuPanier = async (id_article) => {
 }
 
   useEffect(() => {
-    // Utilisez la catégorie directement de l'objet article ici
     fetchArticle(id)
-    console.log({"article data" : article})
-    console.log(id)
   }, [id])
 
   return (
@@ -69,7 +66,7 @@ const ajouterAuPanier = async (id_article) => {
           Quantité disponible:{' '}
           {article.quantite === 0 ? 'Indisponible' : article.quantite}
         </p>
-        <p>Catégorie: {article.categorie}</p>
+        <p>Catégorie: {categorie.nom}</p>
         <button onClick={() => ajouterAuPanier(article.id)}>Ajouter au panier</button>
       </div>
     </div>

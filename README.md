@@ -101,7 +101,7 @@ API-->Client: << Error Login >>
 end
 
 ```
-> Written with [StackEdit](https://stackedit.io/).
+> Written with [StackEdit](https://stackedit.io/).²
 
 
 # Réalisation de l'atelier professionnel (AP3)

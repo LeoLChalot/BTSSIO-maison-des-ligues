@@ -9,6 +9,7 @@ const routesBoutique = require('./routes/boutique');
 const routesUsers = require('./routes/users');
 const routesAdmin = require('./routes/admin');
 const routesPanier = require('./routes/panier');
+const routesTests = require('./routes/tests');
 
 const whiteList = ['http://localhost:3000', 'http://localhost:5173'];
 const corsOptions = {
@@ -37,6 +38,9 @@ app.use('/m2l/admin', routesAdmin);
 
 // ? Router Panier
 app.use('/m2l/panier', routesPanier);
+
+// ? Router Tests
+app.use('/m2l/tests', routesTests);
 
 // ? Router Error 400
 app.use((req, res, next) => {

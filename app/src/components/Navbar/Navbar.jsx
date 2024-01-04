@@ -45,7 +45,7 @@ const Navbar = () => {
             <Link to={'/profil/' + ls.getItem('pseudo')} className="link">
               Profil
             </Link>
-            <Link to={'/panier'} className="link">
+            <Link to={'/panier/' + ls.getItem('pseudo')} className="link">
               Panier
             </Link>
             <Link to="#" onClick={deconnexion} className="link">

@@ -6,28 +6,38 @@ const jwt = require('jsonwebtoken');
 const ConnexionDAO = require('../models/ConnexionDAO');
 const ArticleDAO = require('../models/ArticleDAO');
 const PanierDAO = require('../models/PanierDAO');
+const UserDAO = require('../models/UserDAO');
 const CommandeDAO = require('../models/CommandeDAO');
 
 const auth = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/:pseudo', async (req, res) => {
    let connexion;
+   // res.send('Ceci est le panier');
    try {
       connexion = await ConnexionDAO.connect();
-      const id_utilisateur = req.query.id;
-      if (id_utilisateur) {
-         const panier = await PanierDAO.getPanier(connexion, id_utilisateur);
-         if (panier) {
-            res.status(200).json({
-               msg: 'Récupération réussie du panier',
-               panier,
-            });
-         } else {
-            res.status(400).json({
-               msg: 'Aucun panier trouvé pour cet utilisateur',
-            });
+      const pseudo = req.params.pseudo;
+      // res.send('Ceci est le pseudo : ' + pseudo);
+      if (pseudo) {
+         const user = await UserDAO.getUserByPseudo(connexion, pseudo);
+         // res.send('user : ' + user.getPseudo());
+         if (user) {
+            const id_utilisateur = user.getId();
+            // res.send('User Id : ' + id_utilisateur);
+            const panier = await PanierDAO.getPanierByUser(connexion, id_utilisateur);
+            // res.send('Panier : ' + panier);
+            if (panier) {
+               res.status(200).json({
+                  msg: 'Récupération du panier',
+                  panier,
+               });
+            } else {
+               res.status(400).json({
+                  msg: 'Aucun panier sélectionné pour cet utilisateur',
+               });
+            }
          }
-      } else {
+      }else {
          res.status(400).json({ msg: 'Identifiant utilisateur requis' });
       }
    } catch (error) {
@@ -35,10 +45,14 @@ router.get('/', async (req, res) => {
       res.status(500).send('Internal Server Error');
    } finally {
       if (connexion) {
-         connexion.disconnect(connexion);
+         ConnexionDAO.disconnect(connexion);
       }
    }
 });
+
+router.get('/detail', async (req, res) => {
+      res.send("Détail du panier")
+})
 
 router.post('/add', async (req, res) => {
    let connexion;
@@ -50,7 +64,7 @@ router.post('/add', async (req, res) => {
             msg: "Identifiant de l'article ou de l'utilisateur requis",
          });
       }
-      const panier = await PanierDAO.getPanier(connexion, userId);
+      const panier = await PanierDAO.getPanierByUser(connexion, userId);
       const article = await ArticleDAO.getArticleById(connexion, articleId);
       const ajout = await panier.ajouterArticle(connexion, article);
 

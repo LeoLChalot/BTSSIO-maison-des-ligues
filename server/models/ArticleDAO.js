@@ -129,6 +129,13 @@ class ArticleDAO {
             .query(selectQuery, selectValues);
          const quantity = rows[0]?.quantite;
 
+         if (quantity < 0) {
+            const updateQuery =
+               'UPDATE articles SET quantite = 0 WHERE id_article = ?';
+            const updateValues = [this.id_article];
+            await connexion.query(updateQuery, updateValues);
+         }
+
          if (quantity > 0) {
             const updateQuery =
                'UPDATE articles SET quantite = quantite - 1 WHERE id_article = ?';
