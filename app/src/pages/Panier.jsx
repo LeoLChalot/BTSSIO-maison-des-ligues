@@ -8,13 +8,10 @@ const PagePanier = () => {
 
   const getPanier = async (pseudo) => {
     console.log(pseudo)
-    await Panier.getPanier(pseudo).then((data) => {
-      console.log(data.panier.articles)
-      setPanier([...data.panier.articles])
-    })
-    // console.log(data.panier.articles);
-
-    // setPanier([...data.panier.articles]);
+    const { data } = await Panier.getPanier(pseudo)
+    console.log(data)
+    console.log(data.panier.articles)
+    setPanier([...data.panier.articles])
     console.log(panier)
   }
 
@@ -26,14 +23,10 @@ const PagePanier = () => {
   return (
     <div>
       <h1>Page Panier</h1>
-      {panier ? (
-        panier.map((article) => {
-          <div>
-            <p>{article}</p>
-          </div>
-        })
+      {panier.length > 0 ? (
+        panier.map((article) => <p>{article.nom}</p>)
       ) : (
-        <h1>Aucun article</h1>
+        <p>Vous n'avez rien dans votre panier...</p>
       )}
     </div>
   )

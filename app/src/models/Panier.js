@@ -14,7 +14,7 @@ class Panier {
     const { data } = await axios.get(
       `http://localhost:3000/m2l/panier/${pseudo}`
     )
-    console.log(data)
+    // console.log(data)
     return data
   }
 

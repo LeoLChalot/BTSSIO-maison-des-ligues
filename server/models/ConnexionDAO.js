@@ -14,6 +14,7 @@ class ConnexionDAO {
         connectionLimit: 20, // ajustez selon vos besoins
       });
     }
+    
     return this.pool;
   }
 
