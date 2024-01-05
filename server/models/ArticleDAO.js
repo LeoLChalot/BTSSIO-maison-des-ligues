@@ -1,10 +1,19 @@
-const { v4: uuidv4 } = require('uuid');
 const ConnexionDAO = require('./ConnexionDAO');
-const { json } = require('express');
 
 class ArticleDAO {
+   /**
+    * Constructor pour creer une instance de la classe.
+    *
+    * @param {uuid} id - Id de l'article (uuid)
+    * @param {string} nom - Nom de l'article
+    * @param {string} photo - Chemin d'accès à l'image (images/no-image sinon)
+    * @param {string} description - Description de l'article
+    * @param {float} prix - Prix de l'article
+    * @param {int} quantite - Quantite de l'article
+    * @param {uuid} categorie_id - Id de la catégorie (uuid)
+    */
    constructor(id, nom, photo, description, prix, quantite, categorie_id) {
-      this.id_article = id ? id : uuidv4();
+      this.id_article = id;
       this.nom = nom;
       this.photo = photo ? photo : 'images\\no-image.png';
       this.description = description;
@@ -13,13 +22,12 @@ class ArticleDAO {
       this.categorie_id = categorie_id;
    }
 
-
    /**
     * Retourner tous les articles de la base de données.
-    *
-    * @return {Array} Un tableau d'objets Article.
+    * ---
+    * @return {Array} Un tableau d'objets.
     */
-   static async getAllItems() {
+   static async get_all() {
       try {
          const query = `
          SELECT * 
@@ -39,10 +47,11 @@ class ArticleDAO {
     * ---
     * @param {string} db_column - Le nom de la colonne de la table Articles.
     * @param {any} value - La valeur à cibler dans la colonne.
-    * @return {Promise<Array>} - Une promesse sensée retourner un tableau d'objets Article.
-    * @throws {Error} - Erreur à retourner en cas de problème lors de la requête
+    * @return {Promise<Array>} - Une promesse sensée retourner un tableau
+    *                            d'objets.
+    * @throws {Error} - A retourner en cas de problème lors de la requête
     */
-   static async getItem(table, db_column, value) {
+   static async get(db_column, value) {
       try {
          const query = `
          SELECT * 
@@ -57,25 +66,27 @@ class ArticleDAO {
       }
    }
 
-   async addArticle(connexion) {
+   /**
+    * Ajouter un article dans la base de données.
+    * ---
+    * @param {Array} values - Tableau de valeurs à insérer dans la table.
+    * @return {type} Résultat de la requête.
+    */
+   static async add([values]) {
       try {
-         const values = [
-            this.id_article,
-            this.nom,
-            this.photo,
-            this.description,
-            this.prix,
-            this.quantite,
-            this.categorie_id,
-         ];
-
-         console.log(values);
-
          const query = `
-         INSERT INTO articles (id_article, nom, photo, description, prix, quantite, categorie_id) 
+         INSERT INTO articles (
+            id_article, 
+            nom, 
+            photo, 
+            description, 
+            prix, 
+            quantite, 
+            categorie_id
+            ) 
          VALUES(?, ?, ?, ?, ?, ?, ?)
          `;
-         const result = await connexion.query(query, values);
+         const result = await ConnexionDAO.query(query, values);
          return result;
       } catch (error) {
          console.error('Error adding article:', error);
@@ -83,20 +94,36 @@ class ArticleDAO {
       }
    }
 
-   async updateArticle(connexion) {
+   /**
+    * Mettre à jour un article dans la base de données.
+    * ---
+    * @param {Array} values - Un tableau de valeurs à mettre à jour.
+    *                         Les valeurs doivent être dans l'ordre suivant:
+    *                         [nom, photo, description, prix,
+    *                         quantite, categorie_id, id_article]
+    * @return {Promise} Une promesse qui représente la mise à jour de
+    *                   l'article.
+    *                   Le résultat est un objet qui contient des
+    *                   informations sur la mise à jour.
+    *                   Si la mise à jour est à jour avec succès,
+    *                   'affectedRows' sera le nombre de lignes affectées
+    *                   par la mise à jour.
+    *                   Si la mise à jour n'aboutit pas, une erreur sera levée.
+    *                   Un objet contenant le message d'erreur sera retourné.
+    */
+   static async update([values]) {
       try {
-         const values = [
-            this.nom,
-            this.photo,
-            this.description,
-            this.prix,
-            this.quantite,
-            this.categorie_id,
-            this.id_article,
-         ];
-         const query =
-            'UPDATE articles SET nom = ?, photo = ?, description = ?, prix = ?, quantite = ?, categorie_id = ? WHERE id_article = ?';
-         const result = await connexion.query(query, values);
+         const query = `
+         UPDATE articles 
+         SET nom = ?, 
+         photo = ?, 
+         description = ?, 
+         prix = ?, 
+         quantite = ?, 
+         categorie_id = ? 
+         WHERE id_article = ?
+         `;
+         const result = await ConnexionDAO.query(query, values);
          return result;
       } catch (error) {
          console.error('Error updating article:', error);
@@ -104,86 +131,26 @@ class ArticleDAO {
       }
    }
 
-   async delete(connexion, option) {
-      try {
-         if (option === 'all') {
-            const query = 'DELETE FROM articles WHERE id_article = ?';
-            const values = [this.id_article];
-            await connexion.query(query, values);
-            return { success: true, message: 'Tous les articles suprimés.' };
+   /**
+    * Supprimer un article de la base de données.
+    *
+    * @param {type} uuid - La valeur de l'identifiant unique à supprimer.
+    * @return {type} result - Le résultat de la requête.
+    */
+   static async delete(uuid) {
+      {
+         try {
+            const query = `
+         DELETE FROM articles 
+         WHERE id_article = ?
+         `;
+            const result = await ConnexionDAO.query(query, [uuid]);
+            return result;
+         } catch (error) {
+            console.error('Error deleting article:', error);
+            throw error;
          }
-         const selectQuery =
-            'SELECT quantite FROM articles WHERE id_article = ?';
-         const selectValues = [this.id_article];
-         const [rows] = await connexion.query(selectQuery, selectValues);
-         const quantity = rows[0]?.quantite;
-
-         if (quantity < 0) {
-            const updateQuery =
-               'UPDATE articles SET quantite = 0 WHERE id_article = ?';
-            const updateValues = [this.id_article];
-            await connexion.query(updateQuery, updateValues);
-         }
-
-         if (quantity > 0) {
-            const updateQuery =
-               'UPDATE articles SET quantite = quantite - 1 WHERE id_article = ?';
-            const updateValues = [this.id_article];
-            await connexion.query(updateQuery, updateValues);
-            return { success: true, message: 'Un article suprimé.' };
-         } else {
-            return { success: false, message: 'Article en rupture.' };
-         }
-      } catch (error) {
-         console.error('Error deleting or decrementing article:', error);
-         throw error;
       }
-   }
-
-   // Getter methods
-   getId() {
-      return this.id;
-   }
-
-   getNom() {
-      return this.nom;
-   }
-
-   getDescription() {
-      return this.description;
-   }
-
-   getPrice() {
-      return this.price;
-   }
-
-   // Setter methods
-   setId(id) {
-      this.id = id;
-   }
-
-   setNom(nom) {
-      this.nom = nom;
-   }
-
-   setPhoto(photo) {
-      this.photo = photo;
-   }
-
-   setDescription(description) {
-      this.description = description;
-   }
-
-   setPrix(prix) {
-      this.prix = prix;
-   }
-
-   setQuantite(quantite) {
-      this.quantite = quantite;
-   }
-
-   setCategorie(categorie_id) {
-      this.categorie_id = categorie_id;
    }
 }
 
