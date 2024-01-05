@@ -1,5 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
-
 const ConnexionDAO = require('./ConnexionDAO');
 
 class CategorieDAO {
@@ -8,14 +6,22 @@ class CategorieDAO {
       this.nom = nom;
    }
 
-   static async getAllCategories(connexion) {
-      const sql = 'SELECT * FROM categories ORDER BY nom';
+   /**
+    * Retourner tous les articles de la base de données.
+    * ---
+    * @return {Array} Un tableau d'objets.
+    */
+   static async get_all() {
       try {
-         const data = await connexion.query(sql);
-         const categories = data[0];
-         return categories;
+         const query = `
+         SELECT * 
+         FROM categories 
+         ORDER BY nom
+      `;
+         const { rows } = await ConnexionDAO.query(query);
+         return rows;
       } catch (error) {
-         console.error('Error retrieving categories:', error);
+         console.error('Error fetching articles:', error);
          throw error;
       }
    }
