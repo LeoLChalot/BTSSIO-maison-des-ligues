@@ -58,7 +58,8 @@ class ArticleDAO {
          FROM articles 
          WHERE ${db_column} = ?
          `;
-         const { rows } = await ConnexionDAO.query(query, [value]);
+         const { rows } = 
+            await ConnexionDAO.query(query, [value]);
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -86,7 +87,8 @@ class ArticleDAO {
             ) 
          VALUES(?, ?, ?, ?, ?, ?, ?)
          `;
-         const result = await ConnexionDAO.query(query, values);
+         const result = 
+            await ConnexionDAO.query(query, values);
          return result;
       } catch (error) {
          console.error('Error adding article:', error);
@@ -123,7 +125,8 @@ class ArticleDAO {
          categorie_id = ? 
          WHERE id_article = ?
          `;
-         const result = await ConnexionDAO.query(query, values);
+         const result = 
+            await ConnexionDAO.query(query, values);
          return result;
       } catch (error) {
          console.error('Error updating article:', error);
@@ -144,7 +147,8 @@ class ArticleDAO {
          DELETE FROM articles 
          WHERE id_article = ?
          `;
-            const result = await ConnexionDAO.query(query, [uuid]);
+            const result = 
+               await ConnexionDAO.query(query, [uuid]);
             return result;
          } catch (error) {
             console.error('Error deleting article:', error);
