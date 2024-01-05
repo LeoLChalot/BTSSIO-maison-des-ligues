@@ -144,20 +144,18 @@ router.get('/article', async (req, res) => {
    try {
       connexion = await ConnexionDAO.connect();
       const key = Object.keys(req.query);
-      console.log(key);
-      connexion = await ConnexionDAO.connect();
       if (key.length === 0) {
-         const articles = await ArticleDAO.getAllArticles(connexion);
+         const articles = ArticleDAO.getAllItems();
          res.status(200).json(articles);
       } else if (key.length === 1 && key[0] === 'idart') {
-         const article = await ArticleDAO.getArticleById(
-            connexion,
+         const article = await ArticleDAO.getItem(
+            "id_article",
             req.query.idart
          );
          res.status(200).json(article);
       } else if (key.length === 1 && key[0] === 'idcat') {
-         const articles = await ArticleDAO.getArticlesByCategoryId(
-            connexion,
+         const articles = await ArticleDAO.getItem(
+            "categorie_id",
             req.query.idcat
          );
          res.status(200).json(articles);

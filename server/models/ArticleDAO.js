@@ -13,59 +13,46 @@ class ArticleDAO {
       this.categorie_id = categorie_id;
    }
 
-   static async getAllArticles(connexion) {
+
+   /**
+    * Retourner tous les articles de la base de données.
+    *
+    * @return {Array} Un tableau d'objets Article.
+    */
+   static async getAllItems() {
       try {
          const query = `
          SELECT * 
          FROM articles 
          ORDER BY nom
-         `;
-         const data = await connexion.query(query);
-         return data;
+      `;
+         const { rows } = await ConnexionDAO.query(query);
+         return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
          throw error;
       }
    }
 
-   static async getArticleById(connexion, id_article) {
+   /**
+    * Rechercher un article dans la base de données.
+    * ---
+    * @param {string} db_column - Le nom de la colonne de la table Articles.
+    * @param {any} value - La valeur à cibler dans la colonne.
+    * @return {Promise<Array>} - Une promesse sensée retourner un tableau d'objets Article.
+    * @throws {Error} - Erreur à retourner en cas de problème lors de la requête
+    */
+   static async getItem(table, db_column, value) {
       try {
          const query = `
          SELECT * 
          FROM articles 
-         WHERE id_article = ?
+         WHERE ${db_column} = ?
          `;
-         const data = await connexion.query(query, [id_article]);
-         const article = data[0][0];
-
-         const newArticle = new ArticleDAO(
-            id_article,
-            article.nom,
-            article.photo,
-            article.description,
-            article.prix,
-            article.quantite,
-            article.categorie_id
-         );
-         console.log(newArticle);
-         return newArticle;
+         const { rows } = await ConnexionDAO.query(query, [value]);
+         return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
-         throw error;
-      }
-   }
-
-   static async getArticlesByCategoryId(connexion, categoryId) {
-      try {
-         const query = `
-         SELECT * 
-         FROM articles 
-         WHERE categorie_id = ?
-         `;
-         const data = await connexion.query(query, [categoryId]);
-         return data[0];
-      } catch (error) {
-         console.error('Error fetching articles by category id:', error);
          throw error;
       }
    }
@@ -128,8 +115,7 @@ class ArticleDAO {
          const selectQuery =
             'SELECT quantite FROM articles WHERE id_article = ?';
          const selectValues = [this.id_article];
-         const [rows] = await connexion
-            .query(selectQuery, selectValues);
+         const [rows] = await connexion.query(selectQuery, selectValues);
          const quantity = rows[0]?.quantite;
 
          if (quantity < 0) {
