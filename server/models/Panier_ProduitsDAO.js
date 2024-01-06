@@ -1,8 +1,12 @@
+const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+
 const ConnexionDAO = require('./ConnexionDAO');
 
-class CategorieDAO {
+class Panier_ProduitsDAO {
    constructor() {
-      this.table = 'categories';
+      this.table = 'panier_produits';
    }
 
 
@@ -61,6 +65,7 @@ class CategorieDAO {
     * @param {Array} values - Un tableau de valeurs pour le nouvel item.
     * @return {Promise} Une promesse qui contient le résultat de la requête.
     */
+
    async create(connexion, object) {
       try {
          const columns = Object.keys(object);
@@ -82,27 +87,28 @@ class CategorieDAO {
             }
          }
          console.log(query, values);
-         
+
          const result = await connexion.query(query, values);
          console.log(result);
          return result;
       } catch (error) {
-         console.error('Error adding article:', error);
+         console.error('Error adding panier_produits:', error);
          throw error;
       }
    }
 
 
+
    /**
     * Mise à jour d'une ligne dans la base de données.
-    * ---
+    *
     * @param {Object} connexion - L'objet de connexion.
-    * @param {Array} columns - Un tableau de colonnes à mettre à jour.
-    * @param {Array} values - Un tableau des valeurs à mettre à jour.
+    * @param {Object} object - L'objet contenant les colonnes à mettre à jour.
     * @return {Promise} Une promesse qui contient le résultat de la requête.
     */
-   async update(connexion, columns, values) {
+   async update(connexion, object) {
       try {
+         const columns = Object.keys(object);
          let query = `UPDATE ${this.table} SET `;
          for (let i = 0; i < columns.length; i++) {
             if (i < columns.length - 1) {
@@ -147,4 +153,4 @@ class CategorieDAO {
    }
 }
 
-module.exports = CategorieDAO;
+module.exports = Panier_ProduitsDAO;

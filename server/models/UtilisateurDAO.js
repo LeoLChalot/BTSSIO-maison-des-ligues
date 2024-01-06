@@ -9,10 +9,12 @@ class UtilisateurDAO {
       this.table = 'utilisateurs';
    }
 
+
    /**
-    * Retourner tous les articles de la base de données.
+    * Retrouver tous les articles de la base de données.
     * ---
-    * @return {Array} Un tableau d'objets.
+    * @param {Object} connexion - L'objet de connexion.
+    * @return {Array} Un tableau d'objets
     */
    async find_all(connexion) {
       try {
@@ -22,7 +24,7 @@ class UtilisateurDAO {
          ORDER BY nom
          `;
          const rows = await connexion.query(query);
-         console.log({ rows: rows });
+         console.log(rows);
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -30,24 +32,24 @@ class UtilisateurDAO {
       }
    }
 
+   
    /**
-    * Rechercher un article dans la base de données.
+    * Retrouver un item dans la base de données.
     * ---
-    * @param {string} db_column - Le nom de la colonne de la table Articles.
-    * @param {any} value - La valeur à cibler dans la colonne.
-    * @return {Promise<Array>} - Une promesse sensée retourner un tableau
-    *                            d'objets.
-    * @throws {Error} - A retourner en cas de problème lors de la requête
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {string} db_column - Le nom de la colonne de la table
+    * @param {any} value - La valeur à cibler dans la colonne
+    * @return {Promise<Array>} Un tableau d'objets
     */
    async find(connexion, db_column, value) {
       try {
-         let query = `
+         const query = `
          SELECT * 
          FROM ${this.table} 
          WHERE ${db_column} = ?
          `;
          const rows = await connexion.query(query, [value]);
-         console.log({ rows: rows });
+         console.log(rows);
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -55,15 +57,27 @@ class UtilisateurDAO {
       }
    }
 
+
    /**
-    * Ajouter un article dans la base de données.
+    * Ajouter un nouvel item dans la base de données.
     * ---
-    * @param {Array} values - Tableau de valeurs à insérer dans la table.
-    * @return {type} Résultat de la requête.
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {Array} values - Un tableau de valeurs pour le nouvel item.
+    * @return {Promise} Une promesse qui contient le résultat de la requête.
     */
-   async create(connexion, values) {
+   async create(connexion, object) {
       try {
-         let query = `INSERT INTO ${this.table} VALUES(`;
+         const columns = Object.keys(object);
+         const values = Object.values(object);
+
+         let query = `INSERT INTO ${this.table} (`;
+         for (let i = 0; i < columns.length; i++) {
+            if (i < columns.length - 1) {
+               query += `${columns[i]}, `;
+            } else {
+               query += `${columns[i]}) VALUES(`;
+            }
+         }
          for (let i = 0; i < values.length; i++) {
             if (i < values.length - 1) {
                query += `?, `;
@@ -71,7 +85,8 @@ class UtilisateurDAO {
                query += `?)`;
             }
          }
-         console.log(query);
+         console.log(query, values);
+         
          const result = await connexion.query(query, values);
          console.log(result);
          return result;
@@ -81,23 +96,18 @@ class UtilisateurDAO {
       }
    }
 
+
+
    /**
-    * Mettre à jour un article dans la base de données.
-    * ---
-    * @param {Array} values - Un tableau de valeurs à mettre à jour.
-    *                         Les valeurs doivent être un ensemble de paires clé valeurs
-    * @return {Promise} Une promesse qui représente la mise à jour de
-    *                   l'article.
-    *                   Le résultat est un objet qui contient des
-    *                   informations sur la mise à jour.
-    *                   Si la mise à jour est à jour avec succès,
-    *                   'affectedRows' sera le nombre de lignes affectées
-    *                   par la mise à jour.
-    *                   Si la mise à jour n'aboutit pas, une erreur sera levée.
-    *                   Un objet contenant le message d'erreur sera retourné.
+    * Mise à jour d'une ligne dans la base de données.
+    *
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {Object} object - L'objet contenant les colonnes à mettre à jour.
+    * @return {Promise} Une promesse qui contient le résultat de la requête.
     */
-   async update(connexion, [columns], [values]) {
+   async update(connexion, object) {
       try {
+         const columns = Object.keys(object);
          let query = `UPDATE ${this.table} SET `;
          for (let i = 0; i < columns.length; i++) {
             if (i < columns.length - 1) {
@@ -115,25 +125,29 @@ class UtilisateurDAO {
       }
    }
 
+
    /**
     * Supprime une ligne dans la base de données.
-    *
-    * @param {string} db_column - Le nom de la colonne de la table.
-    * @param {any} value - La valeur à cibler dans la colonne.
-    * @return {Promise<any>} Une promesse qui contient le résultat de la requête.
+    * ---
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {string} db_column - Une colonne de la table
+    * @param {any} value - Une valeur de colonne
+    * @return {Promise<Object>} - Une promesse qui contient le résultat
     */
    async delete(connexion, db_column, value) {
-      try {
-         const query = `
+      {
+         try {
+            const query = `
          DELETE FROM ${this.table} 
          WHERE ${db_column} = ?
          `;
-         const result = await connexion.query(query, [value]);
-         console.log(result);
-         return result;
-      } catch (error) {
-         console.error('Error deleting article:', error);
-         throw error;
+            const result = await connexion.query(query, [value]);
+            console.log(result);
+            return result;
+         } catch (error) {
+            console.error('Error deleting article:', error);
+            throw error;
+         }
       }
    }
 }

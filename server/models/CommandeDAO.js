@@ -7,40 +7,19 @@ class CommandeDAO {
    }
 
    /**
-    * Compte le nombre de colonnes dans la table.
-    *
-    * @return {Array} Un tableau d'objets.
-    */
-   __count_columns() {
-      try {
-         const query = `
-         SELECT COUNT(*)
-         FROM information_schema.columns
-         WHERE table_schema = ${process.env.DB_NAME}
-         AND table_name = ${this.table}
-         `;
-         const { rows } = ConnexionDAO.query(query);
-         console.log(rows);
-         return rows;
-      } catch (error) {
-         console.error('Error counting columns:', error);
-         throw error;
-      }
-   }
-
-   /**
-    * Retourner tous les articles de la base de données.
+    * Retrouver tous les articles de la base de données.
     * ---
-    * @return {Array} Un tableau d'objets.
+    * @param {Object} connexion - L'objet de connexion.
+    * @return {Array} Un tableau d'objets
     */
-   static async find_all() {
+   async find_all(connexion) {
       try {
          const query = `
          SELECT * 
          FROM ${this.table} 
          ORDER BY nom
          `;
-         const rows = await ConnexionDAO.query(query);
+         const rows = await connexion.query(query);
          console.log(rows);
          return rows;
       } catch (error) {
@@ -50,22 +29,21 @@ class CommandeDAO {
    }
 
    /**
-    * Rechercher un article dans la base de données.
+    * Retrouver un item dans la base de données.
     * ---
-    * @param {string} db_column - Le nom de la colonne de la table Articles.
-    * @param {any} value - La valeur à cibler dans la colonne.
-    * @return {Promise<Array>} - Une promesse sensée retourner un tableau
-    *                            d'objets.
-    * @throws {Error} - A retourner en cas de problème lors de la requête
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {string} db_column - Le nom de la colonne de la table
+    * @param {any} value - La valeur à cibler dans la colonne
+    * @return {Promise<Array>} Un tableau d'objets
     */
-   static async find(db_column, value) {
+   async find(connexion, db_column, value) {
       try {
          const query = `
          SELECT * 
          FROM ${this.table} 
          WHERE ${db_column} = ?
          `;
-         const rows = await ConnexionDAO.query(query, [value]);
+         const rows = await connexion.query(query, [value]);
          console.log(rows);
          return rows;
       } catch (error) {
@@ -75,23 +53,35 @@ class CommandeDAO {
    }
 
    /**
-    * Ajouter un article dans la base de données.
+    * Ajouter un nouvel item dans la base de données.
     * ---
-    * @param {Array} values - Tableau de valeurs à insérer dans la table.
-    * @return {type} Résultat de la requête.
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {Array} values - Un tableau de valeurs pour le nouvel item.
+    * @return {Promise} Une promesse qui contient le résultat de la requête.
     */
-   static async add([values]) {
+   async create(connexion, object) {
       try {
-         const columns = this.__count_columns();
-         let query = `INSERT INTO ${this.table} VALUES(`;
+         const columns = Object.keys(object);
+         const values = Object.values(object);
+
+         let query = `INSERT INTO ${this.table} (`;
          for (let i = 0; i < columns.length; i++) {
             if (i < columns.length - 1) {
+               query += `${columns[i]}, `;
+            } else {
+               query += `${columns[i]}) VALUES(`;
+            }
+         }
+         for (let i = 0; i < values.length; i++) {
+            if (i < values.length - 1) {
                query += `?, `;
             } else {
                query += `?)`;
             }
-         }  
-         const result = await ConnexionDAO.query(query, values);
+         }
+         console.log(query, values);
+         
+         const result = await connexion.query(query, values);
          console.log(result);
          return result;
       } catch (error) {
@@ -101,31 +91,24 @@ class CommandeDAO {
    }
 
    /**
-    * Mettre à jour un article dans la base de données.
+    * Mise à jour d'une ligne dans la base de données.
     * ---
-    * @param {Array} values - Un tableau de valeurs à mettre à jour.
-    *                         Les valeurs doivent être un ensemble de paires clé valeurs
-    * @return {Promise} Une promesse qui représente la mise à jour de
-    *                   l'article.
-    *                   Le résultat est un objet qui contient des
-    *                   informations sur la mise à jour.
-    *                   Si la mise à jour est à jour avec succès,
-    *                   'affectedRows' sera le nombre de lignes affectées
-    *                   par la mise à jour.
-    *                   Si la mise à jour n'aboutit pas, une erreur sera levée.
-    *                   Un objet contenant le message d'erreur sera retourné.
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {Array} columns - Un tableau de colonnes à mettre à jour.
+    * @param {Array} values - Un tableau des valeurs à mettre à jour.
+    * @return {Promise} Une promesse qui contient le résultat de la requête.
     */
-   static async update([columns], [values]) {
+   async update(connexion, columns, values) {
       try {
          let query = `UPDATE ${this.table} SET `;
-         for(let i = 0; i < columns.length; i++) {
-            if(i < columns.length - 1) {
+         for (let i = 0; i < columns.length; i++) {
+            if (i < columns.length - 1) {
                query += `${columns[i]} = ?, `;
             } else {
                query += `${columns[i]} = ?`;
             }
          }
-         const result = await ConnexionDAO.query(query, values);
+         const result = await connexion.query(query, values);
          console.log(result);
          return result;
       } catch (error) {
@@ -136,19 +119,20 @@ class CommandeDAO {
 
    /**
     * Supprime une ligne dans la base de données.
-    *
-    * @param {string} db_column - Le nom de la colonne de la table.
-    * @param {any} value - La valeur à cibler dans la colonne.
-    * @return {Promise<any>} Une promesse qui contient le résultat de la requête.
+    * ---
+    * @param {Object} connexion - L'objet de connexion.
+    * @param {string} db_column - Une colonne de la table
+    * @param {any} value - Une valeur de colonne
+    * @return {Promise<Object>} - Une promesse qui contient le résultat
     */
-   static async delete(db_column, value) {
+   async delete(connexion, db_column, value) {
       {
          try {
             const query = `
          DELETE FROM ${this.table} 
          WHERE ${db_column} = ?
          `;
-            const result = await ConnexionDAO.query(query, [value]);
+            const result = await connexion.query(query, [value]);
             console.log(result);
             return result;
          } catch (error) {

@@ -40,7 +40,7 @@ app.use('/m2l/boutique', routesBoutique);
 app.use('/m2l/admin', routesAdmin);
 
 // ? Router Panier
-app.use('/m2l/panier', auth, routesPanier);
+app.use('/m2l/panier', routesPanier);
 
 // ? Router Tests
 app.use('/m2l/tests', routesTests);
