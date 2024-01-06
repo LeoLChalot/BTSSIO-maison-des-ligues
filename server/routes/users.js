@@ -5,8 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const ConnexionDAO = require('../models/ConnexionDAO');
 const UtilisateurDAO = require('../models/UtilisateurDAO');
-const OauthDAO = require('./../models/OauthDAO');
-const PanierDAO = require('./../models/PanierDAO');
+const OauthDAO = require('../models/OauthDAO');
+const PanierDAO = require('../models/PanierDAO');
 
 router.post('/inscription', async (req, res) => {
    let connexion;
@@ -35,15 +35,24 @@ router.post('/inscription', async (req, res) => {
             pseudo
          );
          if (existMail[0].length !== 0)
-            res.status(400).json({ success: false, message: 'Cet email est déjà utilisé' });
+            res.status(400).json({
+               success: false,
+               message: 'Cet email est déjà utilisé',
+            });
          if (existPseudo[0].length !== 0)
-            res.status(400).json({ success: false, message: 'Ce pseudo est déjà utilisé' });
+            res.status(400).json({
+               success: false,
+               message: 'Ce pseudo est déjà utilisé',
+            });
 
          await utilisateur.create(connexion, user);
 
          res.status(200).json({ message: 'Le compté à été créé avec succès' });
       } else {
-         res.status(400).end({ success: false, message: 'Informations erronées'});
+         res.status(400).end({
+            success: false,
+            message: 'Informations erronées',
+         });
       }
    } catch (error) {
       console.error('Error connecting user:', error);
@@ -68,14 +77,17 @@ router.post('/connexion', async (req, res) => {
          }
          if (utilisateur[0].length === 0) {
             res.status(400).json({
-               success: false, 
+               success: false,
                msg: "L'email et le mot de passe ne correspondent pas",
             });
             return;
          }
          utilisateur = utilisateur[0][0];
          if (!bcrypt.compareSync(mot_de_passe, utilisateur.mot_de_passe)) {
-            res.status(400).json({ success: false,  msg: 'Mot de passe incorrect' });
+            res.status(400).json({
+               success: false,
+               msg: 'Mot de passe incorrect',
+            });
             return;
          }
          const token = OauthDAO.generateAccessToken(utilisateur);
@@ -103,7 +115,7 @@ router.post('/connexion', async (req, res) => {
          };
 
          res.status(200).json({
-            success: true, 
+            success: true,
             message: 'Utilisateur connecté',
             infos: {
                utilisateur: {
@@ -114,7 +126,10 @@ router.post('/connexion', async (req, res) => {
             },
          });
       } else {
-         res.status(400).json({  success: false, msg: 'Email et mot de passe requis' });
+         res.status(400).json({
+            success: false,
+            msg: 'Email et mot de passe requis',
+         });
       }
    } catch (error) {
       console.error('Error connecting user:', error);

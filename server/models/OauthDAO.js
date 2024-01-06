@@ -27,7 +27,11 @@ class OauthDAO {
             'RANDOM_REFRESH_TOKEN_SECRET',
             { expiresIn: '7d' }
          );
-         await OauthDAO.addRefreshToken(connexion, user.id_utilisateur, refreshToken);
+         await OauthDAO.addRefreshToken(
+            connexion,
+            user.id_utilisateur,
+            refreshToken
+         );
          return refreshToken;
       }
       return existingRefreshToken;
@@ -76,8 +80,7 @@ class OauthDAO {
          const decoded = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
          req.user = decoded;
          if (req.user.status !== 'admin') {
-            return res
-               .status(401).send(false);
+            return res.status(401).send(false);
          } else {
             return res.status(200).send(true);
          }

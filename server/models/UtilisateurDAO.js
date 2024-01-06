@@ -1,4 +1,4 @@
-const DAOModel = require("./DAOModel");
+const DAOModel = require('./DAOModel');
 class UtilisateurDAO extends DAOModel {
    constructor() {
       super();

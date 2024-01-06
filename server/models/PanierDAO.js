@@ -1,4 +1,4 @@
-const DAOModel = require("./DAOModel");
+const DAOModel = require('./DAOModel');
 class PanierDAO extends DAOModel {
    constructor() {
       super();

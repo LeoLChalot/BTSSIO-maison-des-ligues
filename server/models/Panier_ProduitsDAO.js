@@ -1,8 +1,8 @@
-const DAOModel = require("./DAOModel");
+const DAOModel = require('./DAOModel');
 class Panier_ProduitsDAO extends DAOModel {
    constructor() {
       super();
-      this.table = 'utilisateurs';
+      this.table = 'panier_produits';
    }
 }
 

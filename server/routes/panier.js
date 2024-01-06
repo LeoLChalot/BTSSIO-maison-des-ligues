@@ -57,7 +57,7 @@ router.get('/detail', async (req, res) => {
    res.send('Détail du panier');
 });
 
-router.post('/add', async (req, res) => {
+router.post('/:pseudo', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
@@ -91,7 +91,7 @@ router.post('/add', async (req, res) => {
             .json({ success: false, message: 'Article non trouvée' });
       }
 
-      if (article[0][0].quantite > quantity) {
+      if (article[0][0].quantite >= quantity) {
          for (let i = 0; i < quantity; i++) {
             const entree_panier = {
                id: uuidv4(),
@@ -122,7 +122,12 @@ router.post('/add', async (req, res) => {
             success: true,
             message: 'Articles ajoutés au panier avec succès',
          });
+      } else {
+         res
+            .status(400)
+            .json({ success: false, message: 'Quantité insuffisante' });
       }
+
    } catch (error) {
       console.error('Error connecting to database:', error);
       res.status(500).send('Internal Server Error');
@@ -133,11 +138,36 @@ router.post('/add', async (req, res) => {
    }
 });
 
-router.delete('/delete', async (req, res) => {
+router.delete('/:pseudo', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
-      const { id } = req.body;
+      const {id, id_panier} = req.body
+      if(id_panier){
+
+         const panier_ProduitsDAO = new Panier_ProduitsDAO();
+         const articleDAO = new ArticleDAO();
+         const articles = await panier_ProduitsDAO.find(connexion, 'id_panier', id_panier);
+         console.log({articles : articles})
+
+         for (let article of articles[0]) {
+            console.log({article : article})
+             const original_article = await articleDAO.find(connexion, 'id_article', article.id_article);
+             const suppression = await panier_ProduitsDAO.delete(connexion, 'id_article', article.id_article);
+             console.log({original_article : original_article[0][0].quantite})
+             if (original_article[0].length > 0) {
+                 const updateArticle = {
+                     quantite: original_article[0][0].quantite + 1,
+                     id_article: original_article[0][0].id_article
+                 };
+                 await articleDAO.update(connexion, updateArticle);
+             }
+         }
+         return res.status(200).json({
+            success: true,
+            message: 'Tous les articles du panier sont supprimés',
+         });
+      }
 
       if (!id) {
          return res.status(400).json({
@@ -147,16 +177,13 @@ router.delete('/delete', async (req, res) => {
       }
 
       const panier_ProduitsDAO = new Panier_ProduitsDAO();
-      const result = await panier_ProduitsDAO.find(
-         connexion,
-         'id',
-         id
-      )
+      const result = await panier_ProduitsDAO.find(connexion, 'id', id);
 
       if (result[0].length === 0) {
-         return res
-            .status(404)
-            .json({ success: false, message: 'L\'article n\'est pas présent dans le panier' });
+         return res.status(404).json({
+            success: false,
+            message: "L'article n'est pas présent dans le panier",
+         });
       }
 
       const articleDAO = new ArticleDAO();
@@ -164,24 +191,22 @@ router.delete('/delete', async (req, res) => {
          connexion,
          'id_article',
          result[0][0].id_article
-      )
+      );
 
       const updateArticle = {
          quantite: article[0][0].quantite + 1,
          id_article: article[0][0].id_article,
-      }
-      console.log(updateArticle)
+      };
+      console.log(updateArticle);
 
-      const result1 = await articleDAO.update(connexion, updateArticle)
+      const result1 = await articleDAO.update(connexion, updateArticle);
 
-      const result2 = await panier_ProduitsDAO.delete(
-         connexion,
-         "id",
-         id
-      )
+      const result2 = await panier_ProduitsDAO.delete(connexion, 'id', id);
 
-      res.status(200).json({ success: true, message: 'Produit supprimé du panier avec succès' });
-      
+      res.status(200).json({
+         success: true,
+         message: 'Produit supprimé du panier avec succès',
+      });
    } catch (error) {
       console.error('Error connecting to database:', error);
       res.status(500).send('Internal Server Error');
@@ -192,7 +217,7 @@ router.delete('/delete', async (req, res) => {
    }
 });
 
-router.post('/valider', async (req, res) => {
+router.post('/', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();

@@ -99,19 +99,21 @@ router.post('/categorie', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
-      const categorie = req.body.categorie;  
+      const nom = req.body.nom;  
 
-      if (!categorie) {
+      if (!nom) {
          return res
             .status(404)
             .json({ success: false, message: 'Categorie non trouvée' });
       }
       const categorieDAO = new CategorieDAO();
-      const values = [
-         uuidv4(),
-         categorie
-      ]
-      const result = await categorieDAO.create(connexion, values);
+      const categorie = {
+         id_categorie: uuidv4(),
+         nom: nom
+      }
+         
+  
+      const result = await categorieDAO.create(connexion, categorie);
       if(result) {
          res.status(201).json({
             success: true,
@@ -119,7 +121,7 @@ router.post('/categorie', async (req, res) => {
          });
       }
 
-   } catch (err) {
+   } catch (error) {
       console.error('Error connecting shop:', error);
       throw error;
    } finally {
@@ -132,27 +134,15 @@ router.post('/categorie', async (req, res) => {
 router.delete('/categorie', async (req, res) => {
    let connexion;
    try {
-      connexion = await ConnexionDAO.connect();
-      if (OauthDAO.verifyToken(req, res)) {
-         const { id_categorie } = req.body;
-         const categorie = await CategorieDAO.getCategoryById(
-            connexion,
-            id_categorie
-         );
-         if (!categorie) {
-            return res
-               .status(404)
-               .json({ success: false, message: 'Categorie non trouvée' });
-         }
-         await CategorieDAO.deleteCategory(connexion, id_categorie);
-         res.status(201).json({
+      let connexion = await ConnexionDAO.connect();
+      const { nom } = req.body;
+      const categorieDAO = new CategorieDAO();
+      const result = await categorieDAO.delete(connexion, 'nom', nom);
+      if(result) {
+         res.status(200).json({
             success: true,
             message: 'Categorie supprimée !',
          });
-      } else {
-         return res
-            .status(401)
-            .json({ success: false, message: 'Unauthorized' });
       }
    } catch (error) {
       console.error('Error connecting shop:', error);

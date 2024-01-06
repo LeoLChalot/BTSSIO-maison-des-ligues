@@ -142,6 +142,20 @@ class DAOModel {
          }
       }
    }
+
+   async deleteAll(connexion) {
+      try {
+         const query = `
+        DELETE FROM ${this.table}
+        `;
+         const result = await connexion.query(query);
+         console.log(result);
+         return result;
+      } catch (error) {
+         console.error('Error deleting article:', error);
+         throw error;
+      }
+   }
 }
 
 module.exports = DAOModel;
