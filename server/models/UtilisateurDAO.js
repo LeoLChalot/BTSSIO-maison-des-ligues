@@ -1,8 +1,12 @@
+const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+
 const ConnexionDAO = require('./ConnexionDAO');
 
-class ArticleDAO {
+class UtilisateurDAO {
    constructor() {
-      this.table = 'articles';
+      this.table = 'utilisateurs';
    }
 
    /**
@@ -10,15 +14,15 @@ class ArticleDAO {
     * ---
     * @return {Array} Un tableau d'objets.
     */
-   async find_all() {
+   async find_all(connexion) {
       try {
          const query = `
          SELECT * 
          FROM ${this.table} 
          ORDER BY nom
          `;
-         const { rows } = await ConnexionDAO.query(query);
-         console.log(rows);
+         const rows = await connexion.query(query);
+         console.log({ rows: rows });
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -35,15 +39,15 @@ class ArticleDAO {
     *                            d'objets.
     * @throws {Error} - A retourner en cas de problème lors de la requête
     */
-   async find(db_column, value) {
+   async find(connexion, db_column, value) {
       try {
-         const query = `
+         let query = `
          SELECT * 
          FROM ${this.table} 
          WHERE ${db_column} = ?
          `;
-         const { rows } = await ConnexionDAO.query(query, [value]);
-         console.log(rows);
+         const rows = await connexion.query(query, [value]);
+         console.log({ rows: rows });
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -57,18 +61,18 @@ class ArticleDAO {
     * @param {Array} values - Tableau de valeurs à insérer dans la table.
     * @return {type} Résultat de la requête.
     */
-   async add([values]) {
+   async create(connexion, values) {
       try {
-         const columns = this.__count_columns();
          let query = `INSERT INTO ${this.table} VALUES(`;
-         for (let i = 0; i < columns.length; i++) {
-            if (i < columns.length - 1) {
+         for (let i = 0; i < values.length; i++) {
+            if (i < values.length - 1) {
                query += `?, `;
             } else {
                query += `?)`;
             }
-         }  
-         const result = await ConnexionDAO.query(query, values);
+         }
+         console.log(query);
+         const result = await connexion.query(query, values);
          console.log(result);
          return result;
       } catch (error) {
@@ -92,17 +96,17 @@ class ArticleDAO {
     *                   Si la mise à jour n'aboutit pas, une erreur sera levée.
     *                   Un objet contenant le message d'erreur sera retourné.
     */
-   async update([columns], [values]) {
+   async update(connexion, [columns], [values]) {
       try {
          let query = `UPDATE ${this.table} SET `;
-         for(let i = 0; i < columns.length; i++) {
-            if(i < columns.length - 1) {
+         for (let i = 0; i < columns.length; i++) {
+            if (i < columns.length - 1) {
                query += `${columns[i]} = ?, `;
             } else {
                query += `${columns[i]} = ?`;
             }
          }
-         const result = await ConnexionDAO.query(query, values);
+         const result = await connexion.query(query, values);
          console.log(result);
          return result;
       } catch (error) {
@@ -118,22 +122,20 @@ class ArticleDAO {
     * @param {any} value - La valeur à cibler dans la colonne.
     * @return {Promise<any>} Une promesse qui contient le résultat de la requête.
     */
-   async delete(db_column, value) {
-      {
-         try {
-            const query = `
+   async delete(connexion, db_column, value) {
+      try {
+         const query = `
          DELETE FROM ${this.table} 
          WHERE ${db_column} = ?
          `;
-            const result = await ConnexionDAO.query(query, [value]);
-            console.log(result);
-            return result;
-         } catch (error) {
-            console.error('Error deleting article:', error);
-            throw error;
-         }
+         const result = await connexion.query(query, [value]);
+         console.log(result);
+         return result;
+      } catch (error) {
+         console.error('Error deleting article:', error);
+         throw error;
       }
    }
 }
 
-module.exports = ArticleDAO;
+module.exports = UtilisateurDAO;

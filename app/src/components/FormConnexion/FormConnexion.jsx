@@ -20,7 +20,7 @@ const FormConnexion = () => {
     e.preventDefault()
 
     try {
-      const userData = await axios.post(
+      const res = await axios.post(
         `http://localhost:3000/m2l/user/connexion`,
         {
           login: login,
@@ -28,27 +28,17 @@ const FormConnexion = () => {
         }
       )
 
-      if (userData.status == 200) {
-        const userInfos = userData.data
-
+      if (res.status == 200) {
         localStorage.clear()
+        const userInfos = res.data.infos.utilisateur
         const ls = localStorage
         ls.setItem('oauth_token', userInfos.token)
-        ls.setItem('id_utilisateur', userInfos.id_utilisateur)
+        ls.setItem('id_utilisateur', userInfos.id)
         ls.setItem('pseudo', userInfos.pseudo)
         ls.setItem('email', userInfos.email)
-        ls.setItem('isAdmin', userInfos.status)
+        ls.setItem('isAdmin', userInfos.isAdmin)
         ls.setItem('isAuth', '1')
 
-        const user = {
-          id_utilisateur: ls.getItem('id_utilisateur'),
-          pseudo: ls.getItem('pseudo'),
-          email: ls.getItem('email'),
-          token: ls.getItem('oauth_token'),
-          role: ls.getItem('isAdmin'),
-        }
-
-        console.table({user})
         navigate(`/profil/${ls.getItem('pseudo')}`)
       }
     } catch (err) {

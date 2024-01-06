@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const ConnexionDAO = require('../models/ConnexionDAO');
 const ArticleDAO = require('../models/ArticleDAO');
 const PanierDAO = require('../models/PanierDAO');
-const UserDAO = require('../models/UserDAO');
+const UtilisateurDAO = require('../models/UtilisateurDAO');
 const CommandeDAO = require('../models/CommandeDAO');
 
 router.get('/:pseudo', async (req, res) => {
@@ -17,7 +17,7 @@ router.get('/:pseudo', async (req, res) => {
       const pseudo = req.params.pseudo;
       // res.send('Ceci est le pseudo : ' + pseudo);
       if (pseudo) {
-         const user = await UserDAO.getUserByPseudo(connexion, pseudo);
+         const user = await UtilisateurDAO.getUserByPseudo(connexion, pseudo);
          // res.send('user : ' + user.getPseudo());
          if (user) {
             const id_utilisateur = user.getId();
