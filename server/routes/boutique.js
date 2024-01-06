@@ -20,9 +20,8 @@ router.get('/categorie', async (req, res) => {
       const categorieDAO = new CategorieDAO();
       let result = categorie
          ? await categorieDAO.find(connexion, 'nom', categorie)
-         : categorieDAO.find_all(connexion);
-      result = result[0];
-      if (result.length === 0) {
+         : await categorieDAO.find_all(connexion);
+      if (result[0].length === 0) {
          res.status(404).json({
             success: false,
             message: 'Categorie non trouvé',

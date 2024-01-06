@@ -156,7 +156,7 @@ router.delete('/delete', async (req, res) => {
       if (result[0].length === 0) {
          return res
             .status(404)
-            .json({ success: false, message: 'Produit non trouvé' });
+            .json({ success: false, message: 'L\'article n\'est pas présent dans le panier' });
       }
 
       const articleDAO = new ArticleDAO();
@@ -180,7 +180,7 @@ router.delete('/delete', async (req, res) => {
          id
       )
 
-      res.status(200).json({ success: true, message: 'Produit supprimé avec succès' });
+      res.status(200).json({ success: true, message: 'Produit supprimé du panier avec succès' });
       
    } catch (error) {
       console.error('Error connecting to database:', error);
