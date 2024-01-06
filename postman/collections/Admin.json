@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "08cac29e-c61a-4f31-b4b2-537b68eab77c",
 		"name": "Admin",
-		"description": "Every routes in the Admin folder must send an HTTP Header with correct access token to be used",
+		"description": "Ensemble de URL d'api utilisable par l'administrateur du site de la Maison des Ligues.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_uid": "27944123-08cac29e-c61a-4f31-b4b2-537b68eab77c"
 	},
@@ -79,7 +79,7 @@
 						"categorie"
 					]
 				},
-				"description": "La requête POST pour ajouter une nouvelle catégorie nécessite une autorisation fournie par le token d'authentification lors de la connexion"
+				"description": "La requête POST pour ajouter une nouvelle catégorie nécessite une autorisation fournie par le token d'authentification lors de la connexion, au format JSON Web Token.\n\nIl faudra envoyer le nom de la catégorie à ajouter dans l'objet body de la requête HTTP."
 			},
 			"response": []
 		},
@@ -123,7 +123,7 @@
 						"article"
 					]
 				},
-				"description": "La requête POST pour ajouter une nouvelle catégorie nécessite une autorisation fournie par le token d'authentification lors de la connexion"
+				"description": "La requête POST pour ajouter un nouvel article nécessite une autorisation fournie par le token d'authentification lors de la connexion, au format JSON Web Token.\n\nLes informations relatives à l'objet sont envoyé dans l'objet body de la requête HTTP"
 			},
 			"response": []
 		},
@@ -134,6 +134,9 @@
 				"disableBodyPruning": true
 			},
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "PUT",
 				"header": [],
 				"body": {
@@ -157,7 +160,8 @@
 						"admin",
 						"article"
 					]
-				}
+				},
+				"description": "La requête PUT pour modifier un article existant nécessite une autorisation fournie par le token d'authentification lors de la connexion, au format JSON Web Token.\n\nLes informations relatives à l'objet sont envoyé dans l'objet body de la requête HTTP"
 			},
 			"response": []
 		},
@@ -191,7 +195,8 @@
 						"admin",
 						"article"
 					]
-				}
+				},
+				"description": "La requête DELETE pour supprimer un article nécessite une autorisation via jeton d'accès au format JSON Web Token."
 			},
 			"response": []
 		},
@@ -235,7 +240,8 @@
 						"admin",
 						"categorie"
 					]
-				}
+				},
+				"description": "La requête DELETE pour supprimer une catégorie nécessite une autorisation via jeton d'accès au format JSON Web Token."
 			},
 			"response": []
 		},
@@ -269,7 +275,8 @@
 						"admin",
 						"user"
 					]
-				}
+				},
+				"description": "La requête DELETE pour supprimer un compte utilisateur nécessite une autorisation spéciale via un jeton d'accès au format JSON Web Token."
 			},
 			"response": []
 		}
