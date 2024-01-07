@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './page.css'
+// import jwtDecode from 'jwt-decode'
+import Cookies from 'js-cookie'
 
 const Profil = () => {
   const { pseudo } = useParams()
   const navigate = useNavigate()
   const ls = localStorage
 
+
+
   const authCheck = () => {
     return ls.getItem('pseudo') === pseudo && ls.getItem('isAuth') === '1'
   }
 
   useEffect(() => {
-    if (!authCheck()) {
-      navigate('/')
-    }
-  }, [ls.getItem('pseudo'), ls.getItem('isAuth')])
+    token_check()
+  }, [])
 
   return (
     <section id="page-profil" className="page">

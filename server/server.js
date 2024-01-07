@@ -4,8 +4,6 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-const auth = require('./middleware/is-auth');
-const admin = require('./middleware/is-admin');
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 

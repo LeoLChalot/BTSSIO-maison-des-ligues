@@ -3,7 +3,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
-const auth = require('../middleware/is-auth');
+
 
 const ConnexionDAO = require('../models/ConnexionDAO');
 const CategorieDAO = require('../models/CategorieDAO');

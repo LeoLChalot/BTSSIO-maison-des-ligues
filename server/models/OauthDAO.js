@@ -1,7 +1,48 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const ConnexionDAO = require('./ConnexionDAO');
 const { json } = require('express');
-class OauthDAO {
+const DAOModel = require('./DAOModel');
+
+class OauthDAO extends DAOModel {
+   constructor() {
+      super();
+      this.table = 'oauth';
+   }
+
+   /**
+    * Créer un jeton pour l'utilisateur connecté (cookie)
+    * ---
+    * @param {Object} user - L'objet contenant les informations de l'utilisateur
+    * @param {Object} res - L'objet de requête
+    * @return {string} Le jeton généré
+    */
+   create_token(user, res) {
+      let jwt_token = jwt.sign({ user_email: user.email, user_pseudo: user.pseudo, user_role: user.isAdmin }, process.env.SECRET_KEY, {
+         expiresIn: '1d',
+      });
+
+      // Response
+      res.cookie('jwt_token', jwt_token, {
+         expires: new Date(Date.now() + 604800000),
+         httpOnly: true,
+         // secure: true,
+      });
+
+      console.log("Cookie created");
+
+      return jwt_token;
+   }
+
+   /**
+    * Décode un jeton
+    *
+    * @param {string} token - Le jeton à décoder
+    * @return {Promise<object>} Le jeton decodé
+    */
+   decode_token(token) {
+      return jwt.verify(token, process.env.SECRET_KEY);
+   }
+
    static generateAccessToken(user) {
       const payload = {
          user_email: user.mail,
