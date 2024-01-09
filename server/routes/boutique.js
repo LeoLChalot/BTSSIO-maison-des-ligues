@@ -55,11 +55,11 @@ router.get('/articles', async (req, res) => {
       let result
       const nom = req.query.nom;
       const articleDAO = new ArticleDAO();
-      console.log(article)
-      if (!article) {
+      console.log(articleDAO)
+      if (!articleDAO) {
          result = await articleDAO.find_all(connexion);
       } else {
-         result = await articleDAO.find(connexion, 'nom', article);
+         result = await articleDAO.find(connexion, 'nom', nom);
          if (result[0].length === 0) {
             res.status(404).json({
                success: false,
