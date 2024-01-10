@@ -1,21 +1,32 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Navbar.css'
 import { Link, useNavigate } from 'react-router-dom'
 import ButtonBurger from '../ButtonBurger/ButtonBurger'
+import { isValidToken } from '../../utils/isValidToken'
+import { isAdmin } from '../../utils/isAdmin'
+import { decodeToken } from '../../utils/decodeToken'
+import Cookies from 'js-cookie'
 
 const Navbar = () => {
   const [isActive, setIsActive] = useState('hide')
+  const [jwtToken, setJwtToken] = useState(Cookies.get('jwt_token'))
+  const [isConnected, setIsConnected] = useState(false)
+  const [role, setRole] = useState(isAdmin(jwtToken))
   const ls = localStorage
   const navigate = useNavigate()
 
   const deconnexion = () => {
-    localStorage.clear()
+    Cookies.remove('jwt_token')
+    setJwtToken('')
     navigate('/')
   }
 
-  window.onunload = function () {
-    deconnexion()
-  }
+  useEffect(() => {
+    if (!isValidToken(jwtToken)) {
+      navigate('/connexion')
+    }
+    setIsConnected(true)
+  }, [jwtToken])
 
   return (
     <>
@@ -31,7 +42,7 @@ const Navbar = () => {
         <Link to="/boutique" className="link">
           Boutique
         </Link>
-        {ls.getItem('isAuth') != '1' ? (
+        {!isConnected ? (
           <>
             <Link to="/connexion" className="link">
               Connexion
@@ -54,7 +65,7 @@ const Navbar = () => {
           </>
         )}
 
-        {ls.getItem('isAdmin') == 'admin' && (
+        {role === true && (
           <Link to="/dashboard" className="link">
             Dashboard
           </Link>

@@ -2,6 +2,7 @@
 
 .card {
   width: 100%;
+  max-width: 1000px;
   margin: .3rem 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -9,10 +10,11 @@
   background-color: #fafafa;
   transition: transform 0.3s ease-in-out;
   display: flex;
+  
 }
 
 .card:hover {
-  transform: scale(1);
+  transform: scale(1.03);
 }
 .card-image{
   width: 100%;

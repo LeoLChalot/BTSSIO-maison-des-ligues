@@ -21,7 +21,7 @@ cookieJwtAuth = (req, res, next) => {
   } catch (err) {
 
     // Si le token n'est pas valide, on le supprime
-    res.clearCookie("token");
+    res.status(401).json({ message: "Unauthorized" });
     // Et on redirige vers la page de login (qui est aussi /)
     return res.redirect("/");
   }

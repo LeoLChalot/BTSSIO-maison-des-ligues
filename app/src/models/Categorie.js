@@ -9,7 +9,7 @@ class Categorie {
     console.log('getAllCategories')
     try {
       const { data } = await axios.get(
-        'http://localhost:3000/m2l/boutique/categorie'
+        'http://localhost:3000/m2l/boutique/categories'
       )
       return data
     } catch (error) {
@@ -24,12 +24,12 @@ class Categorie {
 static async getCategoryById(id_categorie) {
   try {
     const { data } = await axios.get(
-      `http://localhost:3000/m2l/boutique/categorie?idcat=${id_categorie}`
+      `http://localhost:3000/m2l/boutique/categories?id=${id_categorie}`
     );
     console.log({ Categorie: data });
 
     // Retournez toutes les données de la catégorie
-    return data;
+    return data.infos[0].nom;
   } catch (error) {
     console.error('Error retrieving category:', error);
     throw error;
@@ -42,7 +42,7 @@ static async getCategoryById(id_categorie) {
   static async getCategoryByName(nom) {
     try {
       const { data } = await axios.get(
-        `http://localhost:3000/m2l/boutique/categorie/${nom}`
+        `http://localhost:3000/m2l/boutique/categories?nom=${nom}`
       )
       return data
     } catch (error) {

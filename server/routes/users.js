@@ -135,30 +135,36 @@ router.post('/connexion', cookieParser(), async (req, res) => {
          }
 
          let jwt_token = jwt.sign({ 
-            user_email: utilisateur.email, 
-            user_pseudo: utilisateur.pseudo, 
-            user_role: utilisateur.isAdmin }, 
+            email: utilisateur.email, 
+            pseudo: utilisateur.pseudo, 
+            role: utilisateur.isAdmin,
+            panier: panier[0][0].id_panier
+          }, 
             process.env.SECRET_KEY, {
-               expiresIn: '1d',
+               expiresIn: '1h',
          });
    
-         // Response
-         res.cookie('jwt_token', jwt_token, {
-            expires: new Date(Date.now() + 604800000),
-            // httpOnly: true,
-            // secure: true,
-         });
    
          console.log("Cookie created");
+         console.log({JWT_Token: jwt_token});
+
+         const decodedToken = jwt.verify(jwt_token, process.env.SECRET_KEY);
+         console.log({Decoded_Token: decodedToken});
 
 
          res.status(200).json({
             success: true,
             message: 'Utilisateur connecté',
             infos: {
-               utilisateur: utilisateur,
+               utilisateur: {
+                 email: utilisateur.email,
+                 pseudo: utilisateur.pseudo,
+                 isAdmin: utilisateur.isAdmin
+               },
                panier: panier[0][0],
+               jwt_token: jwt_token
             },
+
          });
          return;
       } else {
@@ -178,5 +184,7 @@ router.post('/connexion', cookieParser(), async (req, res) => {
       }
    }
 });
+
+
 
 module.exports = router;

@@ -15,7 +15,7 @@ class DAOModel {
         ORDER BY nom
         `;
          const rows = await connexion.query(query);
-         console.log(rows);
+         // console.log(rows);
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);
@@ -39,7 +39,7 @@ class DAOModel {
         WHERE ${db_column} = ?
         `;
          const rows = await connexion.query(query, [value]);
-         console.log(rows);
+         // console.log(rows);
          return rows;
       } catch (error) {
          console.error('Error fetching articles:', error);

@@ -8,7 +8,8 @@ const MenuBoutique = ({ setCategorie }) => {
   const [categories, setCategories] = useState([])
 
   const fetchCategories = async () => {
-    const listCategories = await Categorie.getAllCategories()
+    const res = await Categorie.getAllCategories()
+    const listCategories = res.infos
     console.log(listCategories)
     setCategories(listCategories)
   }

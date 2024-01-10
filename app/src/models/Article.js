@@ -12,10 +12,11 @@ class Article {
 
   static async getAllArticles() {
     try {
-      const { data } = await axios.get(
-        'http://localhost:3000/m2l/boutique/article'
+      const res = await axios.get(
+        'http://localhost:3000/m2l/boutique/articles'
       )
-      return data[0]
+      // console.log(res)
+      return res
     } catch (error) {
       console.error(error)
     }
@@ -23,10 +24,11 @@ class Article {
 
   static async getArticleById(id_article) {
     try {
-      const { data } = await axios.get(
+      const res = await axios.get(
         `http://localhost:3000/m2l/boutique/article?idart=${id_article}`
       )
-      return data
+      
+      // return res
     } catch (error) {
       console.error(error)
     }
@@ -34,10 +36,11 @@ class Article {
 
   static async getArticlesByCategoryId(categoryId) {
     try {
-      const { data } = await axios.get(
-        `http://localhost:3000/m2l/boutique/article?idcat=${categoryId}`
+      const res = await axios.get(
+        `http://localhost:3000/m2l/boutique/articles?id_categorie=${categoryId}`
       )
-      return data
+      // console.log(res)
+        return res
     } catch (error) {
       console.error(error)
     }

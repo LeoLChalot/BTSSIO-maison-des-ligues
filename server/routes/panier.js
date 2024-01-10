@@ -61,7 +61,12 @@ router.post('/:pseudo', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
-      const { id_panier, id_article, quantity } = req.body;
+      const { id_panier, id_article, quantite } = req.body;
+      console.log({
+         id_panier,
+         id_article,
+         quantite,
+      });
       if (!id_panier) {
          return res
             .status(400)
@@ -73,7 +78,7 @@ router.post('/:pseudo', async (req, res) => {
             message: "Identifiant de l'article requis",
          });
       }
-      if (!quantity) {
+      if (!quantite) {
          return res
             .status(400)
             .json({ success: false, message: "Quantité de l'article requise" });
@@ -91,8 +96,8 @@ router.post('/:pseudo', async (req, res) => {
             .json({ success: false, message: 'Article non trouvée' });
       }
 
-      if (article[0][0].quantite >= quantity) {
-         for (let i = 0; i < quantity; i++) {
+      if (article[0][0].quantite >= quantite) {
+         for (let i = 0; i < quantite; i++) {
             const entree_panier = {
                id: uuidv4(),
                id_panier: id_panier,
@@ -112,7 +117,7 @@ router.post('/:pseudo', async (req, res) => {
             id_article
          );
          const updateArticle = {
-            quantite: article[0][0].quantite - quantity,
+            quantite: article[0][0].quantite - quantite,
             id_article: article[0][0].id_article,
          };
 

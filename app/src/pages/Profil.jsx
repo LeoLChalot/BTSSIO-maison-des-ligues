@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './page.css'
-// import jwtDecode from 'jwt-decode'
-import Cookies from 'js-cookie'
+import { isValidToken } from '../utils/isValidToken'
+import Cookies from 'js-cookie';
 
 const Profil = () => {
   const { pseudo } = useParams()
   const navigate = useNavigate()
+  const [jwtToken, setJwtToken] = useState(Cookies.get('jwt_token'))
   const ls = localStorage
 
 
-
-  const authCheck = () => {
-    return ls.getItem('pseudo') === pseudo && ls.getItem('isAuth') === '1'
-  }
+    
 
   useEffect(() => {
-    token_check()
-  }, [])
+    if(!isValidToken(jwtToken)) {
+      navigate('/connexion')
+    }
+  }, [jwtToken])
 
   return (
     <section id="page-profil" className="page">

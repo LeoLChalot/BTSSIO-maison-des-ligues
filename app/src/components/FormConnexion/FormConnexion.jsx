@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import bcrypt from 'bcryptjs'
+import Cookies from 'js-cookie'
+import { isValidToken } from '../../utils/isValidToken'
 import Oeil from '/oeil.svg'
 import OeilFerme from '/oeil_ferme.svg'
 import './FormConnexion.css'
@@ -20,27 +21,21 @@ const FormConnexion = () => {
     e.preventDefault()
 
     try {
-      const res = await axios.post(
-        `http://localhost:3000/m2l/user/connexion`,
-        {
-          login: login,
-          mot_de_passe: password,
-        }
-      )
-
+      const res = await axios.post(`http://localhost:3000/m2l/user/connexion`, {
+        login: login,
+        mot_de_passe: password,
+      })
       if (res.status == 200) {
         localStorage.clear()
-        const userInfos = res.data.infos.utilisateur
-        const ls = localStorage
-        ls.setItem('oauth_token', userInfos.token)
-        ls.setItem('id_utilisateur', userInfos.id)
-        ls.setItem('pseudo', userInfos.pseudo)
-        ls.setItem('email', userInfos.email)
-        ls.setItem('isAdmin', userInfos.isAdmin)
-        ls.setItem('isAuth', '1')
+        console.log(res.data.infos)
 
-        navigate(`/profil/${ls.getItem('pseudo')}`)
+        // Initialize a cookie with the retrieved token
+        Cookies.set('jwt_token', res.data.infos.jwt_token)
+        let token = Cookies.get('jwt_token')
+        console.log(isValidToken(token))
       }
+
+      navigate(`/profil/${res.data.infos.utilisateur.pseudo}`)
     } catch (err) {
       throw err
     }

@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom'
 const Boutique = () => {
   const [articles, setArticles] = useState([])
   const [categorie, setCategorie] = useState(null)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const validateUUIDv4 = (uuid) => {
     const regex =
@@ -20,18 +21,20 @@ const Boutique = () => {
   }
 
   const fetchArticles = async (id_categorie) => {
-    if (id_categorie === null) {
+    if (id_categorie == null) {
       const result = await Article.getAllArticles()
-      setArticles(result)
+      console.log({result: result})
+      setArticles(result.data.infos)
     } else if (validateUUIDv4(id_categorie)) {
       const result = await Article.getArticlesByCategoryId(id_categorie)
-      setArticles(result)
+      console.log({result: result})
+      result != undefined ? setArticles(result.data.infos) : setErrorMessage('Aucun article')
     }
   }
 
   useEffect(() => {
     fetchArticles(categorie)
-    console.log(categorie)
+    console.log({id_categorie: categorie})
   }, [categorie])
 
   return (
@@ -43,7 +46,7 @@ const Boutique = () => {
             <ArticleCard key={v4()} article={article} />
           ))
         ) : (
-          <p>Aucun article</p>
+          <p>{ errorMessage }</p>
         )}
       </main>
     </>
