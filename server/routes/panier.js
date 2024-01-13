@@ -168,8 +168,8 @@ router.delete('/:pseudo', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
-      const { id, id_panier } = req.body;
-      if (id_panier) {
+      const { id_article, id_panier } = req.body;
+      if (id_panier && !id_article) {
          const panier_ProduitsDAO = new Panier_ProduitsDAO();
          const articleDAO = new ArticleDAO();
          const articles = await panier_ProduitsDAO.find(
@@ -206,7 +206,7 @@ router.delete('/:pseudo', async (req, res) => {
          });
       }
 
-      if (!id) {
+      if (!id_article) {
          return res.status(400).json({
             success: false,
             message: "Identifiant de l'article requis",
@@ -214,7 +214,7 @@ router.delete('/:pseudo', async (req, res) => {
       }
 
       const panier_ProduitsDAO = new Panier_ProduitsDAO();
-      const result = await panier_ProduitsDAO.find(connexion, 'id', id);
+      const result = await panier_ProduitsDAO.find(connexion, 'id', id_article);
 
       if (result[0].length === 0) {
          return res.status(404).json({
@@ -236,9 +236,13 @@ router.delete('/:pseudo', async (req, res) => {
       };
       console.log(updateArticle);
 
-      const result1 = await articleDAO.update(connexion, updateArticle);
+      await articleDAO.update(connexion, updateArticle);
 
-      const result2 = await panier_ProduitsDAO.delete(connexion, 'id', id);
+      const article_a_supprimer = {
+         id: id_article,
+      }
+
+      await panier_ProduitsDAO.delete(connexion, article_a_supprimer)
 
       res.status(200).json({
          success: true,

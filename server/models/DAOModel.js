@@ -118,25 +118,36 @@ class DAOModel {
       }
    }
 
+
    /**
-    * Supprime une ligne dans la base de données.
-    * ---
+    * Supprimer un item dans la base de données.
+    *
     * @param {Object} connexion - L'objet de connexion.
-    * @param {string} db_column - Une colonne de la table
-    * @param {any} value - Une valeur de colonne
-    * @return {Promise<Object>} - Une promesse qui contient le résultat
+    * @param {Object} object - L'objet contenant les colonnes et valeurs à supprimer.
+    * @return {Promise} - Une promesse qui contient le résultat de la requête.
     */
    async delete(connexion, object) {
       try {
-         const { db_column, value } = object;
-         console.log(db_column, value);
-      //    const query = `
-      //   DELETE FROM ${this.table} 
-      //   WHERE ${db_column} = ?
-      //   `;
-      //    const result = await connexion.query(query, [value]);
-      //    console.log(result);
-      //    return result;
+         const columns = Object.keys(object);
+         const values = Object.values(object);
+         let query = ""
+         if(columns.length > 1 && values.length > 1){
+            query = `DELETE FROM ${this.table} WHERE `;
+            for (let i = 0; i < columns.length - 1; i++) {
+               if (i < columns.length - 2) {
+                  query += `${columns[i]} = ? AND `;
+               } else {
+                  query += `${columns[i]} = ? `;
+               }
+            }
+            console.log(query, values);
+         } else {
+            query = `DELETE FROM ${this.table} WHERE ${columns} = ?`;
+         }
+
+         const result = await connexion.query(query, values);
+         console.log(result);
+         return result;
       } catch (error) {
          console.error('Error deleting article:', error);
          throw error;
