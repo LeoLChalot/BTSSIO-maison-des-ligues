@@ -20,6 +20,7 @@ import { v4 } from 'uuid'
 import ArticleDetail from './components/Articles/ArticleDetail'
 import Erreur404 from './pages/Erreurs/Erreur404'
 import PagePanier from './pages/Panier'
+import ErreurAuth from './pages/Erreurs/ErreurAuth'
 
 function App() {
   return (
@@ -38,7 +39,9 @@ function App() {
             <Route path="/inscription" element={<Inscription />} />
             <Route path="/profil/:pseudo" element={<Profil />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/notyou" element={<ErreurAuth />} />
             <Route path="*" element={<Erreur404 />} />
+
             <Route path="/unauthorized" element={<ErreurNonAdmin />} />
           </Routes>
         </Suspense>

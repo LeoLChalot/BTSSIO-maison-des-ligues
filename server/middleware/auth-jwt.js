@@ -1,33 +1,27 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const cookieParser = require('cookie-parser');
 
-// Midddlewares d'authentification avec jwt
-// Méthode avec les cookies
+
 cookieJwtAuth = (req, res, next) => {
-  // On récupère le token dans le cookie
-  const token = req.cookies['token'];
+  cookieParser()(req, res, () => {
+    const token = req.cookies.jwt_token;
+    console.log('Token from cookies:', token);
 
-  console.log(token);
+    try {
+      const user = jwt.verify(token, process.env.SECRET_KEY);
+      console.log('Decoded user from token:', user);
 
-  // On vérifie le token avec la clé secrète
-  try {
-    const user = jwt.verify(token, process.env.SECRET_KEY);
-
-    // On ajoute les infos utilisateurs à la requete
-    req.user = user;
-
-    // On passe au middleware suivant
-    next();
-  } catch (err) {
-
-    // Si le token n'est pas valide, on le supprime
-    res.status(401).json({ message: "Unauthorized" });
-    // Et on redirige vers la page de login (qui est aussi /)
-    return res.redirect("/");
-  }
+      req.user = user;
+      next();
+    } catch (err) {
+      console.error('Error verifying token:', err);
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  });
 };
 
-// Méthode avec les headers, c'est à dire le jwt est envoyé 
+// Méthode avec les headers, c'est à dire le jwt est envoyé
 // dans le header de la requete via Authorization: Bearer <token>
 
 // const decodeToken = (req, res, next) => {
@@ -50,6 +44,5 @@ cookieJwtAuth = (req, res, next) => {
 //     res.status(401).json({ message: "Unauthorized" });
 //   }
 // };
-
 
 module.exports = cookieJwtAuth;

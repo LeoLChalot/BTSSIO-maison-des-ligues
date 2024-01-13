@@ -126,20 +126,20 @@ class DAOModel {
     * @param {any} value - Une valeur de colonne
     * @return {Promise<Object>} - Une promesse qui contient le résultat
     */
-   async delete(connexion, db_column, value) {
-      {
-         try {
-            const query = `
-        DELETE FROM ${this.table} 
-        WHERE ${db_column} = ?
-        `;
-            const result = await connexion.query(query, [value]);
-            console.log(result);
-            return result;
-         } catch (error) {
-            console.error('Error deleting article:', error);
-            throw error;
-         }
+   async delete(connexion, object) {
+      try {
+         const { db_column, value } = object;
+         console.log(db_column, value);
+      //    const query = `
+      //   DELETE FROM ${this.table} 
+      //   WHERE ${db_column} = ?
+      //   `;
+      //    const result = await connexion.query(query, [value]);
+      //    console.log(result);
+      //    return result;
+      } catch (error) {
+         console.error('Error deleting article:', error);
+         throw error;
       }
    }
 

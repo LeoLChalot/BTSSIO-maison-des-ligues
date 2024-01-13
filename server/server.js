@@ -22,10 +22,12 @@ const corsOptions = {
          callback(new Error('Not allowed by CORS'));
       }
    },
+   credentials: true,
    optionsSuccessStatus: 200,
 };
 
 app.use(express.json());
+// app.use(cors());
 app.use(cors(corsOptions));
 
 // ? Router inscription / connexion

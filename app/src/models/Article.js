@@ -1,38 +1,38 @@
 import axios from 'axios'
 class Article {
-  constructor(id = uuidv4(), nom, description, photo, prix, quantite, id_category) {
+  constructor(id, id_article, nom, description, photo, prix, quantite, id_category) {
     this.id = id
+    this.id_article = id_article
     this.nom = nom
     this.description = description
     this.photo = photo
     this.prix = prix
     this.quantite = quantite
-    this.id_category = id_category
+    this.id_categorie = id_category
   }
 
-  static async getAllArticles() {
-    try {
-      const res = await axios.get(
-        'http://localhost:3000/m2l/boutique/articles'
-      )
-      // console.log(res)
-      return res
-    } catch (error) {
-      console.error(error)
-    }
+/**
+ * Retourne la liste des articles de la boutique
+ *
+ * @return {Promise} Une promesse qui contient la liste des articles
+ */
+static async getAllArticles() {
+  try {
+    const res = await axios.get('http://localhost:3000/m2l/boutique/articles');
+    return res;
+  } catch (error) {
+    console.error(error);
   }
+}
 
-  static async getArticleById(id_article) {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/m2l/boutique/article?idart=${id_article}`
-      )
-      
-      // return res
-    } catch (error) {
-      console.error(error)
-    }
+static async getArticleById(id_article) {
+  try {
+    const res = await axios.get(`http://localhost:3000/m2l/boutique/articles?id_article=${id_article}`);
+    return res;
+  } catch (error) {
+    console.error(error);
   }
+}
 
   static async getArticlesByCategoryId(categoryId) {
     try {
@@ -45,6 +45,8 @@ class Article {
       console.error(error)
     }
   }
+
+
 
   static async addArticle(article) {}
 

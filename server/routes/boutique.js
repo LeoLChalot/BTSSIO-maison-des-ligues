@@ -89,6 +89,7 @@ router.get('/articles', async (req, res) => {
             return;
          }
       } else if (id_article) {
+         console.log(id_article);
          result = await articleDAO.find(connexion, 'id_article', id_article);
          if (result[0].length === 0) {
             res.status(404).json({

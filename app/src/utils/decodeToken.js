@@ -10,7 +10,7 @@ export const decodeToken = (token) => {
   // console.log(token)
   try {
     const decodedToken = jwtDecode(token)
-    // console.log('Decoded Token:', decodedToken)
+    console.log('Decoded Token:', decodedToken)
     const currentDateTime = new Date().getTime() / 1000
     // console.log('Current DateTime:', currentDateTime)
     decodedToken.exp > currentDateTime

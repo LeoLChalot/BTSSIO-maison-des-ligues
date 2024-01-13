@@ -18,14 +18,13 @@ router.post('/inscription', async (req, res) => {
       const registerDate = new Date();
 
       if (prenom && nom && pseudo && email && mot_de_passe) {
-         const passwordHash = await bcrypt.hash(mot_de_passe, 10);
          const user = {
             id_utilisateur: uuidv4(),
             prenom: prenom,
             nom: nom,
             pseudo: pseudo,
             email: email,
-            mot_de_passe: passwordHash,
+            mot_de_passe: mot_de_passe,
             is_admin: false,
             register_date: registerDate,
          };
@@ -142,6 +141,7 @@ router.post('/connexion', cookieParser(), async (req, res) => {
           }, 
             process.env.SECRET_KEY, {
                expiresIn: '1h',
+  
          });
    
    

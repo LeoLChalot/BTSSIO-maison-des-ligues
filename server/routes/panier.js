@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
+
 const { v4: uuidv4 } = require('uuid');
-const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
+const cookieJwtAuth = require('../middleware/auth-jwt');
 
 const ConnexionDAO = require('../models/ConnexionDAO');
 const ArticleDAO = require('../models/ArticleDAO');
@@ -10,7 +13,18 @@ const UtilisateurDAO = require('../models/UtilisateurDAO');
 const CommandeDAO = require('../models/CommandeDAO');
 const Panier_ProduitsDAO = require('../models/Panier_ProduitsDAO');
 
+router.use(
+   cookieParser(null, {
+      sameSite: 'None',
+      secure: true,
+   })
+);
+
+// router.use(cookieJwtAuth());
+
 router.get('/:pseudo', async (req, res) => {
+   console.log(req.cookies);
+
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
@@ -35,13 +49,20 @@ router.get('/:pseudo', async (req, res) => {
          'id_utilisateur',
          user[0][0].id_utilisateur
       );
+      const panier_produitDAO = new Panier_ProduitsDAO();
+      const articles = await panier_produitDAO.find(connexion, 'id_panier', result[0][0].id_panier);
+      console.log({ article: articles });
       if (result[0].length === 0) {
          return res.status(404).json({
             success: false,
             message: 'Panier non trouvé',
          });
       }
-      const panier = result[0][0];
+      const panier = {
+         id_panier: result[0][0].id_panier,
+         pseudo: pseudo,
+         articles: articles[0],
+      }
       res.status(200).json(panier);
    } catch (error) {
       console.error('Error connecting shop:', error);
@@ -128,11 +149,11 @@ router.post('/:pseudo', async (req, res) => {
             message: 'Articles ajoutés au panier avec succès',
          });
       } else {
-         res
-            .status(400)
-            .json({ success: false, message: 'Quantité insuffisante' });
+         res.status(400).json({
+            success: false,
+            message: 'Quantité insuffisante',
+         });
       }
-
    } catch (error) {
       console.error('Error connecting to database:', error);
       res.status(500).send('Internal Server Error');
@@ -147,26 +168,37 @@ router.delete('/:pseudo', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
-      const {id, id_panier} = req.body
-      if(id_panier){
-
+      const { id, id_panier } = req.body;
+      if (id_panier) {
          const panier_ProduitsDAO = new Panier_ProduitsDAO();
          const articleDAO = new ArticleDAO();
-         const articles = await panier_ProduitsDAO.find(connexion, 'id_panier', id_panier);
-         console.log({articles : articles})
+         const articles = await panier_ProduitsDAO.find(
+            connexion,
+            'id_panier',
+            id_panier
+         );
+         console.log({ articles: articles });
 
          for (let article of articles[0]) {
-            console.log({article : article})
-             const original_article = await articleDAO.find(connexion, 'id_article', article.id_article);
-             const suppression = await panier_ProduitsDAO.delete(connexion, 'id_article', article.id_article);
-             console.log({original_article : original_article[0][0].quantite})
-             if (original_article[0].length > 0) {
-                 const updateArticle = {
-                     quantite: original_article[0][0].quantite + 1,
-                     id_article: original_article[0][0].id_article
-                 };
-                 await articleDAO.update(connexion, updateArticle);
-             }
+            console.log({ article: article });
+            const original_article = await articleDAO.find(
+               connexion,
+               'id_article',
+               article.id_article
+            );
+            const suppression = await panier_ProduitsDAO.delete(
+               connexion,
+               'id_article',
+               article.id_article
+            );
+            console.log({ original_article: original_article[0][0].quantite });
+            if (original_article[0].length > 0) {
+               const updateArticle = {
+                  quantite: original_article[0][0].quantite + 1,
+                  id_article: original_article[0][0].id_article,
+               };
+               await articleDAO.update(connexion, updateArticle);
+            }
          }
          return res.status(200).json({
             success: true,

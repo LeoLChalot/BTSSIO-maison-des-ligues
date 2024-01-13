@@ -1,77 +1,65 @@
 import React, { useState, useEffect } from 'react'
 import './Navbar.css'
 import { Link, useNavigate } from 'react-router-dom'
-import ButtonBurger from '../ButtonBurger/ButtonBurger'
-import { isValidToken } from '../../utils/isValidToken'
-import { isAdmin } from '../../utils/isAdmin'
-import { decodeToken } from '../../utils/decodeToken'
 import Cookies from 'js-cookie'
+import { useAuth } from '../../hooks/useAuth'
+
+
 
 const Navbar = () => {
-  const [isActive, setIsActive] = useState('hide')
-  const [jwtToken, setJwtToken] = useState(Cookies.get('jwt_token'))
-  const [isConnected, setIsConnected] = useState(false)
-  const [role, setRole] = useState(isAdmin(jwtToken))
-  const ls = localStorage
+  const { isLoggedIn, isAdmin, pseudo, updateState } = useAuth()
   const navigate = useNavigate()
 
-  const deconnexion = () => {
-    Cookies.remove('jwt_token')
-    setJwtToken('')
-    navigate('/')
-  }
-
   useEffect(() => {
-    if (!isValidToken(jwtToken)) {
-      navigate('/connexion')
-    }
-    setIsConnected(true)
-  }, [jwtToken])
+    const jwtToken = Cookies.get('jwt_token');
+    updateState(jwtToken);
+    console.log('Context updated:', { isLoggedIn, isAdmin, pseudo });
+  }, [pseudo]);
+
+  const handleLogout = () => {
+    // Supprime le cookie et déconnecte l'utilisateur
+    Cookies.remove('jwt_token');
+    updateState(null);
+    // Redirige vers la page de connexion par exemple
+    navigate('/connexion');
+  };
 
   return (
-    <>
-      <ButtonBurger isActive={isActive} setIsActive={setIsActive} />
-      <div
-        id="navbar"
-        className={isActive}
-        onClick={(e) => setIsActive('hide')}
-      >
-        <Link to="/" className="link ">
-          Accueil
-        </Link>
-        <Link to="/boutique" className="link">
-          Boutique
-        </Link>
-        {!isConnected ? (
-          <>
-            <Link to="/connexion" className="link">
-              Connexion
-            </Link>
-            <Link to="/inscription" className="link">
-              Inscription
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link to={'/profil/' + ls.getItem('pseudo')} className="link">
-              Profil
-            </Link>
-            <Link to={'/panier/' + ls.getItem('pseudo')} className="link">
-              Panier
-            </Link>
-            <Link to="#" onClick={deconnexion} className="link">
-              Déconnexion
-            </Link>
-          </>
-        )}
+    <nav id="navbar">
+      <Link to="/" className="link">
+        Accueil
+      </Link>
+      <Link to="/boutique" className="link">Boutique</Link>
 
-        {role === true && (
-          <Link to="/dashboard" className="link">
-            Dashboard
+      {isLoggedIn === true ? (
+        <>
+          <Link to={`/profil/${pseudo}`} className="link">
+            Profil
           </Link>
-        )}
-      </div>
-    </>
+          <Link to={`/panier/${pseudo}`} className="link">
+            Panier
+          </Link>
+
+          {isAdmin && (
+            <Link to="/dashboard" className="link">
+              Admin
+            </Link>
+          )}
+
+          <button onClick={handleLogout}>Déconnexion</button>
+        </>
+      ) : (
+        <>
+          <Link to="/connexion" className="link">
+            Connexion
+          </Link>
+
+          <Link to="/inscription" className="link">
+            Inscription
+          </Link>
+        </>
+      )}
+    </nav>
   )
 }
 

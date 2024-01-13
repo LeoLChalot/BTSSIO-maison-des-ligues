@@ -18,7 +18,6 @@ export const isAdmin = (token) => {
       : console.log('Token is not valid')
     return decodedToken.role
   } catch (error) {
-    console.error('Erreur lors du décodage du token :', error)
     return false
   }
 }

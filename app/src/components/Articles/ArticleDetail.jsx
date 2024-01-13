@@ -6,6 +6,7 @@ import Categorie from '../../models/Categorie'
 import { isValidToken } from '../../utils/isValidToken'
 import { decodeToken } from '../../utils/decodeToken'
 import Cookies from 'js-cookie'
+import { toast } from 'react-toastify'
 
 import './ArticleDetail.css'
 
@@ -15,10 +16,10 @@ const ArticleDetail = () => {
   const [quantite, setQuantite] = useState(1)
   const [photo, setPhoto] = useState(null)
   const [categorie, setCategorie] = useState('')
-  const navigate = useNavigate()
   const serverBaseUrl = 'http://localhost:3000'
-  const ls = localStorage
-  const [jwtToken, setJwtToken] = useState(Cookies.get('jwt_token'))
+  const [jwtToken, setJwtToken] = useState('')
+  const [addedArticle, setAddedArticle] = useState(false)
+  const navigate = useNavigate()
 
   const fetchArticle = async (id) => {
     try {
@@ -31,7 +32,6 @@ const ArticleDetail = () => {
       const selectedCategorie = await Categorie.getCategoryById(
         data.infos[0].categorie_id
       )
-      console.log(selectedCategorie)
       setCategorie(selectedCategorie)
       setArticle(data.infos[0])
     } catch (error) {
@@ -42,23 +42,28 @@ const ArticleDetail = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     // Check if the user is logged in
-    if (!isValidToken(jwtToken)) {
+    if (Cookies.get('jwt_token') === undefined) {
       alert('Veuillez vous connecter pour ajouter un article au panier')
       navigate('/connexion')
       return
     }
-    if(quantite < 1) {
+
+    if (quantite > article.quantite || quantite < 1 || quantite === null) {
       alert('Quantité invalide')
+      setQuantite(1)
       return
     }
+
     try {
+      setJwtToken(Cookies.get('jwt_token'))
       const decoded_token = decodeToken(jwtToken)
       console.log(decoded_token)
-      const pseudo = decoded_token.user_pseudo
-      const panier = decoded_token.user_panier
+      const pseudo = decoded_token.pseudo
+      const panier = decoded_token.panier
       console.log({
-        id_panier: panier,
-        id_article: article.id_article,
+        panier: panier,
+        article: article.id_article,
+        quantite: quantite,
       })
       // Make an API call to add the article to the cart
       const res = await axios.post(
@@ -71,13 +76,14 @@ const ArticleDetail = () => {
       )
       console.log(res)
       if (res.status === 200) {
-        alert(quantite)
         quantite === 1
           ? alert('Article ajouté au panier')
           : alert('Articles ajoutés au panier')
+        setAddedArticle(true)
         return
+      } else if (res.status === 400) {
+        alert('Article en rupture !')
       }
-      alert('Article en rupture !')
 
       navigate('/boutique')
     } catch (error) {
@@ -86,8 +92,10 @@ const ArticleDetail = () => {
   }
 
   useEffect(() => {
+    setAddedArticle(false)
     fetchArticle(id)
-  }, [id])
+    setJwtToken(Cookies.get('jwt_token'))
+  }, [addedArticle])
 
   return (
     <div className="article-detail">
@@ -96,24 +104,28 @@ const ArticleDetail = () => {
         <div className="article-price">
           <span>{article.prix} €</span>
         </div>
-        
       </div>
       <div className="article-info">
         <p>{categorie}</p>
         <h2 style={{ textAlign: 'left' }}>{article.nom}</h2>
         <p>{article.description}</p>
-        
-        <p style={{fontWeight: 'bold'}}>
-        <>
-          {article.quantite === 0 
-          ? <span style={{ color: 'red'}}>En rupture</span>
-          : article.quantite === 1 
-          ? <span style={{ color: 'maroon'}}>Plus qu'un exemplaire en stock !</span>
-          : <span style={{ color: 'green'}}>{article.quantite} en stock</span>
-          }
-        </>
+
+        <p style={{ fontWeight: 'bold' }}>
+          <>
+            {article.quantite === 0 ? (
+              <span style={{ color: 'red' }}>En rupture</span>
+            ) : article.quantite === 1 ? (
+              <span style={{ color: 'maroon' }}>
+                Plus qu'un exemplaire en stock !
+              </span>
+            ) : (
+              <span style={{ color: 'green' }}>
+                {article.quantite} en stock
+              </span>
+            )}
+          </>
         </p>
-        
+
         {article.quantite > 0 ? (
           <form id="formulaire-ajout-panier" onSubmit={(e) => handleSubmit(e)}>
             <input
