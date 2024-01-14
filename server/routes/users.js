@@ -77,9 +77,15 @@ router.post('/connexion', cookieParser(), async (req, res) => {
       if (login && mot_de_passe) {
          // ? Trouver l'utilisateur
          const utilisateurDAO = new UtilisateurDAO();
-         let utilisateur = await utilisateurDAO.find(connexion, 'email', login);
+         const findWithMail = {
+            email: login,
+         }
+         const findWithPseudo = {
+            pseudo: login,
+         }
+         let utilisateur = await utilisateurDAO.find(connexion, findWithMail);
          if (utilisateur[0].length === 0) {
-            utilisateur = await utilisateurDAO.find(connexion, 'pseudo', login);
+            utilisateur = await utilisateurDAO.find(connexion, findWithPseudo);
          }
 
          // ! Envoyer une erreur si le couple login/mdp ne correspond pas
@@ -112,10 +118,13 @@ router.post('/connexion', cookieParser(), async (req, res) => {
 
          // ? Récupérer le panier de l'utilisateur
          const panierDAO = new PanierDAO();
-         let panier = await panierDAO.find(
+         const findWithIdUtilisateur = {
+            id_utilisateur: utilisateur['id_utilisateur'],
+         }
+
+         const panier = await panierDAO.find(
             connexion,
-            'id_utilisateur',
-            utilisateur['id_utilisateur']
+            findWithIdUtilisateur
          );
 
          // ? Creer un nouveau panier si aucun panier n'est trouvé
@@ -128,8 +137,7 @@ router.post('/connexion', cookieParser(), async (req, res) => {
             await panierDAO.create(connexion, newPanier);
             panier = await panierDAO.find(
                connexion,
-               'id_utilisateur',
-               utilisateur['id_utilisateur']
+               findWithIdUtilisateur
             );
          }
 
@@ -142,14 +150,6 @@ router.post('/connexion', cookieParser(), async (req, res) => {
             process.env.SECRET_KEY, {
                expiresIn: '1h',
          });
-   
-   
-         console.log("Cookie created");
-         console.log({JWT_Token: jwt_token});
-
-         const decodedToken = jwt.verify(jwt_token, process.env.SECRET_KEY);
-         console.log({Decoded_Token: decodedToken});
-
 
          res.status(200).json({
             success: true,

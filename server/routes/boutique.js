@@ -17,9 +17,12 @@ router.get('/categories', async (req, res) => {
       let result;
       const { nom, id } = req.query;
       const categorieDAO = new CategorieDAO();
-      console.log(nom);
+
       if (nom) {
-         result = await categorieDAO.find(connexion, 'nom', nom);
+         const findByNom = {
+            nom: nom,
+         }
+         result = await categorieDAO.find(connexion, findByNom);
          console.log(result);
          if (result[0].length === 0) {
             res.status(404).json({
@@ -29,7 +32,10 @@ router.get('/categories', async (req, res) => {
             return;
          }
       } else if (id) {
-         result = await categorieDAO.find(connexion, 'id_categorie', id);
+         const findById = {
+            id_categorie: id,
+         }
+         result = await categorieDAO.find(connexion, findById);
          if (result[0].length === 0) {
             res.status(404).json({
                success: false,
@@ -63,9 +69,11 @@ router.get('/articles', async (req, res) => {
       let result;
       const { nom, id_categorie, id_article } = req.query;
       const articleDAO = new ArticleDAO();
-      console.log(nom);
       if (nom) {
-         result = await articleDAO.find(connexion, 'nom', nom);
+         const findByNom = {
+            nom: nom,
+         }
+         result = await articleDAO.find(connexion, findByNom);
          if (result[0].length === 0) {
             res.status(404).json({
                success: false,
@@ -74,11 +82,12 @@ router.get('/articles', async (req, res) => {
             return;
          }
       } else if (id_categorie) {
-         console.log(id_categorie);
+         const findByIdCategorie = {
+            id_categorie: id_categorie,
+         }
          result = await articleDAO.find(
             connexion,
-            'categorie_id',
-            id_categorie
+            findByIdCategorie
          );
          if (result[0].length === 0) {
             console.log({ res: result[0].length });
@@ -89,8 +98,10 @@ router.get('/articles', async (req, res) => {
             return;
          }
       } else if (id_article) {
-         console.log(id_article);
-         result = await articleDAO.find(connexion, 'id_article', id_article);
+         const findByIdArticle = {
+            id_article: id_article,
+         }
+         result = await articleDAO.find(connexion, findByIdArticle);
          if (result[0].length === 0) {
             res.status(404).json({
                success: false,

@@ -1,12 +1,21 @@
+/**
+ * @class DAOModel - Classe de base pour tous les modeles.
+ * @property {string} table - La table de la base de données.
+ * @method find_all(connexion) - Retourne toutes les lignes de la table.
+ * @method find(connexion, object) - Retourne tous les items correspondant à la recherche.
+ * @method create(connexion, object) - Ajoute un nouvel item dans la base de données.
+ * @method delete(connexion, object) - Supprime un item dans la base de données.
+ * @method update(connexion, object) - Met à jour un item dans la base de données.
+ * @method deleteAll(connexion) - Supprime tous les items de la table.
+ */
 class DAOModel {
    constructor() {}
-
    /**
-    * ## Retrouver tous les articles de la base de données.
+    * ## Retourne toutes les lignes de la table.
     * ---
     * @param {Object} connexion - L'objet de connexion.
     * @return {Array} Un tableau d'objets.
-    * 
+    *
     * ---
     * *Exemples :*
     * ```js
@@ -31,7 +40,7 @@ class DAOModel {
    }
 
    /**
-    * ## Retourner tous les items correspondant à la recherche.
+    * ## Retourne tous les items correspondant à la recherche.
     * ---
     * @param {Object} connexion - L'objet de connexion.
     * @param {Object} object - L'objet contenant les colonnes et les valeurs de recherche.
@@ -47,28 +56,28 @@ class DAOModel {
    async find(connexion, object) {
       const columns = Object.keys(object);
       const values = Object.values(object);
-      let query = '';
-      if (columns.length > 1 && values.length > 1) {
-         query = `SELECT * FROM ${this.table} WHERE `;
-         for (let i = 0; i < columns.length - 1; i++) {
-            if (i < columns.length - 2) {
-               query += `${columns[i]} = ? AND `;
-            } else {
-               query += `${columns[i]} = ? `;
+      try {
+         let query = '';
+         if (columns.length > 1 && values.length > 1) {
+            query = `SELECT * FROM ${this.table} WHERE `;
+            for (let i = 0; i < columns.length - 1; i++) {
+               if (i < columns.length - 2) {
+                  query += `${columns[i]} = ?, `;
+               } else {
+                  query += `AND ${columns[i]} = ? `;
+               }
             }
+            console.log(query, values);
+         } else {
+            query = `SELECT * FROM ${this.table} WHERE ${columns[0]} = ?`;
          }
-         console.log(query, values);
-      } else {
-         query = `SELECT * FROM ${this.table} WHERE ${columns} = ?`;
-      }
 
-      const result = await connexion.query(query, values);
-      console.log(result);
-      return result;
-   }
-   catch(error) {
-      console.error('Error deleting article:', error);
-      throw error;
+         const result = await connexion.query(query, values);
+         return result;
+      } catch (error) {
+         console.error('Error deleting article:', error);
+         throw error;
+      }
    }
 
    /**
@@ -130,7 +139,7 @@ class DAOModel {
     * const model = new DAOModel();
     * model.update(connexion, object);
     * ```
-    * 
+    *
     */
    async update(connexion, object) {
       try {
@@ -164,23 +173,23 @@ class DAOModel {
     * @param {Object} object - L'objet contenant les colonnes et valeurs à supprimer.
     * @return {Promise} - Une promesse qui contient le résultat de la requête.
     * ---
-    * ### *Exemples : Avec une seule colonne*
+    * *Exemples : Avec une seule colonne*
     * ```js
-    * const object = { id: 1 } 
-    * // Delete From 'table' 
+    * const object = { id: 1 }
+    * // Delete From 'table'
     * // Where 'id' = 1
     * const model = new DAOModel();
-    * model.delete(connexion, object); 
+    * model.delete(connexion, object);
     * ```
     * ---
-    * ### *Exemples : Avec plusieurs colonne*
+    * *Exemples : Avec plusieurs colonne*
     * ```js
-    * const object = { id: 1, col_1: val_1, col_2: val_2 } 
-    * // Delete From 'table' 
+    * const object = { id: 1, col_1: val_1, col_2: val_2 }
+    * // Delete From 'table'
     * // Where 'id' = 1
     * // AND 'col_1' = val_1
     * const model = new DAOModel();
-    * model.delete(connexion, object); 
+    * model.delete(connexion, object);
     * ```
     */
    async delete(connexion, object) {
@@ -211,6 +220,18 @@ class DAOModel {
       }
    }
 
+   /**
+    * Supprimer tous les items de la table.
+    *
+    * @param {Object} connexion -   L'objet de connexion.
+    * @return {Promise} Résultat de la requête.
+    * ---
+    * *Exemples :*
+    * ```js
+    * const model = new DAOModel();
+    * model.deleteAll(connexion);
+    * ```
+    */
    async deleteAll(connexion) {
       try {
          const query = `

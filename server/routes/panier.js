@@ -36,7 +36,8 @@ router.get('/:pseudo', async (req, res) => {
          });
       }
       const utilisateur = new UtilisateurDAO();
-      const user = await utilisateur.find(connexion, 'pseudo', pseudo);
+      const findWithPseudo = { pseudo: pseudo };
+      const user = await utilisateur.find(connexion, findWithPseudo);
       if (user[0].length === 0) {
          return res.status(404).json({
             success: false,
@@ -44,16 +45,20 @@ router.get('/:pseudo', async (req, res) => {
          });
       }
       const panierDAO = new PanierDAO();
+      const findWithIdUtilisateur = {
+         id_utilisateur: user[0][0].id_utilisateur,
+      }
       const result = await panierDAO.find(
          connexion,
-         'id_utilisateur',
-         user[0][0].id_utilisateur
+         findWithIdUtilisateur
       );
       const panier_produitDAO = new Panier_ProduitsDAO();
+      const findWithIdPanier = {
+         id_panier: result[0][0].id_panier,
+      }
       const articles = await panier_produitDAO.find(
          connexion,
-         'id_panier',
-         result[0][0].id_panier
+         findWithIdPanier
       );
       console.log({ article: articles });
       if (result[0].length === 0) {
@@ -76,10 +81,6 @@ router.get('/:pseudo', async (req, res) => {
          ConnexionDAO.disconnect(connexion);
       }
    }
-});
-
-router.get('/detail', async (req, res) => {
-   res.send('Détail du panier');
 });
 
 router.post('/:pseudo', async (req, res) => {
@@ -110,10 +111,13 @@ router.post('/:pseudo', async (req, res) => {
       }
 
       const articleDAO = new ArticleDAO();
+
+      const findWithIdArticle = {
+         id_article: id_article,
+      }
       const article = await articleDAO.find(
          connexion,
-         'id_article',
-         id_article
+         findWithIdArticle
       );
       if (article[0].length === 0) {
          return res
@@ -136,10 +140,13 @@ router.post('/:pseudo', async (req, res) => {
          }
 
          const articleDAO = new ArticleDAO();
+
+         const findWithIdArticle = {
+            id_article: id_article,
+         }
          const article = await articleDAO.find(
             connexion,
-            'id_article',
-            id_article
+            findWithIdArticle
          );
          const updateArticle = {
             quantite: article[0][0].quantite - quantite,
@@ -185,26 +192,26 @@ router.delete('/:pseudo', async (req, res) => {
          const panier_ProduitsDAO = new Panier_ProduitsDAO();
          const articleDAO = new ArticleDAO();
 
-         const requestArticles = {
+         const findWithIdPanier = {
             id_panier: id_panier,
          }
 
          const articles = await panier_ProduitsDAO.find(
             connexion,
-            requestArticles
+            findWithIdPanier
          );
 
          for (let article of articles[0]) {
-            const requestArticle = {
+            const findWithIdArticle = {
                id_article: article.id_article,
             }
             const original_article = await articleDAO.find(
                connexion,
-               requestArticle
+               findWithIdArticle
             );
             await panier_ProduitsDAO.delete(
                connexion,
-               requestArticle
+               findWithIdArticle
             );
             if (original_article[0].length > 0) {
                const updateArticle = {
