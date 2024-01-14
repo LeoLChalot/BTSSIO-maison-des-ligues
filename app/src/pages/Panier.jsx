@@ -11,15 +11,14 @@ const PagePanier = () => {
   const [prix, setPrix] = useState(0)
   const [panier, setPanier] = useState({})
   const [articles, setArticles] = useState([])
+  const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
 
   const getPanier = async (pseudo) => {
     try {
-      // console.log('getPanier')
       const panier = await Panier.getPanier(pseudo)
       setPanier(panier)
       const articles_panier = panier.getArticles()
-      console.log(articles_panier)
       setArticles(articles_panier)
       setPrix(panier.getPrixTotal())
     } catch (error) {
@@ -29,8 +28,8 @@ const PagePanier = () => {
 
   const handleDelete = async (id) => {
     try {
-      await Panier.deleteArticleFromPanier(pseudo, id)
-      await getPanier(pseudo)
+      await panier.deleteArticleFromPanier(pseudo, id)
+      setRerender(true)
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'article du panier :', error)
     }
@@ -42,7 +41,8 @@ const PagePanier = () => {
       await getPanier(pseudo)
     }
     fetchData()
-  }, [])
+    setRerender(false)
+  }, [rerender])
 
   return (
     <>
@@ -52,7 +52,7 @@ const PagePanier = () => {
           {articles?.length > 0 ? (
             <ul className='list-panier'>
               {articles.map((article) => (
-                <li className="item-panier" key={article.id}>{article.nom} <button>supprimer</button></li>
+                <li className="item-panier" key={article.id}>{article.nom} <button onClick={() => handleDelete(article.id)}>supprimer</button></li>
               ))}
             </ul>
           ) : (

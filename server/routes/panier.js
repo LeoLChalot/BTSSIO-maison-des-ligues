@@ -50,7 +50,11 @@ router.get('/:pseudo', async (req, res) => {
          user[0][0].id_utilisateur
       );
       const panier_produitDAO = new Panier_ProduitsDAO();
-      const articles = await panier_produitDAO.find(connexion, 'id_panier', result[0][0].id_panier);
+      const articles = await panier_produitDAO.find(
+         connexion,
+         'id_panier',
+         result[0][0].id_panier
+      );
       console.log({ article: articles });
       if (result[0].length === 0) {
          return res.status(404).json({
@@ -62,7 +66,7 @@ router.get('/:pseudo', async (req, res) => {
          id_panier: result[0][0].id_panier,
          pseudo: pseudo,
          articles: articles[0],
-      }
+      };
       res.status(200).json(panier);
    } catch (error) {
       console.error('Error connecting shop:', error);
@@ -168,30 +172,40 @@ router.delete('/:pseudo', async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
-      const { id_article, id_panier } = req.body;
-      if (id_panier && !id_article) {
+      const { id, id_panier } = req.body;
+      console.log({ id: id, id_panier: id_panier });
+      if (!id && !id_panier) {
+         return res.status(400).json({
+            success: false,
+            message: "Identifiant de l'article ou du panier requis",
+         });
+      }
+
+      if (id_panier) {
          const panier_ProduitsDAO = new Panier_ProduitsDAO();
          const articleDAO = new ArticleDAO();
+
+         const requestArticles = {
+            id_panier: id_panier,
+         }
+
          const articles = await panier_ProduitsDAO.find(
             connexion,
-            'id_panier',
-            id_panier
+            requestArticles
          );
-         console.log({ articles: articles });
 
          for (let article of articles[0]) {
-            console.log({ article: article });
+            const requestArticle = {
+               id_article: article.id_article,
+            }
             const original_article = await articleDAO.find(
                connexion,
-               'id_article',
-               article.id_article
+               requestArticle
             );
-            const suppression = await panier_ProduitsDAO.delete(
+            await panier_ProduitsDAO.delete(
                connexion,
-               'id_article',
-               article.id_article
+               requestArticle
             );
-            console.log({ original_article: original_article[0][0].quantite });
             if (original_article[0].length > 0) {
                const updateArticle = {
                   quantite: original_article[0][0].quantite + 1,
@@ -206,15 +220,12 @@ router.delete('/:pseudo', async (req, res) => {
          });
       }
 
-      if (!id_article) {
-         return res.status(400).json({
-            success: false,
-            message: "Identifiant de l'article requis",
-         });
+      const panier_ProduitsDAO = new Panier_ProduitsDAO();
+      const requestArticle = {
+         id: id,
       }
 
-      const panier_ProduitsDAO = new Panier_ProduitsDAO();
-      const result = await panier_ProduitsDAO.find(connexion, 'id', id_article);
+      const result = await panier_ProduitsDAO.find(connexion, requestArticle);
 
       if (result[0].length === 0) {
          return res.status(404).json({
@@ -224,25 +235,28 @@ router.delete('/:pseudo', async (req, res) => {
       }
 
       const articleDAO = new ArticleDAO();
+
+      const original_article = {
+         id_article: result[0][0].id_article,
+      };
+
       const article = await articleDAO.find(
          connexion,
-         'id_article',
-         result[0][0].id_article
+         original_article
       );
 
       const updateArticle = {
          quantite: article[0][0].quantite + 1,
          id_article: article[0][0].id_article,
       };
-      console.log(updateArticle);
 
       await articleDAO.update(connexion, updateArticle);
 
       const article_a_supprimer = {
-         id: id_article,
-      }
+         id: id,
+      };
 
-      await panier_ProduitsDAO.delete(connexion, article_a_supprimer)
+      await panier_ProduitsDAO.delete(connexion, article_a_supprimer);
 
       res.status(200).json({
          success: true,

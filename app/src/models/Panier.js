@@ -21,11 +21,13 @@ class Panier {
       const response = await axios.get(url, config)
       console.log({ response: response })
       const panier = new Panier(response.data.id_panier, pseudo)
-      console.log({panier : panier})
+      console.log({ panier: panier })
       for (let i = 0; i < response.data.articles.length; i++) {
         console.log(response.data.articles[i].id_article)
-        const { data } = await Article.getArticleById(response.data.articles[i].id_article)
-        console.log({data: data})
+        const { data } = await Article.getArticleById(
+          response.data.articles[i].id_article
+        )
+        console.log({ data: data })
         if (data) {
           const item = new Article(
             response.data.articles[i].id,
@@ -50,20 +52,23 @@ class Panier {
 
   // Méthode pour ajouter un article au panier
   addArticleToPanier(article) {
-    this.articles.push(article);
+    this.articles.push(article)
   }
 
   confirmPanier(id_panier) {
     // Implement the logic to confirm the cart
   }
 
-  async deleteArticleFromPanier(pseudo, id_article) {
+  async deleteArticleFromPanier(pseudo, id) {
     // Implement the logic to delete an article from the cart
     const request = await axios.post(
-      `http://localhost:3000/m2l/panier/${pseudo}`, {
-        id_article: id_article
+      `http://localhost:3000/m2l/panier/${pseudo}`,
+      {
+        body: {
+          id: id,
+        },
       }
-    ) 
+    )
   }
 
   viderPanier() {
@@ -71,11 +76,15 @@ class Panier {
   }
 
   getNombreArticles() {
-    return this.articles.length;
+    return this.articles.length
   }
 
   getPrixTotal() {
-    return Math.round(this.articles.reduce((total, article) => total + article.prix, 0) * 100) / 100
+    return (
+      Math.round(
+        this.articles.reduce((total, article) => total + article.prix, 0) * 100
+      ) / 100
+    )
   }
 
   /**
