@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Panier from '../models/Panier'
 import { useAuth } from '../hooks/useAuth'
 import { toast } from 'react-toastify'
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
@@ -17,28 +17,51 @@ const PagePanier = () => {
   const getPanier = async (pseudo) => {
     try {
       const panier = await Panier.getPanier(pseudo)
-      setPanier(panier)
-      const articles_panier = panier.getArticles()
-      setArticles(articles_panier)
-      setPrix(panier.getPrixTotal())
+      return panier
     } catch (error) {
       console.error('Erreur lors de la récupération du panier :', error)
     }
   }
 
+  const getArticles = async (panier) => {
+    try {
+      const articles_panier = panier.getArticles()
+      setPrix(panier.getPrixTotal())
+      return articles_panier
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handleDelete = async (id) => {
     try {
+      // console.log({ panier_client: panier })
       await panier.deleteArticleFromPanier(pseudo, id)
       setRerender(true)
     } catch (error) {
-      console.error('Erreur lors de la suppression de l\'article du panier :', error)
+      console.error(
+        "Erreur lors de la suppression de l'article du panier",
+        error
+      )
     }
   }
 
   useEffect(() => {
     const fetchData = async () => {
       if (!isLoggedIn || pseudo_param !== pseudo) navigate('/notyou')
-      await getPanier(pseudo)
+      const fetchPanier = await getPanier(pseudo)
+      if (!fetchPanier) {
+        console.error('Panier introuvable')
+        return
+      }
+      setPanier(fetchPanier)
+      const fetchArticles = await getArticles(fetchPanier)
+      if (!fetchArticles) {
+        console.error('Articles introuvables')
+        return
+      }
+      setArticles(fetchArticles)
+      
     }
     fetchData()
     setRerender(false)
@@ -50,9 +73,14 @@ const PagePanier = () => {
         <h1>Page Panier | {prix}€</h1>
         <div className="content">
           {articles?.length > 0 ? (
-            <ul className='list-panier'>
+            <ul className="list-panier">
               {articles.map((article) => (
-                <li className="item-panier" key={article.id}>{article.nom} <button onClick={() => handleDelete(article.id)}>supprimer</button></li>
+                <li className="item-panier" key={article.id}>
+                  {article.nom}
+                  <button onClick={() => handleDelete(article.id)}>
+                    supprimer
+                  </button>
+                </li>
               ))}
             </ul>
           ) : (

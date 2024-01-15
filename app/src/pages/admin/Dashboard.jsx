@@ -7,33 +7,26 @@ import FormArticle from '../../components/FormArticle/FormArticle'
 import AsideMenu from '../../components/AsideMenu/AsideMenu'
 import ErreurNonAdmin from '../Erreurs/ErreurNonAdmin'
 import ArticlesList from './ArticlesList'
+import { useAuth } from '../../hooks/useAuth'
 
 const Dashboard = () => {
+  const { isLoggedIn, isAdmin, pseudo, jwtToken, updateState } = useAuth()
   const navigate = useNavigate()
   const ls = localStorage
 
   const authCheck = async (oauth_token) => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/m2l/admin/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${oauth_token}`,
-        },
-      })
-      if (data.status != 'admin') {
-        return false
-      }
+      const { data } = await axios.get(`http://localhost:3000/m2l/boutique/articles`)
     } catch (error) {
       console.error(error)
     }
   }
 
   useEffect(() => {
-    console.log(ls.getItem('isAdmin'))
-    if (ls.getItem('isAdmin') != 'admin') {
-      navigate('/unauthorized')
+    const fetchData = async () => {
+      if (!(isLoggedIn || isAdmin) ) navigate('/notyou')
     }
-  }, [ls.getItem('isAdmin')])
+  }, [])
 
   return (
     <>

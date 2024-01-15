@@ -59,17 +59,18 @@ class Panier {
     // Implement the logic to confirm the cart
   }
 
-  async deleteArticleFromPanier(pseudo, id) {
-    // Implement the logic to delete an article from the cart
-    const request = await axios.post(
-      `http://localhost:3000/m2l/panier/${pseudo}`,
-      {
-        body: {
-          id: id,
-        },
-      }
-    )
-  }
+static async deleteArticleFromPanier(pseudo, id) {
+  // Implement the logic to delete an article from the cart
+  console.log("Backend", { pseudo: pseudo, id: id })
+  const request = await axios.delete(
+    `http://localhost:3000/m2l/panier/${pseudo}`,
+    {
+      body: {
+        id: id,
+      },
+    }
+  )
+}
 
   viderPanier() {
     // Implement the logic to empty the cart

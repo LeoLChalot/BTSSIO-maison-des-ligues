@@ -97,6 +97,8 @@ router.post('/connexion', cookieParser(), async (req, res) => {
             return;
          }
 
+         console.log(utilisateur)
+
          utilisateur = {
             id_utilisateur: utilisateur[0][0].id_utilisateur,
             pseudo: utilisateur[0][0].pseudo,
@@ -122,7 +124,7 @@ router.post('/connexion', cookieParser(), async (req, res) => {
             id_utilisateur: utilisateur['id_utilisateur'],
          }
 
-         const panier = await panierDAO.find(
+         let panier = await panierDAO.find(
             connexion,
             findWithIdUtilisateur
          );
