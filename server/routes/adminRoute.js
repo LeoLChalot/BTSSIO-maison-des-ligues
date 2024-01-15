@@ -55,45 +55,7 @@ router.put('/article', upload.single('photo'), adminController.updateArticle, as
 });
 
 router.delete('/article', async (req, res) => {
-   let connexion;
-   try {
-      connexion = await ConnexionDAO.connect();
-      const id = req.body.id;
-      const articleDAO = new ArticleDAO();
-      const articleMagasin = await articleDAO.find(connexion, 'id_article', id);
-      if (articleMagasin[0].length === 0) {
-         res.status(404).json({
-            success: false,
-            message: 'Article non trouvée',
-         });
-         return;
-      }
-      if (quantity) {
-         const updateArticle = {
-            quantite: articleMagasin[0][0].quantite - quantity,
-            id_article: articleMagasin[0][0].id_article,
-         };
-         console.log(updateArticle);
-         const result = await articleDAO.update(connexion, updateArticle);
-         res.status(201).json({
-            success: true,
-            message: 'Article(s) supprimé(s) !',
-         });
-      } else {
-         const result = await articleDAO.delete(connexion, 'id_article', id);
-         res.status(201).json({
-            success: true,
-            message: 'Tous les articles supprimés !',
-         });
-      }
-   } catch (error) {
-      console.error('Error connecting shop:', error);
-      throw error;
-   } finally {
-      if (connexion) {
-         ConnexionDAO.disconnect(connexion);
-      }
-   }
+
 });
 
 module.exports = router;
