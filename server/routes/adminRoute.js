@@ -5,9 +5,9 @@ const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 
 const ConnexionDAO = require('../models/ConnexionDAO');
-const UtilisateurDAO = require('./../models/UtilisateurDAO');
-const CategorieDAO = require('./../models/CategorieDAO');
-const ArticleDAO = require('./../models/ArticleDAO');
+const UtilisateurDAO = require('../models/UtilisateurDAO');
+const CategorieDAO = require('../models/CategorieDAO');
+const ArticleDAO = require('../models/ArticleDAO');
 
 const MIME_TYPES = {
    'image/jpg': 'jpg',

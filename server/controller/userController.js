@@ -1,22 +1,24 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
-const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
-
 const ConnexionDAO = require('../models/ConnexionDAO');
 const UtilisateurDAO = require('../models/UtilisateurDAO');
-const OauthDAO = require('../models/OauthDAO');
 const PanierDAO = require('../models/PanierDAO');
 
-router.post('/inscription', async (req, res) => {
+const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+
+/**
+ * ## Inscrire un utilisateur
+ *
+ * @param {Object} req - L'objet de requête.
+ * @param {Object} res - L'objet de réponse.
+ * @return {Promise<void>} Une promesse qui contient le résultat.
+ */
+exports.register = async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
       const { prenom, nom, pseudo, email, mot_de_passe } = req.body;
       const registerDate = new Date();
-
       if (prenom && nom && pseudo && email && mot_de_passe) {
          const user = {
             id_utilisateur: uuidv4(),
@@ -31,23 +33,25 @@ router.post('/inscription', async (req, res) => {
 
          // ! Envoyer une erreur si l'utilisateur existe
          const utilisateur = new UtilisateurDAO();
-         const existMail = await utilisateur.find(connexion, 'email', email);
-         const existPseudo = await utilisateur.find(
-            connexion,
-            'pseudo',
-            pseudo
-         );
-         if (existMail[0].length !== 0)
+         const findWithMail = { email: email };
+         const findWithPseudo = { pseudo: pseudo };
+         const existMail = await utilisateur.find(connexion, findWithMail);
+         const existPseudo = await utilisateur.find(connexion, findWithPseudo);
+         if (existMail[0].length !== 0) {
             res.status(400).json({
                success: false,
                message: 'Cet email est déjà utilisé',
             });
-         if (existPseudo[0].length !== 0)
+            return;
+         }
+         if (existPseudo[0].length !== 0) {
             res.status(400).json({
                success: false,
                message: 'Ce pseudo est déjà utilisé',
             });
-         
+            return;
+         }
+
          // ? Creer l'utilisateur
          await utilisateur.create(connexion, user);
 
@@ -60,29 +64,38 @@ router.post('/inscription', async (req, res) => {
          });
       }
    } catch (error) {
-      console.error('Error connecting user:', error);
+      console.error('Error connecting shop:', error);
       throw error;
    } finally {
       if (connexion) {
          ConnexionDAO.disconnect(connexion);
       }
    }
-});
+};
 
-router.post('/connexion', cookieParser(), async (req, res) => {
-   const { login, mot_de_passe } = req.body;
+/**
+ * ## Connexion d'un utilisateur
+ *
+ * @param {object} req - L'objet de requête.
+ * @param {object} res - L'objet de réponse.
+ * @return {Promise<void>} - Une promesse qui contient le résultat.
+ */
+exports.login = async (req, res) => {
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
+      const { login, mot_de_passe } = req.body;
       if (login && mot_de_passe) {
-         // ? Trouver l'utilisateur
-         const utilisateurDAO = new UtilisateurDAO();
          const findWithMail = {
             email: login,
-         }
+         };
          const findWithPseudo = {
             pseudo: login,
-         }
+         };
+         
+         // ? Trouver l'utilisateur
+         const utilisateurDAO = new UtilisateurDAO();
+
          let utilisateur = await utilisateurDAO.find(connexion, findWithMail);
          if (utilisateur[0].length === 0) {
             utilisateur = await utilisateurDAO.find(connexion, findWithPseudo);
@@ -96,8 +109,6 @@ router.post('/connexion', cookieParser(), async (req, res) => {
             });
             return;
          }
-
-         console.log(utilisateur)
 
          utilisateur = {
             id_utilisateur: utilisateur[0][0].id_utilisateur,
@@ -117,17 +128,13 @@ router.post('/connexion', cookieParser(), async (req, res) => {
             return;
          }
 
-
          // ? Récupérer le panier de l'utilisateur
          const panierDAO = new PanierDAO();
          const findWithIdUtilisateur = {
             id_utilisateur: utilisateur['id_utilisateur'],
-         }
+         };
 
-         let panier = await panierDAO.find(
-            connexion,
-            findWithIdUtilisateur
-         );
+         let panier = await panierDAO.find(connexion, findWithIdUtilisateur);
 
          // ? Creer un nouveau panier si aucun panier n'est trouvé
          if (panier[0].length === 0) {
@@ -137,35 +144,32 @@ router.post('/connexion', cookieParser(), async (req, res) => {
                date: new Date(),
             };
             await panierDAO.create(connexion, newPanier);
-            panier = await panierDAO.find(
-               connexion,
-               findWithIdUtilisateur
-            );
+            panier = await panierDAO.find(connexion, findWithIdUtilisateur);
          }
 
-         let jwt_token = jwt.sign({ 
-            email: utilisateur.email, 
-            pseudo: utilisateur.pseudo, 
-            role: utilisateur.isAdmin,
-            panier: panier[0][0].id_panier
-          }, 
-            process.env.SECRET_KEY, {
+         let jwt_token = jwt.sign(
+            {
+               email: utilisateur.email,
+               pseudo: utilisateur.pseudo,
+               role: utilisateur.isAdmin,
+               panier: panier[0][0].id_panier,
+            },
+            process.env.SECRET_KEY,
+            {
                expiresIn: '1h',
-         });
+            }
+         );
 
          res.status(200).json({
             success: true,
             message: 'Utilisateur connecté',
             infos: {
                utilisateur: {
-                 email: utilisateur.email,
-                 pseudo: utilisateur.pseudo,
-                 isAdmin: utilisateur.isAdmin
+                  email: utilisateur.email,
+                  pseudo: utilisateur.pseudo,
+                  jwt_token: jwt_token,
                },
-               panier: panier[0][0],
-               jwt_token: jwt_token
             },
-
          });
          return;
       } else {
@@ -177,15 +181,11 @@ router.post('/connexion', cookieParser(), async (req, res) => {
          return;
       }
    } catch (error) {
-      console.error('Error connecting user:', error);
+      console.error('Error connecting shop:', error);
       throw error;
    } finally {
       if (connexion) {
          ConnexionDAO.disconnect(connexion);
       }
    }
-});
-
-
-
-module.exports = router;
+};

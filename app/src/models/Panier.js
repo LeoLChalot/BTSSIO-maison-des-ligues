@@ -19,15 +19,15 @@ class Panier {
       }
 
       const response = await axios.get(url, config)
-      console.log({ response: response })
+      // console.log({ response: response })
       const panier = new Panier(response.data.id_panier, pseudo)
-      console.log({ panier: panier })
+      // console.log({ panier: panier })
       for (let i = 0; i < response.data.articles.length; i++) {
-        console.log(response.data.articles[i].id_article)
+        // console.log(response.data.articles[i].id_article)
         const { data } = await Article.getArticleById(
           response.data.articles[i].id_article
         )
-        console.log({ data: data })
+        // console.log({ data: data })
         if (data) {
           const item = new Article(
             response.data.articles[i].id,
@@ -59,18 +59,15 @@ class Panier {
     // Implement the logic to confirm the cart
   }
 
-static async deleteArticleFromPanier(pseudo, id) {
-  // Implement the logic to delete an article from the cart
-  console.log("Backend", { pseudo: pseudo, id: id })
-  const request = await axios.delete(
-    `http://localhost:3000/m2l/panier/${pseudo}`,
-    {
-      body: {
-        id: id,
-      },
-    }
-  )
-}
+  async deleteArticleFromPanier(id) {
+    // Implement the logic to delete an article from the cart
+    console.log('Backend', { pseudo: this.pseudo, id: id })
+    const url = `http://localhost:3000/m2l/panier/` + this.pseudo
+    console.log(url)
+    const request = await axios.delete(url, {
+      id: id,
+    })
+  }
 
   viderPanier() {
     // Implement the logic to empty the cart

@@ -7,11 +7,11 @@ const PORT = 3000;
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-const routesBoutique = require('./routes/boutique');
-const routesUsers = require('./routes/users');
-const routesAdmin = require('./routes/admin');
-const routesPanier = require('./routes/panier');
-const routesTests = require('./routes/tests');
+const routesBoutique = require('./routes/boutiqueRoute');
+const routesUsers = require('./routes/usersRoute');
+const routesAdmin = require('./routes/adminRoute');
+const routesPanier = require('./routes/panierRoute');
+const routesTests = require('./routes/testsRoute');
 
 const whiteList = ['http://localhost:3000', 'http://localhost:5173'];
 const corsOptions = {

@@ -27,10 +27,12 @@ const FormConnexion = () => {
         login: login,
         mot_de_passe: password,
       })
+
+      console.log(res.data)
       if (res.status == 200) {
         console.log(res.data.infos)
 
-        Cookies.set('jwt_token', res.data.infos.jwt_token, {expires: 1, secure: true})
+        Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {expires: 1, secure: true})
         let token = Cookies.get('jwt_token')
         console.log(isValidToken(token))
         updateState(token)

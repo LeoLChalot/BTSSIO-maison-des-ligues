@@ -35,8 +35,9 @@ const PagePanier = () => {
 
   const handleDelete = async (id) => {
     try {
-      // console.log({ panier_client: panier })
-      await panier.deleteArticleFromPanier(pseudo, id)
+      console.log({ panier_client: panier })
+      const panierUser = new Panier(panier.id_panier, pseudo)
+      await panierUser.deleteArticleFromPanier(id)
       setRerender(true)
     } catch (error) {
       console.error(
