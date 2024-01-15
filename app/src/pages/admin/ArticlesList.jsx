@@ -7,29 +7,16 @@ const ArticlesList = () => {
   const [modif, setModif] = useState(false)
   const [articles, setArticles] = useState([])
 
-  useEffect(() => {
-    // Appeler une fonction pour récupérer la liste des articles
-    fetchArticles()
-    setModif(false)
-  }, [modif])
-
   const fetchArticles = async () => {
-    try {
-      const { data } = await axios.get(
-        'http://localhost:3000/m2l/boutique/article'
-      )
-      setArticles(data[0])
-      // setModif(true)
-    } catch (error) {
-      console.error('Error fetching articles:', error)
-    }
+    const {data} = await Article.getAllArticles()
+    console.log({ result: data })
+    setArticles(data.infos)
   }
-
   const handleDeleteArticle = async (id_article) => {
     try {
       // Appeler une fonction pour supprimer l'article
       const { data } = await axios.delete(
-        `http://localhost:3000/m2l/boutique/article/${id_article}`
+        `http://localhost:3000/m2l/admin/articles/${id_article}`
       )
       setModif(true)
       alert(data.message)
@@ -39,6 +26,11 @@ const ArticlesList = () => {
       console.error('Error deleting article:', error)
     }
   }
+  useEffect(() => {
+    // Appeler une fonction pour récupérer la liste des articles
+    fetchArticles()
+    setModif(false)
+  }, [modif])
 
   return (
     <div>
@@ -65,9 +57,6 @@ const ArticlesList = () => {
               <td>{article.quantite}</td>
               <td>{article.categorie_id.slice(0, 15) + '...'}</td>
               <td>
-                <button onClick={() => handleDeleteArticle(article.id_article)}>
-                  -1
-                </button>
                 <button
                   onClick={() =>
                     handleDeleteArticle(`all-${article.id_article}`)

@@ -12,8 +12,8 @@ const FormArticle = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3000/m2l/boutique/categorie');
-        setCategories(data);
+        const { data } = await axios.get('http://localhost:3000/m2l/boutique/categories');
+        setCategories(data.infos);
       } catch (error) {
         console.error('Error retrieving categories:', error);
       }
@@ -36,7 +36,7 @@ const FormArticle = () => {
     });
 
     try {
-      const {data} = await axios.post('http://localhost:3000/m2l/boutique/article', formData, {
+      const {data} = await axios.post('http://localhost:3000/m2l/admin/article', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

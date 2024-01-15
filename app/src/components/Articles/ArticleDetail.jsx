@@ -84,6 +84,7 @@ const ArticleDetail = () => {
 
       const res = await axios.post(
         `http://localhost:3000/m2l/panier/${pseudo}`, body, config )
+        
       console.log(res)
       if (res.status === 200) {
         quantite === 1

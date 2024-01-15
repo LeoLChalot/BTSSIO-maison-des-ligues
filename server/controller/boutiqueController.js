@@ -128,7 +128,7 @@ exports.getAllArticles = async (req, res) => {
       const result = await articleDAO.find_all(connexion);
       res.status(200).json({
          success: true,
-         message: result[0].length > 1 ? 'Liste des articles' : 'Infos article',
+         message: 'Liste des articles',
          infos: result[0],
       });
       return;
