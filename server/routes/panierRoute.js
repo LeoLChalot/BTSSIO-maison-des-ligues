@@ -13,269 +13,31 @@ const UtilisateurDAO = require('../models/UtilisateurDAO');
 const CommandeDAO = require('../models/CommandeDAO');
 const Panier_ProduitsDAO = require('../models/Panier_ProduitsDAO');
 
-router.use(
-   cookieParser(null, {
-      sameSite: 'None',
-      secure: true,
-   })
-);
+const authenticator = require('../middleware/jwt-authentication');
+const panierController = require('../controller/panierController');
 
-// router.use(cookieJwtAuth());
+// router.use(authenticator.auth);
 
-router.get('/:pseudo', async (req, res) => {
+router.get('/:pseudo', panierController.getCartContent, async (req, res) => {
    console.log(req.cookies);
-
-   let connexion;
-   try {
-      connexion = await ConnexionDAO.connect();
-      const pseudo = req.params.pseudo;
-      if (!pseudo) {
-         return res.status(400).json({
-            success: false,
-            message: "Identifiant de l'utilisateur requis",
-         });
-      }
-      const utilisateur = new UtilisateurDAO();
-      const findWithPseudo = { pseudo: pseudo };
-      const user = await utilisateur.find(connexion, findWithPseudo);
-      if (user[0].length === 0) {
-         return res.status(404).json({
-            success: false,
-            message: 'Utilisateur non trouvé',
-         });
-      }
-      const panierDAO = new PanierDAO();
-      const findWithIdUtilisateur = {
-         id_utilisateur: user[0][0].id_utilisateur,
-      }
-      const result = await panierDAO.find(
-         connexion,
-         findWithIdUtilisateur
-      );
-      const panier_produitDAO = new Panier_ProduitsDAO();
-      const findWithIdPanier = {
-         id_panier: result[0][0].id_panier,
-      }
-      const articles = await panier_produitDAO.find(
-         connexion,
-         findWithIdPanier
-      );
-      console.log({ article: articles });
-      if (result[0].length === 0) {
-         return res.status(404).json({
-            success: false,
-            message: 'Panier non trouvé',
-         });
-      }
-      const panier = {
-         id_panier: result[0][0].id_panier,
-         pseudo: pseudo,
-         articles: articles[0],
-      };
-      res.status(200).json(panier);
-   } catch (error) {
-      console.error('Error connecting shop:', error);
-      throw error;
-   } finally {
-      if (connexion) {
-         ConnexionDAO.disconnect(connexion);
-      }
-   }
+   res.send('ok');
 });
 
-router.post('/:pseudo', async (req, res) => {
-   let connexion;
-   try {
-      connexion = await ConnexionDAO.connect();
-      const { id_panier, id_article, quantite } = req.body;
-      console.log({
-         id_panier,
-         id_article,
-         quantite,
-      });
-      if (!id_panier) {
-         return res
-            .status(400)
-            .json({ success: false, message: 'Identifiant du panier requis' });
-      }
-      if (!id_article) {
-         return res.status(400).json({
-            success: false,
-            message: "Identifiant de l'article requis",
-         });
-      }
-      if (!quantite) {
-         return res
-            .status(400)
-            .json({ success: false, message: "Quantité de l'article requise" });
-      }
-
-      const articleDAO = new ArticleDAO();
-
-      const findWithIdArticle = {
-         id_article: id_article,
-      }
-      const article = await articleDAO.find(
-         connexion,
-         findWithIdArticle
-      );
-      if (article[0].length === 0) {
-         return res
-            .status(404)
-            .json({ success: false, message: 'Article non trouvée' });
-      }
-
-      if (article[0][0].quantite >= quantite) {
-         for (let i = 0; i < quantite; i++) {
-            const entree_panier = {
-               id: uuidv4(),
-               id_panier: id_panier,
-               id_article: id_article,
-            };
-            const panier_ProduitsDAO = new Panier_ProduitsDAO();
-            const result = await panier_ProduitsDAO.create(
-               connexion,
-               entree_panier
-            );
-         }
-
-         const articleDAO = new ArticleDAO();
-
-         const findWithIdArticle = {
-            id_article: id_article,
-         }
-         const article = await articleDAO.find(
-            connexion,
-            findWithIdArticle
-         );
-         const updateArticle = {
-            quantite: article[0][0].quantite - quantite,
-            id_article: article[0][0].id_article,
-         };
-
-         const result = await articleDAO.update(connexion, updateArticle);
-
-         res.status(200).json({
-            success: true,
-            message: 'Articles ajoutés au panier avec succès',
-         });
-      } else {
-         res.status(400).json({
-            success: false,
-            message: 'Quantité insuffisante',
-         });
-      }
-   } catch (error) {
-      console.error('Error connecting to database:', error);
-      res.status(500).send('Internal Server Error');
-   } finally {
-      if (connexion) {
-         ConnexionDAO.disconnect(connexion);
-      }
-   }
+router.post('/:pseudo', panierController.addToCart, async (req, res) => {
+   console.log(req.cookies);
+   res.send('ok');
 });
 
 router.delete('/:pseudo', async (req, res) => {
-   let connexion;
-   try {
-      connexion = await ConnexionDAO.connect();
-      const { id, id_panier } = req.body;
-      console.log({ id: id, id_panier: id_panier });
-      if (!id && !id_panier) {
-         return res.status(400).json({
-            success: false,
-            message: "Identifiant de l'article ou du panier requis",
-         });
-      }
-
-      if (id_panier) {
-         const panier_ProduitsDAO = new Panier_ProduitsDAO();
-         const articleDAO = new ArticleDAO();
-
-         const findWithIdPanier = {
-            id_panier: id_panier,
-         }
-
-         const articles = await panier_ProduitsDAO.find(
-            connexion,
-            findWithIdPanier
-         );
-
-         for (let article of articles[0]) {
-            const findWithIdArticle = {
-               id_article: article.id_article,
-            }
-            const original_article = await articleDAO.find(
-               connexion,
-               findWithIdArticle
-            );
-            await panier_ProduitsDAO.delete(
-               connexion,
-               findWithIdArticle
-            );
-            if (original_article[0].length > 0) {
-               const updateArticle = {
-                  quantite: original_article[0][0].quantite + 1,
-                  id_article: original_article[0][0].id_article,
-               };
-               await articleDAO.update(connexion, updateArticle);
-            }
-         }
-         return res.status(200).json({
-            success: true,
-            message: 'Tous les articles du panier sont supprimés',
-         });
-      }
-
-      const panier_ProduitsDAO = new Panier_ProduitsDAO();
-      const requestArticle = {
-         id: id,
-      }
-
-      const result = await panier_ProduitsDAO.find(connexion, requestArticle);
-
-      if (result[0].length === 0) {
-         return res.status(404).json({
-            success: false,
-            message: "L'article n'est pas présent dans le panier",
-         });
-      }
-
-      const articleDAO = new ArticleDAO();
-
-      const original_article = {
-         id_article: result[0][0].id_article,
-      };
-
-      const article = await articleDAO.find(
-         connexion,
-         original_article
-      );
-
-      const updateArticle = {
-         quantite: article[0][0].quantite + 1,
-         id_article: article[0][0].id_article,
-      };
-
-      await articleDAO.update(connexion, updateArticle);
-
-      const article_a_supprimer = {
-         id: id,
-      };
-
-      await panier_ProduitsDAO.delete(connexion, article_a_supprimer);
-
-      res.status(200).json({
-         success: true,
-         message: 'Produit supprimé du panier avec succès',
-      });
-   } catch (error) {
-      console.error('Error connecting to database:', error);
-      res.status(500).send('Internal Server Error');
-   } finally {
-      if (connexion) {
-         ConnexionDAO.disconnect(connexion);
-      }
+   const { id, id_panier } = req.body;
+   if (id) {
+      panierController.deleteToCart(req, res);
+   } else if (id_panier) {
+      panierController.clearCart(req, res);
+   } else {
+      return res
+         .status(400)
+         .json({ msg: "Identifiant du panier ou de l'article requis" });
    }
 });
 

@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const app = express();
 const PORT = 3000;
+const cookieParser = require('cookie-parser');
 
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -12,6 +13,14 @@ const routesUsers = require('./routes/usersRoute');
 const routesAdmin = require('./routes/adminRoute');
 const routesPanier = require('./routes/panierRoute');
 const routesTests = require('./routes/testsRoute');
+
+app.use(
+   cookieParser(null, {
+      sameSite: 'None',
+      secure: true,
+   })
+ );
+
 
 const whiteList = ['http://localhost:3000', 'http://localhost:5173'];
 const corsOptions = {

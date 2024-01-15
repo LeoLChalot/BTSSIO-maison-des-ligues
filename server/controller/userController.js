@@ -160,6 +160,8 @@ exports.login = async (req, res) => {
             }
          );
 
+         console.log('jwt_token:', jwt_token);
+
          res.status(200).json({
             success: true,
             message: 'Utilisateur connecté',

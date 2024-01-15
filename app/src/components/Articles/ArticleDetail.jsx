@@ -60,20 +60,30 @@ const ArticleDetail = () => {
       console.log(decoded_token)
       const pseudo = decoded_token.pseudo
       const panier = decoded_token.panier
+      console.log({panier: decoded_token.panier})
       console.log({
         panier: panier,
         article: article.id_article,
         quantite: quantite,
       })
       // Make an API call to add the article to the cart
+
+      const headers = {
+        'Content-Type': 'application/json',
+      }
+      const body = {
+        id_panier: panier,
+        id_article: article.id_article,
+        quantite: quantite,
+      }
+
+      const config =  {
+        headers,
+        withCredentials: true,
+      }
+
       const res = await axios.post(
-        `http://localhost:3000/m2l/panier/${pseudo}`,
-        {
-          id_panier: panier,
-          id_article: article.id_article,
-          quantite: quantite,
-        }
-      )
+        `http://localhost:3000/m2l/panier/${pseudo}`, body, config )
       console.log(res)
       if (res.status === 200) {
         quantite === 1
@@ -95,6 +105,7 @@ const ArticleDetail = () => {
     setAddedArticle(false)
     fetchArticle(id)
     setJwtToken(Cookies.get('jwt_token'))
+    
   }, [addedArticle])
 
   return (
