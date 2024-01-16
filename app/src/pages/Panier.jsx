@@ -17,6 +17,7 @@ const PagePanier = () => {
   const getPanier = async (pseudo) => {
     try {
       const panier = await Panier.getPanier(pseudo)
+      console.log({ panier_client: panier })
       return panier
     } catch (error) {
       console.error('Erreur lors de la récupération du panier :', error)

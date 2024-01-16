@@ -18,24 +18,30 @@ class Panier {
         withCredentials: true,
       }
 
-      // ? On récupère les informations du panier de l'utilisateur
-      const { data } = await axios.get(url, config)
+      // console.log({ pseudo: pseudo })
 
-      const panierData = data.panierData
-      const articlesData = data.articlesData
-      const utilisateurData = data.utilisateurData
+      // ? On récupère les informations du panier de l'utilisateur
+      const data = await axios.get(url, config)
+
+      const panierData = data.infos.panier
+      const articlesData = data.infos.articles
+      const utilisateurData = data.infos.utilisateur
 
       console.log({
-        data: data
+        data: data,
+        panierData: panierData,
+        articlesData: articlesData,
+        utilisateurData: utilisateurData,
       })
 
       // ? On instancie le panier
       const panier = new Panier(panierData.id_panier, pseudo)
+      console.log({articlesData: articlesData.length})
 
       // ? On instancie les articles
       for (let i = 0; i < articlesData.length; i++) {
 
-        const {data} = await Article.getArticleById(
+        const data = await Article.getArticleById(
           articlesData[i].id_article
         )
         if (data) {
@@ -50,11 +56,9 @@ class Panier {
             data.infos[0].id_category
           )
           panier.addArticleToPanier(item)
+          console.log('item')
         }
       }
-
-      // ? On retourne le panier
-      console.log(panier)
       return panier
     } catch (error) {
       console.error(error)

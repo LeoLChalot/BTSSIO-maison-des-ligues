@@ -8,14 +8,12 @@ const Panier_ProduitsDAO = require('../models/Panier_ProduitsDAO');
 const { v4: uuidv4 } = require('uuid');
 
 exports.getCartContent = async (req, res) => {
-   let connexion;
    try {
-      connexion = await ConnexionDAO.connect();
+      const connexion = await ConnexionDAO.connect();
 
-      // ? On initialise les modèles DAO à utiliser
       const utilisateurDAO = new UtilisateurDAO();
       const panierDAO = new PanierDAO();
-      const panier_produitDAO = new Panier_ProduitsDAO();
+      const panier_ProduitsDAO = new Panier_ProduitsDAO();
 
       const pseudo = req.params.pseudo;
       if (!pseudo) {
@@ -25,44 +23,51 @@ exports.getCartContent = async (req, res) => {
          });
       }
 
-      const findWithPseudo = { pseudo: pseudo };
+      const findWithPseudo = {
+         pseudo: pseudo,
+      };
 
-      // ? Trouver l'utilisateur
       const utilisateurData = await utilisateurDAO.find(
          connexion,
          findWithPseudo
       );
-      if (utilisateurData[0].length === 0) {
+      if (utilisateurData.length === 0) {
          return res.status(404).json({
             success: false,
             message: 'Utilisateur non trouvé',
          });
       }
+
+      console.log({utilisateur: utilisateurData[0][0].id_utilisateur});
+
       const findWithIdUtilisateur = {
          id_utilisateur: utilisateurData[0][0].id_utilisateur,
       };
 
-      // ? Trouver le panier
       const panierData = await panierDAO.find(
          connexion,
          findWithIdUtilisateur
       );
-      const findWithIdPanier = {
-         id_panier: panierData[0][0].id_panier,
-      };
 
-      // ? Trouver les articles du panier
-      const articlesData = await panier_produitDAO.find(
-         connexion,
-         findWithIdPanier
-      );
+      console.log({panier: panierData[0]});
 
-      if (articlesData[0].length === 0) {
+      if (panierData.length === 0) {
          return res.status(404).json({
             success: false,
             message: 'Panier non trouvé',
          });
       }
+
+      const findWithIdPanier = {
+         id_panier: panierData[0][0].id_panier,
+      };
+
+      const articlesData = await panier_ProduitsDAO.find(
+         connexion,
+         findWithIdPanier
+      );
+
+      console.log({articles: articlesData[0][0]});
 
       const panier = {
          id_panier: panierData[0][0].id_panier,
@@ -71,17 +76,19 @@ exports.getCartContent = async (req, res) => {
       };
 
       res.status(200).json({
-         utilisateurData: utilisateurData[0][0],
-         panierData: panierData[0][0],
-         articlesData: articlesData[0],
+         success: true,
+         message: 'Contenu du panier',
+         infos: {
+            panier: panier,
+            articles: articlesData[0][0],
+            utilisateur: utilisateurData[0][0],
+         },
       });
    } catch (error) {
       console.error('Error connecting shop:', error);
       throw error;
    } finally {
-      if (connexion) {
-         ConnexionDAO.disconnect(connexion);
-      }
+      ConnexionDAO.disconnect();
    }
 };
 
@@ -102,12 +109,10 @@ exports.addToCart = async (req, res) => {
       });
 
       if (!id_panier) {
-         return res
-            .status(400)
-            .json({
-               success: false,
-               message: 'Identifiant du panier requis',
-            });
+         return res.status(400).json({
+            success: false,
+            message: 'Identifiant du panier requis',
+         });
       }
       if (!id_article) {
          return res.status(400).json({
@@ -333,5 +338,16 @@ exports.deleteToCart = async (req, res) => {
       if (connexion) {
          ConnexionDAO.disconnect(connexion);
       }
+   }
+};
+
+exports.validateCart = async (req, res) => {
+   try {
+      const connexion = await ConnexionDAO.connect();
+   } catch (error) {
+      console.error('Error connecting to database:', error);
+      res.status(500).send('Internal Server Error');
+   } finally {
+      ConnexionDAO.disconnect();
    }
 };
