@@ -1,42 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Panier from '../models/Panier'
+import Article from '../models/Article'
 import { useAuth } from '../hooks/useAuth'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid'
+
 
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
   const { isLoggedIn, isAdmin, pseudo, jwtToken, updateState } = useAuth()
   const [prix, setPrix] = useState(0)
-  const [panier, setPanier] = useState({})
+  const [panier, setPanier] = useState(null)
   const [articles, setArticles] = useState([])
   const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
 
   const getPanier = async (pseudo) => {
     try {
-      const panier = await Panier.getPanier(pseudo)
-      console.log({ panier_client: panier })
-      return panier
+      console.log(`Avant l'appel à Panier.getCart(${pseudo})`)
+      const fetchPanier = await Panier.getCart(pseudo)
+      console.log(`Apres l'appel à Panier.getCart(${pseudo}) : ${fetchPanier}`)
+      if (!fetchPanier) {
+        console.error('Panier introuvable')
+        return
+      }
+      const articles = fetchPanier.getArticles()
+      if (!articles) {
+        console.error('Articles introuvables')
+        return
+      }
+      setPanier(fetchPanier)
+      setPrix(fetchPanier.getPrixTotal())
+      setArticles(articles)
+      setRerender(true)
     } catch (error) {
       console.error('Erreur lors de la récupération du panier :', error)
     }
   }
 
-  const getArticles = async (panier) => {
-    try {
-      const articles_panier = panier.getArticles()
-      setPrix(panier.getPrixTotal())
-      return articles_panier
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const handleDelete = async (id) => {
     try {
-      console.log({ panier_client: panier })
       const panierUser = new Panier(panier.id_panier, pseudo)
       await panierUser.deleteArticleFromPanier(id)
       setRerender(true)
@@ -50,24 +53,15 @@ const PagePanier = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isLoggedIn || pseudo_param !== pseudo) navigate('/notyou')
-      const fetchPanier = await getPanier(pseudo)
-      if (!fetchPanier) {
-        console.error('Panier introuvable')
+      if (!isLoggedIn || pseudo_param !== pseudo) {
+        navigate('/notyou')
         return
       }
-      setPanier(fetchPanier)
-      const fetchArticles = await getArticles(fetchPanier)
-      if (!fetchArticles) {
-        console.error('Articles introuvables')
-        return
-      }
-      setArticles(fetchArticles)
-      
+      await getPanier(pseudo)
     }
     fetchData()
     setRerender(false)
-  }, [rerender])
+  }, [panier, rerender])
 
   return (
     <>

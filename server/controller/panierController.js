@@ -67,12 +67,12 @@ exports.getCartContent = async (req, res) => {
          findWithIdPanier
       );
 
-      console.log({articles: articlesData[0][0]});
+      console.log({articles: articlesData[0]});
 
       const panier = {
          id_panier: panierData[0][0].id_panier,
          pseudo: pseudo,
-         articles: articlesData[0],
+         articles: articlesData[0]
       };
 
       res.status(200).json({
@@ -80,8 +80,6 @@ exports.getCartContent = async (req, res) => {
          message: 'Contenu du panier',
          infos: {
             panier: panier,
-            articles: articlesData[0][0],
-            utilisateur: utilisateurData[0][0],
          },
       });
    } catch (error) {

@@ -7,7 +7,13 @@ class Panier {
     this.articles = [] // Tableau pour stocker les articles du panier
   }
 
-  static async getPanier(pseudo) {
+  /**
+   * Retrieves the panier information for a given pseudo.
+   *
+   * @param {string} pseudo - the pseudo of the user
+   * @return {Promise<Panier>} - the panier object containing the user's cart information
+   */
+  static async getCart(pseudo) {
     try {
       const url = `http://localhost:3000/m2l/panier/${pseudo}`
       const headers = {
@@ -18,48 +24,59 @@ class Panier {
         withCredentials: true,
       }
 
-      // console.log({ pseudo: pseudo })
+      console.log(`1) On récupère le pseudo "${pseudo}" correctement`)
 
       // ? On récupère les informations du panier de l'utilisateur
-      const data = await axios.get(url, config)
+      await axios.get(url, config).then(async (data) => {
+        console.log(`2) Informations récupérées du panier "${pseudo}"`, {
+          data: data,
+        })
 
-      const panierData = data.infos.panier
-      const articlesData = data.infos.articles
-      const utilisateurData = data.infos.utilisateur
+        console.log(`3) On organise les informations du panier "${pseudo}"`, {
+          panierData: data.data.infos.panier,
+          articlesData: data.data.infos.panier.articles,
+          utilisateurData: data.data.infos.panier.pseudo,
+        })
 
-      console.log({
-        data: data,
-        panierData: panierData,
-        articlesData: articlesData,
-        utilisateurData: utilisateurData,
-      })
+        const panierData = data.data.infos.panier
+        const articlesData = data.data.infos.panier.articles
+        const utilisateurData = data.data.infos.panier.pseudo
 
-      // ? On instancie le panier
-      const panier = new Panier(panierData.id_panier, pseudo)
-      console.log({articlesData: articlesData.length})
+        // ? On instancie le panier
+        const panier = new Panier(panierData.id_panier, pseudo)
 
-      // ? On instancie les articles
-      for (let i = 0; i < articlesData.length; i++) {
-
-        const data = await Article.getArticleById(
-          articlesData[i].id_article
+        console.log(
+          `4) On instancie les articles du panier "${pseudo}" (début de la boucle)`,
+          { articlesData: articlesData }
         )
-        if (data) {
-          const item = new Article(
-            articlesData[i].id,
-            articlesData[i].id_article,
-            data.infos[0].nom,
-            data.infos[0].description,
-            data.infos[0].photo,
-            data.infos[0].prix,
-            data.infos[0].quantite,
-            data.infos[0].id_category
+        // ? On instancie les articles
+        for (let i = 0; i < articlesData.length; i++) {
+          await Article.getArticleById(articlesData[i].id_article).then(
+            (data) => {
+              const item = new Article(
+                articlesData[i].id,
+                articlesData[i].id_article,
+                data.data.infos[0].nom,
+                data.data.infos[0].description,
+                data.data.infos[0].photo,
+                data.data.infos[0].prix,
+                data.data.infos[0].quantite,
+                data.data.infos[0].id_category
+              )
+              panier.addArticleToPanier(item)
+              console.log(
+                `${i + 5}) On ajoute l'item "${item.nom}" au panier "${pseudo}"`
+              )
+            }
           )
-          panier.addArticleToPanier(item)
-          console.log('item')
         }
-      }
-      return panier
+        console.log(
+          `${articlesData.length + 5}) On retourne le panier "${pseudo}"`,
+          { panier: panier }
+        )
+        console.log(panier)
+        return panier
+      })
     } catch (error) {
       console.error(error)
     }

@@ -15,6 +15,7 @@ exports.getAllCategories = async (req, res) => {
       connexion = await ConnexionDAO.connect();
       const categorieDAO = new CategorieDAO();
       const result = await categorieDAO.find_all(connexion);
+      console.log(result);
       res.status(200).json({
          success: true,
          message:
