@@ -18,7 +18,9 @@ exports.getAllCategories = async (req, res) => {
       res.status(200).json({
          success: true,
          message:
-            result[0].length > 1 ? 'Liste des categories' : 'Infos catégorie',
+            result[0].length > 1
+               ? 'Liste des categories'
+               : 'Infos catégorie',
          infos: result[0],
       });
       return;
@@ -58,7 +60,9 @@ exports.getCategoryById = async (req, res) => {
       res.status(200).json({
          success: true,
          message:
-            result[0].length > 1 ? 'Liste des categories' : 'Infos catégorie',
+            result[0].length > 1
+               ? 'Liste des categories'
+               : 'Infos catégorie',
          infos: result[0],
       });
       return;
@@ -99,7 +103,9 @@ exports.getCategoryByName = async (req, res) => {
       res.status(200).json({
          success: true,
          message:
-            result[0].length > 1 ? 'Liste des categories' : 'Infos catégorie',
+            result[0].length > 1
+               ? 'Liste des categories'
+               : 'Infos catégorie',
          infos: result[0],
       });
       return;
@@ -157,7 +163,10 @@ exports.getArticleById = async (req, res) => {
       const findByIdArticle = {
          id_article: req.query.id_article,
       };
-      const result = await articleDAO.find(connexion, findByIdArticle);
+      const result = await articleDAO.find(
+         connexion,
+         findByIdArticle
+      );
       if (result[0].length === 0) {
          res.status(404).json({
             success: false,
@@ -167,7 +176,10 @@ exports.getArticleById = async (req, res) => {
       }
       res.status(200).json({
          success: true,
-         message: result[0].length > 1 ? 'Liste des articles' : 'Infos article',
+         message:
+            result[0].length > 1
+               ? 'Liste des articles'
+               : 'Infos article',
          infos: result[0],
       });
       return;
@@ -189,7 +201,7 @@ exports.getArticleById = async (req, res) => {
  * @return {Promise<void>} - Une promesse qui contient le résultat.
  */
 exports.getArticleByName = async (req, res) => {
-  let connexion
+   let connexion;
    try {
       connexion = await ConnexionDAO.connect();
       const articleDAO = new ArticleDAO();
@@ -206,7 +218,10 @@ exports.getArticleByName = async (req, res) => {
       }
       res.status(200).json({
          success: true,
-         message: result[0].length > 1 ? 'Liste des articles' : 'Infos article',
+         message:
+            result[0].length > 1
+               ? 'Liste des articles'
+               : 'Infos article',
          infos: result[0],
       });
       return;
@@ -235,7 +250,10 @@ exports.getArticlesByIdCategory = async (req, res) => {
       const findByIdCategorie = {
          categorie_id: req.query.id_categorie,
       };
-      const result = await articleDAO.find(connexion, findByIdCategorie);
+      const result = await articleDAO.find(
+         connexion,
+         findByIdCategorie
+      );
       if (result[0].length === 0) {
          console.log({ res: result[0].length });
          res.status(400).json({
@@ -246,7 +264,10 @@ exports.getArticlesByIdCategory = async (req, res) => {
       }
       res.status(200).json({
          success: true,
-         message: result[0].length > 1 ? 'Liste des articles' : 'Infos article',
+         message:
+            result[0].length > 1
+               ? 'Liste des articles'
+               : 'Infos article',
          infos: result[0],
       });
       return;

@@ -43,7 +43,10 @@ exports.getCartContent = async (req, res) => {
       };
 
       // ? Trouver le panier
-      const panierData = await panierDAO.find(connexion, findWithIdUtilisateur);
+      const panierData = await panierDAO.find(
+         connexion,
+         findWithIdUtilisateur
+      );
       const findWithIdPanier = {
          id_panier: panierData[0][0].id_panier,
       };
@@ -101,7 +104,10 @@ exports.addToCart = async (req, res) => {
       if (!id_panier) {
          return res
             .status(400)
-            .json({ success: false, message: 'Identifiant du panier requis' });
+            .json({
+               success: false,
+               message: 'Identifiant du panier requis',
+            });
       }
       if (!id_article) {
          return res.status(400).json({
@@ -121,7 +127,10 @@ exports.addToCart = async (req, res) => {
       };
 
       // ? Trouver l'article
-      const article = await articleDAO.find(connexion, findWithIdArticle);
+      const article = await articleDAO.find(
+         connexion,
+         findWithIdArticle
+      );
 
       // ? Veiller d'avoir l'article en boutique
       if (article[0].length === 0) {
@@ -154,7 +163,10 @@ exports.addToCart = async (req, res) => {
          }
 
          // ? Mettre à jour la quantité
-         const article = await articleDAO.find(connexion, findWithIdArticle);
+         const article = await articleDAO.find(
+            connexion,
+            findWithIdArticle
+         );
          const updateArticle = {
             quantite: article[0][0].quantite - quantite,
             id_article: article[0][0].id_article,
@@ -259,57 +271,30 @@ exports.deleteToCart = async (req, res) => {
    try {
       connexion = await ConnexionDAO.connect();
 
+      // ? On initialise les modèles DAO à utiliser
       const panier_ProduitsDAO = new Panier_ProduitsDAO();
       const articleDAO = new ArticleDAO();
 
-      const { id, id_panier } = req.body;
-
-      if (!id && !id_panier) {
-         return res.status(400).json({
-            success: false,
-            message: "Identifiant de l'article ou du panier requis",
-         });
-      }
-
-      if (id_panier) {
-         const findWithIdPanier = {
-            id_panier: id_panier,
-         };
-
-         const articles = await panier_ProduitsDAO.find(
-            connexion,
-            findWithIdPanier
-         );
-
-         for (let article of articles[0]) {
-            const findWithIdArticle = {
-               id_article: article.id_article,
-            };
-            const original_article = await articleDAO.find(
-               connexion,
-               findWithIdArticle
-            );
-            await panier_ProduitsDAO.delete(connexion, findWithIdArticle);
-            if (original_article[0].length > 0) {
-               const updateArticle = {
-                  quantite: original_article[0][0].quantite + 1,
-                  id_article: original_article[0][0].id_article,
-               };
-               await articleDAO.update(connexion, updateArticle);
-            }
-         }
-         return res.status(200).json({
-            success: true,
-            message: 'Tous les articles du panier sont supprimés',
-         });
-      }
-
-      const requestArticle = {
+      const { id } = req.body;
+      const findWithId = {
          id: id,
       };
 
-      const result = await panier_ProduitsDAO.find(connexion, requestArticle);
+      // ! Envoyer une erreur s'il manque l'ID
+      if (!id) {
+         return res.status(400).json({
+            success: false,
+            message: "Identifiant de l'article requis",
+         });
+      }
 
+      // ? Trouver l'article dans la table panier_produits
+      const result = await panier_ProduitsDAO.find(
+         connexion,
+         findWithId
+      );
+
+      // ! Si l'article n'est pas présent dans le panier
       if (result[0].length === 0) {
          return res.status(404).json({
             success: false,
@@ -321,20 +306,21 @@ exports.deleteToCart = async (req, res) => {
          id_article: result[0][0].id_article,
       };
 
-      const article = await articleDAO.find(connexion, original_article);
+      // ? Récupérer les informations de l'article
+      const article = await articleDAO.find(
+         connexion,
+         original_article
+      );
 
+      // ? Supprimer l'article de la table panier_produits
       const updateArticle = {
          quantite: article[0][0].quantite + 1,
          id_article: article[0][0].id_article,
       };
+      await panier_ProduitsDAO.delete(connexion, findWithId);
 
+      // ? Mettre à jour la quantité dans les stocks
       await articleDAO.update(connexion, updateArticle);
-
-      const article_a_supprimer = {
-         id: id,
-      };
-
-      await panier_ProduitsDAO.delete(connexion, article_a_supprimer);
 
       res.status(200).json({
          success: true,

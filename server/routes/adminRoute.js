@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
    },
 });
 const upload = multer({ storage: storage });
-
 const adminController = require('../controller/adminController');
 
 router.get('/', async (req, res) => {
@@ -32,30 +31,54 @@ router.get('/', async (req, res) => {
    }
 });
 
-router.delete('/user', adminController.deleteUserByPseudo, async (req, res) => {
-   res.status(200).json({ success: true });
-});
-
-router.post('/categorie', adminController.createCategory, async (req, res) => {
-   res.status(200).json({ success: true });
-});
-
-router.delete('/categorie', adminController.deleteCategory, async (req, res) => {
-      res.status(200).json({ success: true });
+router.delete(
+   '/user',
+   adminController.deleteUserByPseudo,
+   async (req, res) => {
+      return res.status(200).json({ success: true });
    }
 );
 
-router.post('/article', upload.single('photo'), adminController.createArticle, async (req, res) => {
-      res.status(200).json({ success: true });
+router.post(
+   '/categorie',
+   adminController.createCategory,
+   async (req, res) => {
+      return res.status(200).json({ success: true });
    }
 );
 
-router.put('/article', upload.single('photo'), adminController.updateArticle, async (req, res) => {
-   res.status(200).json({ success: true });
-});
+router.delete(
+   '/categorie',
+   adminController.deleteCategory,
+   async (req, res) => {
+      return res.status(200).json({ success: true });
+   }
+);
 
-router.delete('/article', async (req, res) => {
+router.post(
+   '/article',
+   upload.single('photo'),
+   adminController.createArticle,
+   async (req, res) => {
+      return res.status(200).json({ success: true });
+   }
+);
 
-});
+router.put(
+   '/article',
+   upload.single('photo'),
+   adminController.updateArticle,
+   async (req, res) => {
+      return res.status(200).json({ success: true });
+   }
+);
+
+router.delete(
+   '/article',
+   adminController.deleteArticle,
+   async (req, res) => {
+      return res.status(200).json({ success: true });
+   }
+);
 
 module.exports = router;

@@ -19,9 +19,17 @@ exports.getUserByLogin = async (req, res) => {
 
       const login = req.body.login;
 
-      let utilisateur = await utilisateurDAO.find(connexion, 'pseudo', login);
+      let utilisateur = await utilisateurDAO.find(
+         connexion,
+         'pseudo',
+         login
+      );
       if (utilisateur[0].length === 0) {
-         utilisateur = await utilisateurDAO.find(connexion, 'email', login);
+         utilisateur = await utilisateurDAO.find(
+            connexion,
+            'email',
+            login
+         );
       }
 
       if (utilisateur[0].length === 0) {
@@ -54,7 +62,10 @@ exports.deleteUserByPseudo = async (req, res) => {
       const { pseudo } = req.body;
 
       const findWithPseudo = { pseudo: pseudo };
-      const user = await utilisateurDAO.find(connexion, findWithPseudo);
+      const user = await utilisateurDAO.find(
+         connexion,
+         findWithPseudo
+      );
 
       if (user.length === 0) {
          res.status(404).json({
@@ -63,7 +74,10 @@ exports.deleteUserByPseudo = async (req, res) => {
          return;
       }
 
-      const result = await utilisateurDAO.delete(connexion, findWithPseudo);
+      const result = await utilisateurDAO.delete(
+         connexion,
+         findWithPseudo
+      );
       res.status(200).json(result);
    } catch (error) {
       console.error('Error connecting user:', error);
@@ -89,7 +103,10 @@ exports.createCategory = async (req, res) => {
       if (!nom) {
          return res
             .status(404)
-            .json({ success: false, message: 'Categorie non trouvée' });
+            .json({
+               success: false,
+               message: 'Categorie non trouvée',
+            });
       }
 
       const categorie = {
@@ -132,7 +149,10 @@ exports.deleteCategory = async (req, res) => {
       const findWithNom = {
          nom: nom,
       };
-      const result = await categorieDAO.delete(connexion, findWithNom);
+      const result = await categorieDAO.delete(
+         connexion,
+         findWithNom
+      );
 
       if (result) {
          res.status(200).json({
@@ -153,7 +173,8 @@ exports.createArticle = async (req, res) => {
       const connexion = await ConnexionDAO.connect();
       const articleDAO = new ArticleDAO();
 
-      const { nom, description, prix, quantite, categorie } = req.body;
+      const { nom, description, prix, quantite, categorie } =
+         req.body;
       const { file } = req;
 
       // ? Vérifie si l'article existe déjà
@@ -177,7 +198,10 @@ exports.createArticle = async (req, res) => {
       if (exists[0].length > 0) {
          return res
             .status(404)
-            .json({ success: false, message: "L'article existe déjà" });
+            .json({
+               success: false,
+               message: "L'article existe déjà",
+            });
       }
 
       // ? Si l'article n'existe pas, on l'ajoute
@@ -214,7 +238,9 @@ exports.updateArticle = async (req, res) => {
       };
 
       const filteredArticleData = Object.fromEntries(
-         Object.entries(article).filter(([key, value]) => value !== null)
+         Object.entries(article).filter(
+            ([key, value]) => value !== null
+         )
       );
 
       const findWithId = {
@@ -230,7 +256,10 @@ exports.updateArticle = async (req, res) => {
          });
       }
 
-      const result = await articleDAO.update(connexion, filteredArticleData);
+      const result = await articleDAO.update(
+         connexion,
+         filteredArticleData
+      );
 
       if (result) {
          res.status(201).json({
@@ -258,7 +287,10 @@ exports.deleteArticle = async (req, res) => {
          id_article: id,
       };
 
-      const articleMagasin = await articleDAO.find(connexion, findWithId);
+      const articleMagasin = await articleDAO.find(
+         connexion,
+         findWithId
+      );
       if (articleMagasin[0].length === 0) {
          res.status(404).json({
             success: false,
@@ -272,13 +304,19 @@ exports.deleteArticle = async (req, res) => {
             id_article: articleMagasin[0][0].id_article,
          };
          console.log(updateArticle);
-         const result = await articleDAO.update(connexion, updateArticle);
+         const result = await articleDAO.update(
+            connexion,
+            updateArticle
+         );
          res.status(201).json({
             success: true,
             message: 'Article(s) supprimé(s) !',
          });
       } else {
-         const result = await articleDAO.delete(connexion, findWithId);
+         const result = await articleDAO.delete(
+            connexion,
+            findWithId
+         );
          res.status(201).json({
             success: true,
             message: 'Tous les articles supprimés !',
