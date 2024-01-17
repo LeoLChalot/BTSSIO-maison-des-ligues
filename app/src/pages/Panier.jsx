@@ -15,11 +15,13 @@ const PagePanier = () => {
   const navigate = useNavigate()
 
   const handleDelete = async (id) => {
+    console.log('Début ft handleDelete')
     try {
-      console.log(`Suppression de l'article ${id} du panier de ${pseudo}`)
-      const panierUser = new Panier(panier.id_panier, pseudo)
-      console.log({ panierUser: panierUser })
-      const request = await panierUser.deleteArticleFromPanier(id)
+      console.log(`Suppression de la ligne ${id} du panier de ${pseudo}`)
+      // console.log(await panier.deleteArticleFromPanier(id))
+      const requestPanier = new Panier(pseudo);
+      const request = await requestPanier.deleteArticleFromPanier(id)
+      console.log('Fin ft handleDelete', request)
       request ? setRerender((rerender) => !rerender) : console.error('Erreur')
     } catch (error) {
       console.error(
@@ -30,39 +32,31 @@ const PagePanier = () => {
   }
 
   useEffect(() => {
-    const fetchData = async (pseudo) => {
-      try {
-        console.log(`Avant l'appel à Panier.getCart(${pseudo})`)
-        const fetchPanier = await Panier.getPanier(pseudo)
-        console.log(
-          `Apres l'appel à Panier.getCart(${pseudo}) : ${fetchPanier.articles}`
-        )
-        if (!fetchPanier) {
-          console.error('Panier introuvable')
-          return false
-        }
-        const articles = fetchPanier.getArticles()
-        if (!articles) {
-          console.error('Articles introuvables')
-          return false
-        }
-        setPanier(fetchPanier)
-        setPrix(fetchPanier.getPrixTotal())
-        setArticles(articles)
-        setRerender((rerender) => !rerender)
-        return true
-      } catch (error) {
-        console.error('Erreur lors de la récupération du panier :', error)
-        return false
-      }
+    const fetchData = async () => {
+      const cart = new Panier(pseudo)
+      const requestCart = await cart.initCart().then((res) => {
+        console.log({ res: res })
+      })
+      console.log({ cart: cart })
+      setPanier(requestCart)
+      const requestPrix = await cart.getPrixTotal()
+      const requestArticles = cart.getArticles()
+
+      console.log({
+        cart: cart,
+        requestPrix: requestPrix,
+        requestArticles: requestArticles,
+      })
+
+      setPrix(requestPrix)
+      setArticles(requestArticles)
+      console.log({
+        message: "pendant l'initialisation du panier",
+        articles,
+        prix,
+      })
     }
-    if (!isLoggedIn || pseudo_param !== pseudo) {
-      navigate('/notyou')
-      return
-    }
-    fetchData(pseudo)
-    console.log(articles)
-    return
+    fetchData()
   }, [rerender])
 
   return (
@@ -75,7 +69,6 @@ const PagePanier = () => {
               {articles.map((article) => (
                 <li className="item-panier" key={article.id}>
                   {article.nom}
-
                   <button onClick={() => handleDelete(article.id)}>
                     supprimer
                   </button>
@@ -83,7 +76,7 @@ const PagePanier = () => {
               ))}
             </ul>
           ) : (
-            <div id="error">
+            <div className="error" id="error">
               <div
                 className="message"
                 style={{ textAlign: 'center', padding: '20px' }}

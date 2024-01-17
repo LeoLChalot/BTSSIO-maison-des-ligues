@@ -1,21 +1,16 @@
 import axios from 'axios'
 import Article from './Article'
 class Panier {
-  constructor(id_panier, pseudo) {
-    this.id_panier = id_panier
+  constructor(pseudo) {
+    this.id_panier
     this.pseudo = pseudo
     this.articles = [] // Tableau pour stocker les articles du panier
   }
 
-  /**
-   * Retrieves the panier information for a given pseudo.
-   *
-   * @param {string} pseudo - the pseudo of the user
-   * @return {Promise<Panier>} - the panier object containing the user's cart information
-   */
-  static async getPanier(pseudo) {
+
+  async initCart(){
     try {
-      const url = `http://localhost:3000/m2l/panier/${pseudo}`
+      const url = `http://localhost:3000/m2l/panier/${this.pseudo}`
       const headers = {
         'Content-Type': 'application/json',
       }
@@ -24,7 +19,7 @@ class Panier {
         withCredentials: true,
       }
 
-      console.log(`1) On récupère le pseudo "${pseudo}" correctement`)
+      console.log(`1) On récupère le pseudo "${this.pseudo}" correctement`)
 
       // ? On récupère les informations du panier de l'utilisateur
       const { data } = await axios.get(url, config)
@@ -41,11 +36,9 @@ class Panier {
 
       const panierData = data.infos.panier
       const articlesData = data.infos.panier.articles
-      const pseudoUtilisateur = data.infos.panier.pseudo
       const id_panier = data.infos.panier.id_panier
 
-      // ? On instancie le panier
-      const panier = new Panier(id_panier, pseudoUtilisateur)
+      this.setId(id_panier)
 
       // console.log(
       //   `4) On instancie les articles du panier "${pseudo}" (début de la boucle)`,
@@ -65,7 +58,7 @@ class Panier {
           request.data.infos[0].quantite,
           request.data.infos[0].id_category
         )
-        panier.addArticleToPanier(item)
+        this.addArticleToPanier(item)
         // console.log(
         //   `${i + 5}) On ajoute l'item "${item.nom}" au panier "${pseudo}"`
         // )
@@ -74,12 +67,14 @@ class Panier {
       //   `${articlesData.length + 5}) On retourne le panier "${pseudo}"`,
       //   { panier: panier }
       // )
-      console.log({ panier: panier })
-      return panier
+      console.log({ panier: this })
+      return this
     } catch (error) {
       console.error(error)
     }
   }
+
+
 
   // Méthode pour ajouter un article au panier
   addArticleToPanier(article) {
@@ -122,7 +117,7 @@ class Panier {
     return this.articles.length
   }
 
-  getPrixTotal() {
+  async getPrixTotal() {
     return (
       Math.round(
         this.articles.reduce((total, article) => total + article.prix, 0) * 100
@@ -173,6 +168,7 @@ class Panier {
    * @return {Array} Le tableau d'articles
    */
   getArticles() {
+    console.log(this.articles)
     return this.articles
   }
 
