@@ -5,7 +5,6 @@ import Article from '../models/Article'
 import { useAuth } from '../hooks/useAuth'
 import { toast } from 'react-toastify'
 
-
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
   const { isLoggedIn, isAdmin, pseudo, jwtToken, updateState } = useAuth()
@@ -15,34 +14,13 @@ const PagePanier = () => {
   const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
 
-  const getPanier = async (pseudo) => {
-    try {
-      console.log(`Avant l'appel à Panier.getCart(${pseudo})`)
-      const fetchPanier = await Panier.getCart(pseudo)
-      console.log(`Apres l'appel à Panier.getCart(${pseudo}) : ${fetchPanier}`)
-      if (!fetchPanier) {
-        console.error('Panier introuvable')
-        return
-      }
-      const articles = fetchPanier.getArticles()
-      if (!articles) {
-        console.error('Articles introuvables')
-        return
-      }
-      setPanier(fetchPanier)
-      setPrix(fetchPanier.getPrixTotal())
-      setArticles(articles)
-      setRerender(true)
-    } catch (error) {
-      console.error('Erreur lors de la récupération du panier :', error)
-    }
-  }
-
   const handleDelete = async (id) => {
     try {
+      console.log(`Suppression de l'article ${id} du panier de ${pseudo}`)
       const panierUser = new Panier(panier.id_panier, pseudo)
-      await panierUser.deleteArticleFromPanier(id)
-      setRerender(true)
+      console.log({ panierUser: panierUser })
+      const request = await panierUser.deleteArticleFromPanier(id)
+      request ? setRerender((rerender) => !rerender) : console.error('Erreur')
     } catch (error) {
       console.error(
         "Erreur lors de la suppression de l'article du panier",
@@ -52,16 +30,40 @@ const PagePanier = () => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!isLoggedIn || pseudo_param !== pseudo) {
-        navigate('/notyou')
-        return
+    const fetchData = async (pseudo) => {
+      try {
+        console.log(`Avant l'appel à Panier.getCart(${pseudo})`)
+        const fetchPanier = await Panier.getPanier(pseudo)
+        console.log(
+          `Apres l'appel à Panier.getCart(${pseudo}) : ${fetchPanier.articles}`
+        )
+        if (!fetchPanier) {
+          console.error('Panier introuvable')
+          return false
+        }
+        const articles = fetchPanier.getArticles()
+        if (!articles) {
+          console.error('Articles introuvables')
+          return false
+        }
+        setPanier(fetchPanier)
+        setPrix(fetchPanier.getPrixTotal())
+        setArticles(articles)
+        setRerender((rerender) => !rerender)
+        return true
+      } catch (error) {
+        console.error('Erreur lors de la récupération du panier :', error)
+        return false
       }
-      await getPanier(pseudo)
     }
-    fetchData()
-    setRerender(false)
-  }, [panier, rerender])
+    if (!isLoggedIn || pseudo_param !== pseudo) {
+      navigate('/notyou')
+      return
+    }
+    fetchData(pseudo)
+    console.log(articles)
+    return
+  }, [rerender])
 
   return (
     <>
@@ -73,6 +75,7 @@ const PagePanier = () => {
               {articles.map((article) => (
                 <li className="item-panier" key={article.id}>
                   {article.nom}
+
                   <button onClick={() => handleDelete(article.id)}>
                     supprimer
                   </button>

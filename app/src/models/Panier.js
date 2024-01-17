@@ -13,7 +13,7 @@ class Panier {
    * @param {string} pseudo - the pseudo of the user
    * @return {Promise<Panier>} - the panier object containing the user's cart information
    */
-  static async getCart(pseudo) {
+  static async getPanier(pseudo) {
     try {
       const url = `http://localhost:3000/m2l/panier/${pseudo}`
       const headers = {
@@ -27,56 +27,55 @@ class Panier {
       console.log(`1) On récupère le pseudo "${pseudo}" correctement`)
 
       // ? On récupère les informations du panier de l'utilisateur
-      await axios.get(url, config).then(async (data) => {
-        console.log(`2) Informations récupérées du panier "${pseudo}"`, {
-          data: data,
-        })
+      const { data } = await axios.get(url, config)
+      // console.log(`2) Informations récupérées du panier "${pseudo}"`, {
+      //   data: data,
+      // })
 
-        console.log(`3) On organise les informations du panier "${pseudo}"`, {
-          panierData: data.data.infos.panier,
-          articlesData: data.data.infos.panier.articles,
-          utilisateurData: data.data.infos.panier.pseudo,
-        })
+      // console.log(`3) On organise les informations du panier "${pseudo}"`, {
+      //   panierData: data.infos.panier,
+      //   articlesData: data.infos.panier.articles,
+      //   utilisateurData: data.infos.panier.pseudo,
+      //   id_panier: data.infos.panier.id_panier,
+      // })
 
-        const panierData = data.data.infos.panier
-        const articlesData = data.data.infos.panier.articles
-        const utilisateurData = data.data.infos.panier.pseudo
+      const panierData = data.infos.panier
+      const articlesData = data.infos.panier.articles
+      const pseudoUtilisateur = data.infos.panier.pseudo
+      const id_panier = data.infos.panier.id_panier
 
-        // ? On instancie le panier
-        const panier = new Panier(panierData.id_panier, pseudo)
+      // ? On instancie le panier
+      const panier = new Panier(id_panier, pseudoUtilisateur)
 
-        console.log(
-          `4) On instancie les articles du panier "${pseudo}" (début de la boucle)`,
-          { articlesData: articlesData }
+      // console.log(
+      //   `4) On instancie les articles du panier "${pseudo}" (début de la boucle)`,
+      //   { articlesData: articlesData }
+      // )
+      // ? On instancie les articles
+      for (let i = 0; i < articlesData.length; i++) {
+        const request = await Article.getArticleById(articlesData[i].id_article)
+        // console.log(data)
+        const item = new Article(
+          articlesData[i].id,
+          articlesData[i].id_article,
+          request.data.infos[0].nom,
+          request.data.infos[0].description,
+          request.data.infos[0].photo,
+          request.data.infos[0].prix,
+          request.data.infos[0].quantite,
+          request.data.infos[0].id_category
         )
-        // ? On instancie les articles
-        for (let i = 0; i < articlesData.length; i++) {
-          await Article.getArticleById(articlesData[i].id_article).then(
-            (data) => {
-              const item = new Article(
-                articlesData[i].id,
-                articlesData[i].id_article,
-                data.data.infos[0].nom,
-                data.data.infos[0].description,
-                data.data.infos[0].photo,
-                data.data.infos[0].prix,
-                data.data.infos[0].quantite,
-                data.data.infos[0].id_category
-              )
-              panier.addArticleToPanier(item)
-              console.log(
-                `${i + 5}) On ajoute l'item "${item.nom}" au panier "${pseudo}"`
-              )
-            }
-          )
-        }
-        console.log(
-          `${articlesData.length + 5}) On retourne le panier "${pseudo}"`,
-          { panier: panier }
-        )
-        console.log(panier)
-        return panier
-      })
+        panier.addArticleToPanier(item)
+        // console.log(
+        //   `${i + 5}) On ajoute l'item "${item.nom}" au panier "${pseudo}"`
+        // )
+      }
+      // console.log(
+      //   `${articlesData.length + 5}) On retourne le panier "${pseudo}"`,
+      //   { panier: panier }
+      // )
+      console.log({ panier: panier })
+      return panier
     } catch (error) {
       console.error(error)
     }
@@ -92,13 +91,27 @@ class Panier {
   }
 
   async deleteArticleFromPanier(id) {
-    // Implement the logic to delete an article from the cart
-    console.log('Backend', { pseudo: this.pseudo, id: id })
-    const url = `http://localhost:3000/m2l/panier/` + this.pseudo
-    console.log(url)
-    const request = await axios.delete(url, {
-      id: id,
-    })
+    try {
+      // Implement the logic to delete an article from the cart
+      console.log('Backend', { pseudo: this.pseudo, id: id })
+      const url = `http://localhost:3000/m2l/panier/${this.pseudo}?id_row=${id}`
+      console.log(url)
+      const headers = {
+        'Content-Type': 'application/json',
+      }
+      const config = {
+        headers,
+        withCredentials: true,
+      }
+      const body = {
+        id: id,
+      }
+      const request = await axios.delete(url, config)
+      console.log({request : request})
+      return request
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   viderPanier() {

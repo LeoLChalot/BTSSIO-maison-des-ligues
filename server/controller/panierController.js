@@ -38,7 +38,9 @@ exports.getCartContent = async (req, res) => {
          });
       }
 
-      console.log({utilisateur: utilisateurData[0][0].id_utilisateur});
+      console.log({
+         utilisateur: utilisateurData[0][0].id_utilisateur,
+      });
 
       const findWithIdUtilisateur = {
          id_utilisateur: utilisateurData[0][0].id_utilisateur,
@@ -49,7 +51,7 @@ exports.getCartContent = async (req, res) => {
          findWithIdUtilisateur
       );
 
-      console.log({panier: panierData[0]});
+      console.log({ panier: panierData[0] });
 
       if (panierData.length === 0) {
          return res.status(404).json({
@@ -67,12 +69,12 @@ exports.getCartContent = async (req, res) => {
          findWithIdPanier
       );
 
-      console.log({articles: articlesData[0]});
+      console.log({ articles: articlesData[0] });
 
       const panier = {
          id_panier: panierData[0][0].id_panier,
          pseudo: pseudo,
-         articles: articlesData[0]
+         articles: articlesData[0],
       };
 
       res.status(200).json({
@@ -208,10 +210,10 @@ exports.clearCart = async (req, res) => {
       const panier_ProduitsDAO = new Panier_ProduitsDAO();
       const articleDAO = new ArticleDAO();
 
-      const { id_panier } = req.body;
+      const { id_cart } = req.query;
 
       // ? Veiller d'avoir l'ID du panier
-      if (!id_panier) {
+      if (!id_cart) {
          return res.status(400).json({
             success: false,
             message: 'Identifiant du panier requis',
@@ -219,7 +221,7 @@ exports.clearCart = async (req, res) => {
       }
 
       const findWithIdPanier = {
-         id_panier: id_panier,
+         id_panier: id_cart,
       };
 
       // ? Trouver les articles du panier
@@ -272,19 +274,21 @@ exports.clearCart = async (req, res) => {
 exports.deleteToCart = async (req, res) => {
    let connexion;
    try {
+      console.log('deleteToCart');
       connexion = await ConnexionDAO.connect();
 
       // ? On initialise les modèles DAO à utiliser
       const panier_ProduitsDAO = new Panier_ProduitsDAO();
       const articleDAO = new ArticleDAO();
 
-      const { id } = req.body;
+      const { id_row } = req.query;
+      console.log(id_row);
       const findWithId = {
-         id: id,
+         id: id_row,
       };
 
       // ! Envoyer une erreur s'il manque l'ID
-      if (!id) {
+      if (!id_row) {
          return res.status(400).json({
             success: false,
             message: "Identifiant de l'article requis",
@@ -325,7 +329,7 @@ exports.deleteToCart = async (req, res) => {
       // ? Mettre à jour la quantité dans les stocks
       await articleDAO.update(connexion, updateArticle);
 
-      res.status(200).json({
+      return res.status(200).json({
          success: true,
          message: 'Produit supprimé du panier avec succès',
       });

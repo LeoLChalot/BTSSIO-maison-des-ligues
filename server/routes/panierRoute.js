@@ -35,10 +35,16 @@ router.post(
 );
 
 router.delete('/:pseudo', async (req, res) => {
-   const { id, id_panier } = req.body;
-   if (id) {
+   const { pseudo } = req.params;
+   if (!pseudo) {
+      return res.status(400).json({
+         msg: 'Pseudo requis',
+      });
+   }
+   const { id_row, id_cart } = req.query;
+   if (id_row) {
       panierController.deleteToCart(req, res);
-   } else if (id_panier) {
+   } else if (id_cart) {
       panierController.clearCart(req, res);
    } else {
       return res.status(400).json({
