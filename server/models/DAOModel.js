@@ -196,14 +196,17 @@ class DAOModel {
       try {
          const columns = Object.keys(object);
          const values = Object.values(object);
+         console.log(columns, values);
          let query = '';
          if (columns.length > 1 && values.length > 1) {
             query = `DELETE FROM ${this.table} WHERE `;
-            for (let i = 0; i < columns.length - 1; i++) {
+            for (let i = 0; i < columns.length; i++) {
                if (i < columns.length - 2) {
                   query += `${columns[i]} = ?, `;
+               } else if (i === columns.length - 2) {
+                  query += `${columns[i]} = ? `;
                } else {
-                  query += `AND ${columns[i]} = ? `;
+                  query += `AND ${columns[i]} = ? LIMIT 1`;
                }
             }
             console.log(query, values);

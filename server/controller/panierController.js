@@ -60,11 +60,9 @@ exports.getCartContent = async (req, res) => {
          });
       }
 
-      const findWithIdPanier = {
-         id_panier: panierData[0][0].id_panier,
-      };
+      const findWithIdPanier = panierData[0][0].id_panier
 
-      const articlesData = await panier_ProduitsDAO.find(
+      const articlesData = await panier_ProduitsDAO.find_and_group(
          connexion,
          findWithIdPanier
       );
@@ -274,24 +272,24 @@ exports.clearCart = async (req, res) => {
 exports.deleteToCart = async (req, res) => {
    let connexion;
    try {
-      console.log('deleteToCart');
+      console.log('deleteToCart',{id_panier: req.query.id_panier, id_article: req.query.id_article});
       connexion = await ConnexionDAO.connect();
 
       // ? On initialise les modèles DAO à utiliser
       const panier_ProduitsDAO = new Panier_ProduitsDAO();
       const articleDAO = new ArticleDAO();
 
-      const { id_row } = req.query;
-      console.log(id_row);
+      const { id_panier, id_article } = req.query;
+
       const findWithId = {
-         id: id_row,
+         id_article: id_article,
       };
 
       // ! Envoyer une erreur s'il manque l'ID
-      if (!id_row) {
+      if (!id_panier || !id_article) {
          return res.status(400).json({
             success: false,
-            message: "Identifiant de l'article requis",
+            message: "Identifiant requis",
          });
       }
 
@@ -321,10 +319,15 @@ exports.deleteToCart = async (req, res) => {
 
       // ? Supprimer l'article de la table panier_produits
       const updateArticle = {
-         quantite: article[0][0].quantite + 1,
-         id_article: article[0][0].id_article,
+         quantite : article[0][0].quantite + 1,
+         id_article: id_article
       };
-      await panier_ProduitsDAO.delete(connexion, findWithId);
+
+      const findWithIdPanier = {
+         id_panier: id_panier,
+         id_article: id_article,
+      }
+      await panier_ProduitsDAO.delete(connexion, findWithIdPanier);
 
       // ? Mettre à jour la quantité dans les stocks
       await articleDAO.update(connexion, updateArticle);

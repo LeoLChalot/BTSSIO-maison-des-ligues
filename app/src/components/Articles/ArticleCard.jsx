@@ -19,7 +19,7 @@ const ArticleCard = ({ article }) => {
       </div>
       <div className="card-body">
         <h5 className="card-title">{article.nom}</h5>
-        <p className="card-text">{description}...</p>
+        <p className="card-text">{description.slice(0, 100)}...</p>
         <div className="card-info">
           <p className="price">{article.prix} €</p>
           <Link className="link-button" to={`/article/${article.id_article}`}>

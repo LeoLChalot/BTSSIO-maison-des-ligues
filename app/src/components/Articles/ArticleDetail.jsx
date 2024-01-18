@@ -6,8 +6,8 @@ import Categorie from '../../models/Categorie'
 import { isValidToken } from '../../utils/isValidToken'
 import { decodeToken } from '../../utils/decodeToken'
 import Cookies from 'js-cookie'
-import { toast } from 'react-toastify'
-
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import './ArticleDetail.css'
 
 const ArticleDetail = () => {
@@ -49,7 +49,7 @@ const ArticleDetail = () => {
     }
 
     if (quantite > article.quantite || quantite < 1 || quantite === null) {
-      alert('Quantité invalide')
+      toast.error('Quantité invalide')
       setQuantite(1)
       return
     }
@@ -60,7 +60,7 @@ const ArticleDetail = () => {
       console.log(decoded_token)
       const pseudo = decoded_token.pseudo
       const panier = decoded_token.panier
-      console.log({panier: decoded_token.panier})
+      console.log({ panier: decoded_token.panier })
       console.log({
         panier: panier,
         article: article.id_article,
@@ -77,26 +77,26 @@ const ArticleDetail = () => {
         quantite: quantite,
       }
 
-      const config =  {
+      const config = {
         headers,
         withCredentials: true,
       }
 
       const res = await axios.post(
-        `http://localhost:3000/m2l/panier/${pseudo}`, body, config )
-        
+        `http://localhost:3000/m2l/panier/${pseudo}`,
+        body,
+        config
+      )
+
       console.log(res)
       if (res.status === 200) {
         quantite === 1
-          ? alert('Article ajouté au panier')
-          : alert('Articles ajoutés au panier')
+          ? toast.info('Article ajouté au panier')
+          : toast.info('Articles ajoutés au panier')
         setAddedArticle(true)
-        return
       } else if (res.status === 400) {
-        alert('Article en rupture !')
+        toast.warning('Article en rupture !')
       }
-
-      navigate('/boutique')
     } catch (error) {
       console.error('Error adding article to cart:', error)
     }
@@ -106,54 +106,59 @@ const ArticleDetail = () => {
     setAddedArticle(false)
     fetchArticle(id)
     setJwtToken(Cookies.get('jwt_token'))
-    
   }, [addedArticle])
 
   return (
-    <div className="article-detail">
-      <div className="article-image">
-        <img src={photo} alt={article.nom} />
-        <div className="article-price">
-          <span>{article.prix} €</span>
+    <>
+      <div className="article-detail">
+        <div className="article-image">
+          <img src={photo} alt={article.nom} />
+          <div className="article-price">
+            <span>{article.prix} €</span>
+          </div>
+        </div>
+        <div className="article-info">
+          <p>{categorie}</p>
+          <h2 style={{ textAlign: 'left' }}>{article.nom}</h2>
+          <p>{article.description}</p>
+
+          <p style={{ fontWeight: 'bold' }}>
+            <>
+              {article.quantite === 0 ? (
+                <span style={{ color: 'red' }}>En rupture</span>
+              ) : article.quantite === 1 ? (
+                <span style={{ color: 'maroon' }}>
+                  Plus qu'un exemplaire en stock !
+                </span>
+              ) : (
+                <span style={{ color: 'green' }}>
+                  {article.quantite} en stock
+                </span>
+              )}
+            </>
+          </p>
+
+          {article.quantite > 0 ? (
+            <form
+              id="formulaire-ajout-panier"
+              onSubmit={(e) => handleSubmit(e)}
+            >
+              <input
+                type="number"
+                name="quantite"
+                id="quantite"
+                value={quantite}
+                onChange={(e) => setQuantite(e.target.value)}
+                min="1"
+                step="1"
+              />
+              <button type="submit">Ajouter au panier</button>
+            </form>
+          ) : null}
         </div>
       </div>
-      <div className="article-info">
-        <p>{categorie}</p>
-        <h2 style={{ textAlign: 'left' }}>{article.nom}</h2>
-        <p>{article.description}</p>
-
-        <p style={{ fontWeight: 'bold' }}>
-          <>
-            {article.quantite === 0 ? (
-              <span style={{ color: 'red' }}>En rupture</span>
-            ) : article.quantite === 1 ? (
-              <span style={{ color: 'maroon' }}>
-                Plus qu'un exemplaire en stock !
-              </span>
-            ) : (
-              <span style={{ color: 'green' }}>
-                {article.quantite} en stock
-              </span>
-            )}
-          </>
-        </p>
-
-        {article.quantite > 0 ? (
-          <form id="formulaire-ajout-panier" onSubmit={(e) => handleSubmit(e)}>
-            <input
-              type="number"
-              name="quantite"
-              id="quantite"
-              value={quantite}
-              onChange={(e) => setQuantite(e.target.value)}
-              min="1"
-              step="1"
-            />
-            <button type="submit">Ajouter au panier</button>
-          </form>
-        ) : null}
-      </div>
-    </div>
+      <ToastContainer />
+    </>
   )
 }
 

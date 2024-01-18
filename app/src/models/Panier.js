@@ -33,7 +33,7 @@ class Panier {
       //   utilisateurData: data.infos.panier.pseudo,
       //   id_panier: data.infos.panier.id_panier,
       // })
-
+      console.log({data: data})
       const panierData = data.infos.panier
       const articlesData = data.infos.panier.articles
       const id_panier = data.infos.panier.id_panier
@@ -48,17 +48,21 @@ class Panier {
       for (let i = 0; i < articlesData.length; i++) {
         const request = await Article.getArticleById(articlesData[i].id_article)
         // console.log(data)
-        const item = new Article(
-          articlesData[i].id,
-          articlesData[i].id_article,
-          request.data.infos[0].nom,
-          request.data.infos[0].description,
-          request.data.infos[0].photo,
-          request.data.infos[0].prix,
-          request.data.infos[0].quantite,
-          request.data.infos[0].id_category
-        )
-        this.addArticleToPanier(item)
+        const article = {
+          id: articlesData[i].id,
+          id_panier: id_panier,
+          id_article: articlesData[i].id_article,
+          nom: request.data.infos[0].nom,
+          description: request.data.infos[0].description,
+          photo: request.data.infos[0].photo,
+          prix_unite: articlesData[i].prix_unite,
+          prix_total: articlesData[i].prix_unite * articlesData[i].quantite_articles,
+          quantite_articles: articlesData[i].quantite_articles,
+        }
+
+        console.log({article: article})
+
+        this.addArticleToPanier(article)
         // console.log(
         //   `${i + 5}) On ajoute l'item "${item.nom}" au panier "${pseudo}"`
         // )
@@ -85,11 +89,11 @@ class Panier {
     // Implement the logic to confirm the cart
   }
 
-  async deleteArticleFromPanier(id) {
+  async deleteArticleFromPanier(id_article, id_panier) {
     try {
       // Implement the logic to delete an article from the cart
-      console.log('Backend', { pseudo: this.pseudo, id: id })
-      const url = `http://localhost:3000/m2l/panier/${this.pseudo}?id_row=${id}`
+      console.log('Backend', { pseudo: this.pseudo })
+      const url = `http://localhost:3000/m2l/panier/${this.pseudo}?id_panier=${id_panier}&id_article=${id_article}`
       console.log(url)
       const headers = {
         'Content-Type': 'application/json',
@@ -97,9 +101,6 @@ class Panier {
       const config = {
         headers,
         withCredentials: true,
-      }
-      const body = {
-        id: id,
       }
       const request = await axios.delete(url, config)
       console.log({request : request})
@@ -120,7 +121,7 @@ class Panier {
   async getPrixTotal() {
     return (
       Math.round(
-        this.articles.reduce((total, article) => total + article.prix, 0) * 100
+        this.articles.reduce((total, article) => total + article.prix_total, 0) * 100
       ) / 100
     )
   }

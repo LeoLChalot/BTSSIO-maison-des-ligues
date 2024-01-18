@@ -7,6 +7,7 @@ import './FormArticle.css';
 const FormArticle = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [categories, setCategories] = useState([]);
+  const [rerender, setRerender] = useState(false);
   const ls = localStorage
 
   useEffect(() => {
@@ -48,10 +49,20 @@ const FormArticle = () => {
       });
 
       alert(data.message);
+
+      Object.keys(data).forEach((key) => {
+        setValue(key, "");
+      });
+
+      setRerender(!rerender);
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'article :", error);
     }
   };
+
+  // useEffect(() => {
+    
+  // })
 
   return (
     <form className="form" onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
