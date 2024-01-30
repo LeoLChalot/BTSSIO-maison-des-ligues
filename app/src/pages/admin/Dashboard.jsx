@@ -23,9 +23,7 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!(isLoggedIn || isAdmin) ) navigate('/notyou')
-    }
+
   }, [])
 
   return (

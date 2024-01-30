@@ -32,6 +32,7 @@ const PagePanier = () => {
   }
 
   useEffect(() => {
+    (pseudo === pseudo_param) ? console.log('Pseudo OK') : navigate(`/panier/${pseudo}`)
     const fetchData = async () => {
       const cart = new Panier(pseudo)
       const requestCart = await cart.initCart()
@@ -92,30 +93,6 @@ const PagePanier = () => {
                   ))}
                 </tbody>
               </table>
-              {/* <ul className="list-panier">
-                {articles.map((article) => (
-                  <li className="item-panier" key={article.id}>
-                    <img
-                      src={
-                        `http://localhost:3000/` +
-                        article.photo.replace(/\\/g, '/')
-                      }
-                      width="100"
-                      height="100"
-                      className="cart-item"
-                    />
-                    <p>{article.nom}</p>
-                    <p>
-                      Quant. {article.quantite_articles}{' '}
-                      
-                    </p>
-                    <p>{article.prix_unite * article.quantite_articles}€</p>
-                    <button onClick={() => handleDelete(article.id)}>
-                      supprimer
-                    </button>
-                  </li>
-                ))}
-              </ul> */}
             </>
           ) : (
             <div className="empty-div" id="empty-div">

@@ -7,12 +7,14 @@ import OeilFerme from '/oeil_ferme.svg'
 import './FormConnexion.css'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const FormConnexion = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [showPassord, setShowPassword] = useState(false)
-  const {isLoggedIn, isAdmin, pseudo, updateState} = useAuth()
+  const { isLoggedIn, isAdmin, pseudo, updateState } = useAuth()
   const navigate = useNavigate()
 
   const showPassordToggle = () => {
@@ -28,17 +30,19 @@ const FormConnexion = () => {
         mot_de_passe: password,
       })
 
-      console.log(res.data)
-      if (res.status == 200) {
+      if (res.data.success === true) {
         console.log(res.data.infos)
-
-        Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {expires: 1, secure: true})
+        Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {
+          expires: 1,
+          secure: true,
+        })
         let token = Cookies.get('jwt_token')
         console.log(isValidToken(token))
         updateState(token)
+        navigate(`/profil/${res.data.infos.utilisateur.pseudo}`)
       }
 
-      navigate(`/profil/${res.data.infos.utilisateur.pseudo}`)
+      toast.error('Login ou mot de passe invalide')
     } catch (err) {
       throw err
     }

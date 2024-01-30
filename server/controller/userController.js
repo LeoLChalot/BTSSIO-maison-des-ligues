@@ -102,7 +102,7 @@ exports.login = async (req, res) => {
 
       // ? Veiller d'avoir un login et un mot de passe
       if (!login || !mot_de_passe) {
-         res.status(400).json({
+         res.status(205).json({
             success: false,
             msg: 'Email et mot de passe requis',
          });
@@ -120,7 +120,7 @@ exports.login = async (req, res) => {
 
       // ! Envoyer une erreur si le couple login/mdp ne correspond pas
       if (utilisateur[0].length === 0) {
-         res.status(400).json({
+         res.status(205).json({
             success: false,
             message: "L'email et le mot de passe ne correspondent pas",
          });
@@ -137,7 +137,7 @@ exports.login = async (req, res) => {
 
       // ? Vérifier le mot de passe
       if (!bcrypt.compareSync(mot_de_passe, utilisateur['hash'])) {
-         res.status(400).json({
+         res.status(205).json({
             success: false,
             message: 'Mot de passe incorrect',
          });
