@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
 const boutiqueController = require('../controller/boutiqueController');
-const authentication = require('../middleware/jwt-authentication');
-
 const cookieParser = require('cookie-parser');
 
 router.use(
