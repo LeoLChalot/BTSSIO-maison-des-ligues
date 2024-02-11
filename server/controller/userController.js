@@ -180,7 +180,6 @@ exports.login = async (req, res) => {
          message: 'Utilisateur connecté',
          infos: {
             utilisateur: {
-               email: utilisateur.email,
                pseudo: utilisateur.pseudo,
                jwt_token: jwt_token,
             },

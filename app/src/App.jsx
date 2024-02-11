@@ -18,7 +18,6 @@ import ErreurAuth from './pages/Erreurs/ErreurAuth'
 import { useAuth } from './hooks/useAuth'
 
 const App = () => {
-
   const { isLoggedIn, isAdmin } = useAuth()
   return (
     <>
@@ -31,11 +30,21 @@ const App = () => {
             <Route path="/" element={<Accueil />} />
             <Route path="/boutique" element={<Boutique />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
-            { !isLoggedIn && <Route path="/connexion" element={<Connexion />} /> }
-            { !isLoggedIn && <Route path="/inscription" element={<Inscription />} /> }
-            { isLoggedIn && <Route path="/profil/:pseudo" element={<Profil />} /> }
-            { isLoggedIn && <Route path="/panier/:pseudo" element={<PagePanier />} /> }
-            { isLoggedIn && isAdmin && <Route path="/dashboard" element={<Dashboard />} /> }
+            {!isLoggedIn && (
+              <>
+                <Route path="/connexion" element={<Connexion />} />
+                <Route path="/inscription" element={<Inscription />} />
+              </>
+            )}
+            {isLoggedIn && (
+              <>
+                <Route path="/profil/:pseudo" element={<Profil />} />
+                <Route path="/panier/:pseudo" element={<PagePanier />} />
+              </>
+            )}
+            {isLoggedIn && isAdmin && (
+              <Route path="/dashboard" element={<Dashboard />} />
+            )}
             <Route path="/notyou" element={<ErreurAuth />} />
             <Route path="*" element={<Erreur404 />} />
             <Route path="/unauthorized" element={<ErreurNonAdmin />} />
