@@ -8,7 +8,6 @@ import OeilFerme from '/oeil_ferme.svg'
 import './FormInscription.css'
 
 const FormInscription = () => {
-  const [idUtilisateur, setIdUtilisateur] = useState('')
   const [prenom, setPrenom] = useState('')
   const [nom, setNom] = useState('')
   const [pseudo, setPseudo] = useState('')
@@ -236,6 +235,7 @@ const FormInscription = () => {
             </li>
           </ul>
         </div>
+        
         {nom.match(loginRegex) &&
         prenom.match(loginRegex) &&
         pseudo.match(pseudoRegex) &&

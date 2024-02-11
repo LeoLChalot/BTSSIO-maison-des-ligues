@@ -17,7 +17,7 @@ import PagePanier from './pages/Panier'
 import ErreurAuth from './pages/Erreurs/ErreurAuth'
 import { useAuth } from './hooks/useAuth'
 
-function App() {
+const App = () => {
 
   const { isLoggedIn, isAdmin } = useAuth()
   return (
