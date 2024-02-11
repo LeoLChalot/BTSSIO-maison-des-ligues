@@ -1,5 +1,7 @@
 <h1 align="center">Projet Activité Professionnelle: Application E-commerce pour l'Association Sportive de la Maison des Ligues de Lorraine</h1>
-La **documentation technique** du projet est disponible à la consultation dans la [rubrique wiki](https://github.com/LeoLChalot/BTSSIO-maison-des-ligues/wiki)
+
+<p align="center">La <b>documentation technique</b> du projet est disponible à la consultation dans le</p>
+<p align="center"><a href="https://github.com/LeoLChalot/BTSSIO-maison-des-ligues/wiki" target="_blank">Wiki du projet</a></p>
 
 ## Description
 Ce projet est une activité professionnelle réalisée dans le cadre de mon BTS SIO à l'IPSSI. L'objectif est de développer une application web e-commerce en utilisant React.js pour le front-end et Node.js pour le back-end, destinée à l'association sportive de la Maison des Ligues de Lorraine. L'application permettra aux membres de l'association de parcourir et de une simuler l'achat de produits liés à leurs activités sportives, ainsi qu'à l'administration de gérer les produits, les commandes et les utilisateurs.
