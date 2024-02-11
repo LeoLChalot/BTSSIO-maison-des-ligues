@@ -7,50 +7,68 @@ import { toast } from 'react-toastify'
 
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
-  const { isLoggedIn, isAdmin, pseudo, jwtToken, updateState } = useAuth()
+  const { isLoggedIn, isAdmin, pseudo, jwtToken, id_panier, updateState } =
+    useAuth()
   const [prixTotal, setPrixTotal] = useState(0)
   const [panier, setPanier] = useState(null)
   const [articles, setArticles] = useState([])
   const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
 
-  const handleDelete = async (id_article, id_panier) => {
-    console.log('Début ft handleDelete')
+  const handleAction = async (id_article, id_panier, action) => {
     try {
-      console.log(`Suppression de la ligne ${id_article} du panier de ${pseudo}`)
-      // console.log(await panier.deleteArticleFromPanier(id))
-      const requestPanier = new Panier(pseudo)
-      const request = await requestPanier.deleteArticleFromPanier(id_article, id_panier)
-      console.log('Fin ft handleDelete', request)
-      request ? setRerender((rerender) => !rerender) : console.error('Erreur')
+      const get_panier = new Panier(pseudo)
+      if (action == 'delete') {
+        console.log(
+          `Suppression de l'article id: ${id_article} du panier de ${pseudo}`
+        )
+        await get_panier.deleteArticleFromPanier(id_article, id_panier)
+      } else if (action == 'add') {
+        console.log(
+          `Ajout de l'article id: ${id_article} au panier de ${pseudo}`
+        )
+        await get_panier.addArticleToPanier(id_article, id_panier)
+      }
+      setRerender((rerender) => !rerender)
     } catch (error) {
       console.error(
-        "Erreur lors de la suppression de l'article du panier",
+        "Erreur lors de l'action sur l'article dans le panier",
         error
       )
     }
   }
 
+  const validerPanier = async () => {
+    try {
+      const get_panier = new Panier(pseudo)
+      await get_panier.confirmPanier()
+      console.log({ 'rerender before': rerender })
+      setRerender((rerender) => !rerender)
+      console.log({ 'rerender after': rerender })
+    } catch (error) {
+      console.error('Erreur lors de la validation du panier', error)
+    }
+  }
+
   useEffect(() => {
-    (pseudo === pseudo_param) ? console.log('Pseudo OK') : navigate(`/panier/${pseudo}`)
+    pseudo === pseudo_param
+      ? console.log('Pseudo OK')
+      : navigate(`/panier/${pseudo}`)
     const fetchData = async () => {
-      const cart = new Panier(pseudo)
-      const requestCart = await cart.initCart()
-      console.log({ requested_cart: requestCart })
-      setPanier(requestCart)
-      // const requestPrix = await requestCart.getPrixTotal()
-      const requestArticles = requestCart.articles
+      const new_panier = new Panier(pseudo)
+      const requestPanier = await new_panier.initCart()
+      const requestArticles = requestPanier.getArticles()
+      const cumulatedPrix = await requestPanier.getPrixTotal()
 
-      const cumulatedPrix = requestArticles.reduce(
-        (total, article) => total + article.prix_total,
-        0
-      )
+      const id_panier = requestPanier.getId()
 
+      setPanier(requestPanier)
       setPrixTotal(cumulatedPrix)
       setArticles(requestArticles)
       console.log({
-        message: "pendant l'initialisation du panier",
-        articles,
+        message: 'Initialisation du panier',
+        id_panier,
+        articles: requestArticles,
         cumulatedPrix,
       })
     }
@@ -61,7 +79,7 @@ const PagePanier = () => {
     <>
       <div id="page-panier">
         <h1>Page Panier | {prixTotal}€</h1>
-        <div className="content">
+        <div className="panier-container">
           {articles?.length > 0 ? (
             <>
               <table>
@@ -80,19 +98,46 @@ const PagePanier = () => {
                         />
                       </td>
                       <td>{article.nom}</td>
-                      <td>{article.prix_unite * article.quantite_articles}€</td>
-
                       <td>
-                        <button onClick={() => handleDelete(article.id_article, article.id_panier)}>-</button>
+                        {(
+                          article.prix_unite * article.quantite_articles
+                        ).toFixed(2)}
+                        €
+                      </td>
+                      <td>
+                        <button
+                          onClick={() =>
+                            handleAction(
+                              article.id_article,
+                              article.id_panier,
+                              'delete'
+                            )
+                          }
+                        >
+                          -
+                        </button>
                       </td>
                       <td>{article.quantite_articles}</td>
                       <td>
-                        <button>+</button>
+                        <button
+                          onClick={() =>
+                            handleAction(
+                              article.id_article,
+                              article.id_panier,
+                              'add'
+                            )
+                          }
+                        >
+                          +
+                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <button type="submit" onClick={() => validerPanier(id_panier)}>
+                Valider
+              </button>
             </>
           ) : (
             <div className="empty-div" id="empty-div">
