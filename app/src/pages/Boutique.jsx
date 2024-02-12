@@ -24,31 +24,31 @@ const Boutique = () => {
   const fetchArticles = async (id_categorie) => {
     if (id_categorie == null) {
       const result = await Article.getAllArticles()
-      console.log({result: result})
+      console.log({ result: result })
       setArticles(result.data.infos)
     } else if (validateUUIDv4(id_categorie)) {
       const result = await Article.getArticlesByCategoryId(id_categorie)
-      console.log({result: result})
+      console.log({ result: result })
       result != undefined ? setArticles(result.data.infos) : setErrorMessage('Aucun article')
     }
   }
 
   useEffect(() => {
     fetchArticles(categorie)
-    console.log({id_categorie: categorie})
+    console.log({ id_categorie: categorie })
   }, [categorie])
 
   return (
     <>
       <MenuBoutique setCategorie={setCategorie} />
-      <main id="page-boutique">
+      <main className="columns-4">
         {articles?.length ? (
           articles.map((article) => (
-            <ArticleCardFlowbite key = { v4() } article = { article } />
+            <ArticleCardFlowbite key={v4()} article={article} />
             // <ArticleCard key={v4()} article={article} />
           ))
         ) : (
-          <p>{ errorMessage }</p>
+          <p>{errorMessage}</p>
         )}
       </main>
     </>

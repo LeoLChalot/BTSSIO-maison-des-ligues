@@ -11,15 +11,16 @@ function ArticleCardFlowbite({ article }) {
 
   return (
     <Card
+      w-full
+      aspect-square
       className="max-w-sm"
-      imgAlt="Apple Watch Series 7 in colors pink, silver, and black"
+      imgAlt={article.description}
       imgSrc={photoUrl}
     >
-      <a href="#">
-        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-          {article.nom}
-        </h5>
-      </a>
+      <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+        {article.nom}
+      </h5>
+
       <div className="mb-5 mt-2.5 flex items-center">
         <svg
           className="h-5 w-5 text-yellow-300"
@@ -70,9 +71,9 @@ function ArticleCardFlowbite({ article }) {
           {article.prix} €
         </span>
         <Button>
-        <Link className="link-button" to={`/article/${article.id_article}`}>
-          Détail
-        </Link>
+          <Link className="link-button" to={`/article/${article.id_article}`}>
+            Détail
+          </Link>
         </Button>
       </div>
     </Card>

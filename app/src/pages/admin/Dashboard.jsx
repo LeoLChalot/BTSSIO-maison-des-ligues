@@ -8,7 +8,7 @@ import AdminTabs from '../../components/AdminTabs/AdminTabs'
 
 const Dashboard = () => {
   const { isLoggedIn, isAdmin, pseudo, jwtToken, updateState } = useAuth()
-  const navigate = useNavigate()
+
 
 
   return (

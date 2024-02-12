@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import Categorie from '../../models/Categorie'
-import { isValidToken } from '../../utils/isValidToken'
 import { decodeToken } from '../../utils/decodeToken'
 import Cookies from 'js-cookie'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './ArticleDetail.css'
+import RatingDetail from '../Rating/RatingDetail'
 
 const ArticleDetail = () => {
   const { id } = useParams()
@@ -110,14 +110,14 @@ const ArticleDetail = () => {
 
   return (
     <>
-      <div className="article-detail">
-        <div className="article-image">
+      <div className="container flex ">
+        <div className="basis-1/2">
           <img src={photo} alt={article.nom} />
           <div className="article-price">
             <span>{article.prix} €</span>
           </div>
         </div>
-        <div className="article-info">
+        <div className="basis-1/2">
           <p>{categorie}</p>
           <h2 style={{ textAlign: 'left' }}>{article.nom}</h2>
           <p>{article.description}</p>
@@ -139,21 +139,24 @@ const ArticleDetail = () => {
           </p>
 
           {article.quantite > 0 ? (
-            <form
-              id="formulaire-ajout-panier"
-              onSubmit={(e) => handleSubmit(e)}
-            >
-              <input
-                type="number"
-                name="quantite"
-                id="quantite"
-                value={quantite}
-                onChange={(e) => setQuantite(e.target.value)}
-                min="1"
-                step="1"
-              />
-              <button type="submit">Ajouter au panier</button>
-            </form>
+            <>
+              <form
+                id="formulaire-ajout-panier"
+                onSubmit={(e) => handleSubmit(e)}
+              >
+                <input
+                  type="number"
+                  name="quantite"
+                  id="quantite"
+                  value={quantite}
+                  onChange={(e) => setQuantite(e.target.value)}
+                  min="1"
+                  step="1"
+                />
+                <button type="submit">Ajouter au panier</button>
+              </form>
+              <RatingDetail />
+            </>
           ) : null}
         </div>
       </div>

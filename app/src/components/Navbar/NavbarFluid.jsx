@@ -25,7 +25,7 @@ function Nav() {
     navigate('/connexion')
   }
   return (
-    <Navbar fluid rounded id="nav-fluid">
+    <Navbar fluid rounded id="nav-fluid container ">
       <Navbar.Brand as={Link} to="/">
         <img src={window.location.origin + '/Logo_M2L.png'} width={100} />
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
