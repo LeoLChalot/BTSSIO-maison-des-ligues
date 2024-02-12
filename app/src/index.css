@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Color Theme Swatches in RGBA */
 /* 
 .UI/UX-1-rgba { color: rgba(191, 15, 29, 1); }
@@ -32,14 +36,16 @@
   /* ? SMALL SCREEN */
   --font-size: 16px;
 }
+
 /* // tout va bien ! */
 * {
-  /* box-shadow: inset 0px 0px 1px 0px red; */
   transform-style: preserve-3d;
 }
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
   width: 0;
 }
+
 *,
 ::before,
 ::after {

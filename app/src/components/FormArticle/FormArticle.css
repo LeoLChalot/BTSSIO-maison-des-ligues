@@ -1,6 +1,8 @@
 /* FormArticle.css */
 
+
 .form {
+  width: 100%;
   display: flex;
   flex-direction: column;
   max-width: 400px;
@@ -14,8 +16,13 @@ label {
 input,
 textarea,
 select {
-  padding: 8px;
+  width: 100%;
+  padding: 10px;
   font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
 }
 
 button {

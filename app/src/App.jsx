@@ -16,6 +16,8 @@ import Erreur404 from './pages/Erreurs/Erreur404'
 import PagePanier from './pages/Panier'
 import ErreurAuth from './pages/Erreurs/ErreurAuth'
 import { useAuth } from './hooks/useAuth'
+import ArticlesList from './pages/admin/ArticlesList'
+import FormArticle from './components/FormArticle/FormArticle'
 
 const App = () => {
   const { isLoggedIn, isAdmin } = useAuth()
@@ -43,7 +45,11 @@ const App = () => {
               </>
             )}
             {isLoggedIn && isAdmin && (
-              <Route path="/dashboard" element={<Dashboard />} />
+              <>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard/stock" element={<ArticlesList />} />
+                <Route path="/dashboard/ajout" element={<FormArticle />} />
+              </>
             )}
             <Route path="/notyou" element={<ErreurAuth />} />
             <Route path="*" element={<Erreur404 />} />

@@ -1,0 +1,13 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './src/components/**/*.{js,jsx}',
+    './src/components/**/**/*.{js,jsx}',
+    'node_modules/flowbite-react/lib/esm/**/*.js',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [require('flowbite/plugin')],
+}
+

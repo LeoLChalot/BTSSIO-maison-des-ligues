@@ -62,7 +62,7 @@ const ArticlesList = () => {
                     handleDeleteArticle(`all-${article.id_article}`)
                   }
                 >
-                  Supprimer
+                  Sup
                 </button>
                 <button onClick={() => handleDeleteArticle(article.id_article)}>
                   Editer

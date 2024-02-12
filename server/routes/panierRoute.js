@@ -18,21 +18,9 @@ const panierController = require('../controller/panierController');
 
 // router.use(authenticator.auth);
 
-router.get(
-   '/:pseudo',
-   panierController.getCartContent,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
-);
+router.get('/:pseudo',panierController.getCartContent);
 
-router.post(
-   '/:pseudo',
-   panierController.addToCart,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
-);
+router.post('/:pseudo', panierController.addToCart);
 
 router.delete('/:pseudo', async (req, res) => {
    const { pseudo } = req.params;
@@ -53,6 +41,14 @@ router.delete('/:pseudo', async (req, res) => {
    }
 });
 
-router.post('/validate/:pseudo', async (req, res) => {});
+router.post('/validate/:pseudo', async (req, res) => {
+   const { pseudo } = req.params;
+   if (!pseudo) {
+      return res.status(400).json({
+         msg: 'Pseudo requis',
+      });
+   }
+   panierController.validateCart(req, res);
+});
 
 module.exports = router;

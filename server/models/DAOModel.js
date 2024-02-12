@@ -28,7 +28,6 @@ class DAOModel {
          const query = `
         SELECT * 
         FROM ${this.table} 
-        ORDER BY nom
         `;
          const rows = await connexion.query(query);
          // console.log(rows);
@@ -56,6 +55,8 @@ class DAOModel {
    async find(connexion, object) {
       const columns = Object.keys(object);
       const values = Object.values(object);
+
+      console.log({columns, values});
       try {
          let query = '';
          if (columns.length > 1 && values.length > 1) {
@@ -67,12 +68,15 @@ class DAOModel {
                   query += `AND ${columns[i]} = ? `;
                }
             }
-            console.log(query, values);
+
          } else {
             query = `SELECT * FROM ${this.table} WHERE ${columns[0]} = ?`;
          }
 
+         console.log(query)
+
          const result = await connexion.query(query, values);
+         console.log({"result": result});
          return result;
       } catch (error) {
          console.error('Error deleting article:', error);

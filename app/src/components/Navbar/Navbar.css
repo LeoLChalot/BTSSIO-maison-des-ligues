@@ -42,7 +42,18 @@
     gap: calc(2 * var(--font-size));
     backdrop-filter: blur(8px);
   }
+
   #navbar .link {
     font-size: var(--font-size);
+  }
+
+  #navbar button {
+    border-radius: 5px;
+    background-color: #a90000;
+    transition: .3s;
+  }
+
+  #navbar button:hover {
+    background-color: #d80000;
   }
 }
