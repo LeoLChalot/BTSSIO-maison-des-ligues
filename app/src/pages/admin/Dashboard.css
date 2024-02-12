@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .dashboard-title {
@@ -22,8 +22,3 @@
   width: 100%;
 }
 
-/* FormArticle.css (ajustements spécifiques au formulaire) */
-/* Ajoutez des styles pour le formulaire ici */
-
-/* ArticlesList.css (ajustements spécifiques à la liste d'articles) */
-/* Ajoutez des styles pour la liste d'articles ici */

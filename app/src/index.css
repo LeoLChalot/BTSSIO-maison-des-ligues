@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,7 +12,7 @@
 .UI/UX-5-rgba { color: rgba(242, 242, 242, .7); } 
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;800&display=swap');
+
 
 :root {
   --color-bg-primary: #fff;

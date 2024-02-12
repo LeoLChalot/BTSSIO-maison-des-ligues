@@ -4,18 +4,18 @@ import './Dashboard.css'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import NavbarAdmin from './NavbarAdmin'
+import AdminTabs from '../../components/AdminTabs/AdminTabs'
 
 const Dashboard = () => {
   const { isLoggedIn, isAdmin, pseudo, jwtToken, updateState } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {}, [])
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-title">
-        <h1>Dashboard</h1>
-      </div>
+    <div className="container">
+
+      <AdminTabs />
+
     </div>
   )
 }

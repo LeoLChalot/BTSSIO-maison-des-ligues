@@ -1,5 +1,5 @@
 @media screen and (max-width: 768px) {
-  #navbar {
+  /* #navbar {
     background-color: var(--color-underline);
     z-index: 998;
     position: fixed;
@@ -12,7 +12,7 @@
     align-items: center;
     gap: calc(3 * var(--font-size));
     transition: var(--transition-config);
-  }
+  } */
 
   #navbar.show {
     left: 0;
@@ -43,17 +43,33 @@
     backdrop-filter: blur(8px);
   }
 
+  #nav-fluid {
+    position: sticky;
+    z-index: 9999 !important;
+  }
+
+
+
+
   #navbar .link {
     font-size: var(--font-size);
+  }
+
+  #nav-fluid .link {
+    font-size: 1.5em;
   }
 
   #navbar button {
     border-radius: 5px;
     background-color: #a90000;
-    transition: .3s;
+    transition: 0.3s;
   }
 
   #navbar button:hover {
     background-color: #d80000;
+  }
+
+  .btn-link {
+    color: white;
   }
 }

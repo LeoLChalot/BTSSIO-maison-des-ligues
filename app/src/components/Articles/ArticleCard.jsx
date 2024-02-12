@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { Signal, effect, computed } from '@preact/signals-react'
+import React from 'react'
+
 
 import './ArticleCard.css'
 import { Link } from 'react-router-dom'

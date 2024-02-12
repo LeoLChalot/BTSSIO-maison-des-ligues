@@ -18,14 +18,16 @@ import ErreurAuth from './pages/Erreurs/ErreurAuth'
 import { useAuth } from './hooks/useAuth'
 import ArticlesList from './pages/admin/ArticlesList'
 import FormArticle from './components/FormArticle/FormArticle'
+import Nav from './components/Navbar/NavbarFluid'
+import { Footer } from 'flowbite-react'
 
 const App = () => {
   const { isLoggedIn, isAdmin } = useAuth()
   return (
     <>
-      <header>
-        <Navbar />
-      </header>
+
+      <Nav />
+
       <div className="App">
         <Suspense fallback={<LoaderPage />}>
           <Routes>
@@ -47,8 +49,9 @@ const App = () => {
             {isLoggedIn && isAdmin && (
               <>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/dashboard/stock" element={<ArticlesList />} />
-                <Route path="/dashboard/ajout" element={<FormArticle />} />
+                <Route path="/stock" element={<ArticlesList />} />
+                <Route path="/ajout" element={<FormArticle />} />
+                <Route path="/utilisateurs" element={<FormArticle />} />
               </>
             )}
             <Route path="/notyou" element={<ErreurAuth />} />
@@ -57,7 +60,7 @@ const App = () => {
           </Routes>
         </Suspense>
       </div>
-      <footer>{/* > Footer < */}</footer>
+      <Footer></Footer>
     </>
   )
 }

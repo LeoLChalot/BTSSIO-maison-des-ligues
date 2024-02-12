@@ -1,9 +1,9 @@
 .banner {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 6rem);
   background-size: cover;
   background-position: center;
 }
@@ -50,7 +50,7 @@
 .banner-content .cta-button {
   display: inline-block;
   padding: .5rem 2rem;
-  background-color:rgb(255, 170, 0);
+  background-color: rgb(255, 170, 0);
   color: #000;
   text-decoration: none;
   font-weight: bold;

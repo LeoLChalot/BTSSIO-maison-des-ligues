@@ -8,6 +8,7 @@ import Article from '../models/Article'
 
 import './page.css'
 import { useParams } from 'react-router-dom'
+import ArticleCardFlowbite from '../components/Articles/ArticleCardFlowbite'
 
 const Boutique = () => {
   const [articles, setArticles] = useState([])
@@ -43,7 +44,8 @@ const Boutique = () => {
       <main id="page-boutique">
         {articles?.length ? (
           articles.map((article) => (
-            <ArticleCard key={v4()} article={article} />
+            <ArticleCardFlowbite key = { v4() } article = { article } />
+            // <ArticleCard key={v4()} article={article} />
           ))
         ) : (
           <p>{ errorMessage }</p>
