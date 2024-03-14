@@ -26,9 +26,9 @@ Ce projet est une activité professionnelle réalisée dans le cadre de mon BTS 
 
 1. Cloner le repository GitHub sur votre machine locale.
 2. Installer les dépendances front-end et back-end en exécutant `npm install` à la racine du dossier `app/` et `server`.
-3. Configurer les variables d'environnement en créant un fichier `.env` et en y ajoutant les informations nécessaires (`PORT`,`DB_HOST`,`DB_NAME`,`DB_USER`,`DB_PASS` et `SECRET_KEY`).
-4. Lancer le serveur back-end en exécutant `nodemon` à la racine du dossier `server`.
-5. Lancer le serveur front-end en exécutant `npm start` à la racine du dossier `app/`.
+3. Configurer les variables d'environnement en reprenant le modèle `.env` (`.env.example`)
+5. Lancer le serveur back-end en exécutant `nodemon` à la racine du dossier `server/`.
+6. Lancer le serveur front-end en exécutant `npm start` à la racine du dossier `app/`.
 
 ## Contributeurs
 
