@@ -31,9 +31,9 @@ const FormInscription = () => {
   }
 
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{12,})/
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{12,})/
   const lenghtRegex = /^.{12,}$/
-  const specialCharRegex = /.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\|\/§].*/
+  const specialCharRegex = /.*[!@#$%^&*()_+{}[\]:;<>,.?~\\|/§].*/
   const lowerCaseRegex = /(.*[a-z]).*/
   const upperCaseRegex = /^(.*[A-Z].*)/
   const numberRegex = /^(.*[0-9].*)/
@@ -66,7 +66,7 @@ const FormInscription = () => {
     console.table(user)
 
     const inscription = await axios.post(
-      `http://localhost:3000/m2l/user/inscription`,
+      `http://192.168.1.35:3000/m2l/user/inscription`,
       {
         prenom: user.prenom,
         nom: user.nom,
@@ -110,8 +110,8 @@ const FormInscription = () => {
           <p className="rule">
             <small>
               Les noms et prénoms ne peuvents pas dépasser 15 caractères et ne
-              doivent pas comporter de chiffre d'accent, ou de caractères spéciaux
-              excepté "-"
+              doivent pas comporter de chiffre d&apos;accent, ou de caractères spéciaux
+              excepté &quot;-&quot;
             </small>
           </p>
           <div className="input-group">
@@ -127,7 +127,7 @@ const FormInscription = () => {
           <p className="rule">
             <small>
               Le pseudo doit contenir au maximum 15 caractères et peut contenir
-              des chiffres et les symboles "_" ou "-"
+              des chiffres et les symboles &quot;_&quot; ou &quot;-&quot;
             </small>
           </p>
           <div className="input-group">

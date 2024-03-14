@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import './FormArticle.css'
@@ -20,7 +20,7 @@ const FormArticle = () => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          'http://localhost:3000/m2l/boutique/categories'
+          'http://192.168.1.35:3000/m2l/boutique/categories'
         )
         setCategories(data.infos)
       } catch (error) {
@@ -46,7 +46,7 @@ const FormArticle = () => {
 
     try {
       const { data } = await axios.post(
-        'http://localhost:3000/m2l/admin/article',
+        'http://192.168.1.35:3000/m2l/admin/article',
         formData,
         {
           headers: {
@@ -103,7 +103,7 @@ const FormArticle = () => {
         }}
         required
       />
-      <Button type="submit">Ajouter l'article</Button>
+      <Button type="submit">Ajouter l&apos;article</Button>
     </form>
   )
 }

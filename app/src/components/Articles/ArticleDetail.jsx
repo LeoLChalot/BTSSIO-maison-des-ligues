@@ -79,7 +79,7 @@ const ArticleDetail = () => {
         withCredentials: true,
       }
       const res = await axios.post(
-        `http://localhost:3000/m2l/panier/${pseudo}`,
+        `http://192.168.1.35:3000/m2l/panier/${pseudo}`,
         body,
         config
       )

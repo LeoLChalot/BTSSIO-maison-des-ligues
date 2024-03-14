@@ -14,7 +14,7 @@ const FormConnexion = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [showPassord, setShowPassword] = useState(false)
-  const { isAdmin, pseudo, updateState } = useAuth()
+  const { updateState } = useAuth()
   const navigate = useNavigate()
 
   const showPassordToggle = () => {
@@ -25,7 +25,7 @@ const FormConnexion = () => {
     e.preventDefault()
 
 
-    const res = await axios.post(`http://localhost:3000/m2l/user/connexion`, {
+    const res = await axios.post(`http://192.168.1.35:3000/m2l/user/connexion`, {
       login: login,
       mot_de_passe: password,
     })

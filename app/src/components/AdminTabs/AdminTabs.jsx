@@ -7,7 +7,7 @@ import ArticlesListFlowbite from '../../pages/admin/ArticlesListFlowbite'
 
 function AdminTabs() {
   const tabsRef = useRef()
-  const [activeTab, setActiveTab] = useState(0)
+  const [, setActiveTab] = useState(0)
 
   return (
     <>

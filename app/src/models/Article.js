@@ -1,4 +1,6 @@
 import axios from 'axios'
+
+
 class Article {
   constructor(id, id_article, nom, description, photo, prix, quantite, id_category) {
     this.id = id
@@ -18,7 +20,7 @@ class Article {
  */
 static async getAllArticles() {
   try {
-    const res = await axios.get('http://localhost:3000/m2l/boutique/articles');
+    const res = await axios.get('http://192.168.1.35:3000/m2l/boutique/articles');
     return res;
   } catch (error) {
     console.error(error);
@@ -27,7 +29,7 @@ static async getAllArticles() {
 
 static async getArticleById(id_article) {
   try {
-    const res = await axios.get(`http://localhost:3000/m2l/boutique/articles?id_article=${id_article}`);
+    const res = await axios.get(`http://192.168.1.35:3000/m2l/boutique/articles?id_article=${id_article}`);
     return res;
   } catch (error) {
     console.error(error);
@@ -37,7 +39,7 @@ static async getArticleById(id_article) {
   static async getArticlesByCategoryId(categoryId) {
     try {
       const res = await axios.get(
-        `http://localhost:3000/m2l/boutique/articles?id_categorie=${categoryId}`
+        `http://192.168.1.35:3000/m2l/boutique/articles?id_categorie=${categoryId}`
       )
       // console.log(res)
         return res
@@ -48,14 +50,14 @@ static async getArticleById(id_article) {
 
 
 
-  static async addArticle(article) {}
+  static async addArticle() {}
 
-  static async updateArticle(updatedArticle) {}
+  static async updateArticle() {}
 
   static async deleteArticleById(articleId) {
     try {
       const { data } = await axios.delete(
-        `http://localhost:3000/m2l/boutique/article/${articleId}`
+        `http://192.168.1.35:3000/m2l/boutique/article/${articleId}`
       )
       return data
     } catch (error) {

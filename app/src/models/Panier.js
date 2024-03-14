@@ -9,7 +9,7 @@ class Panier {
 
   async initCart() {
     try {
-      const url = `http://localhost:3000/m2l/panier/${this.pseudo}`
+      const url = `http://192.168.1.35:3000/m2l/panier/${this.pseudo}`
       const headers = {
         'Content-Type': 'application/json',
       }
@@ -21,7 +21,7 @@ class Panier {
       // ? On récupère les informations du panier de l'utilisateur
       const { data } = await axios.get(url, config)
 
-      const panierData = data.infos.panier
+      // const panierData = data.infos.panier
       const articlesData = data.infos.panier.articles
       const id_panier = data.infos.panier.id_panier
       console.log({ data: data.infos.panier.id_panier })
@@ -75,7 +75,7 @@ class Panier {
       }
 
       const res = await axios.post(
-        `http://localhost:3000/m2l/panier/${this.pseudo}`,
+        `http://192.168.1.35:3000/m2l/panier/${this.pseudo}`,
         body,
         config
       )
@@ -89,7 +89,7 @@ class Panier {
     try {
       // Implement the logic to delete an article from the cart
       console.log('Backend', { pseudo: this.pseudo })
-      const url = `http://localhost:3000/m2l/panier/${this.pseudo}?id_panier=${id_panier}&id_article=${id_article}`
+      const url = `http://192.168.1.35:3000/m2l/panier/${this.pseudo}?id_panier=${id_panier}&id_article=${id_article}`
       console.log({ handleDelete: url })
       const headers = {
         'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ class Panier {
   async confirmPanier() {
     // Implement the logic to confirm the cart
     console.log('Backend', { "pseudo": this.pseudo })
-    const url = `http://localhost:3000/m2l/panier/validate/${this.pseudo}`
+    const url = `http://192.168.1.35:3000/m2l/panier/validate/${this.pseudo}`
     console.log({ handleDelete: url })
     const headers = {
       'Content-Type': 'application/json',
