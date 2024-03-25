@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import PropTypes from 'prop-types';
 import './ButtonBurger.css'
 
 const ButtonBurger = ({ isActive, setIsActive }) => {
-  const [burgerActive, setBurgerActive] = useState("")
-  const toggleBurger = (e) => {
+
+  const toggleBurger = () => {
     if (isActive == 'hide') {
       setIsActive('show')
     } else {
@@ -21,3 +21,8 @@ const ButtonBurger = ({ isActive, setIsActive }) => {
 }
 
 export default ButtonBurger
+
+ButtonBurger.propTypes = {
+  isActive: PropTypes.string.isRequired, // or PropTypes.oneOf(['show', 'hide'])
+  setIsActive: PropTypes.func.isRequired
+};

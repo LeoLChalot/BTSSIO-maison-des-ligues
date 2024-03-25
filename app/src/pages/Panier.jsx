@@ -55,7 +55,7 @@ const PagePanier = () => {
 
   const articleStandBy = async (id_panier, id_article) => {
     const requestStandby = await axios.post(
-      `http://localhost:3000/m2l/panier/standby/${id_panier}`,
+      `http://${JSON.stringify(import.meta.env.VITE_API_URL)}/m2l/panier/standby/${id_panier}`,
       { "id_article": id_article }
     )
 
@@ -106,7 +106,7 @@ const PagePanier = () => {
                       <td>
                         <img
                           src={
-                            `http://localhost:3000/` +
+                            `${JSON.stringify(import.meta.env.VITE_API_URL)}/` +
                             article.photo.replace(/\\/g, '/')
                           }
                           width="100"

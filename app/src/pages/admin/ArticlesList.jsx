@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Article from '../../models/Article'
 import './ArticlesList.css'
@@ -16,7 +16,7 @@ const ArticlesList = () => {
     try {
       // Appeler une fonction pour supprimer l'article
       const { data } = await axios.delete(
-        `http://localhost:3000/m2l/admin/articles/${id_article}`
+        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/articles/${id_article}`
       )
       setModif(true)
       alert(data.message)

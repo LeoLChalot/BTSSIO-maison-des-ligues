@@ -1,5 +1,6 @@
 import { Button, Timeline } from 'flowbite-react';
 import { HiArrowNarrowRight } from 'react-icons/hi';
+import PropTypes from 'prop-types';
 
 function TimelineFlowbite({ commandes }) {
 
@@ -34,3 +35,7 @@ function TimelineFlowbite({ commandes }) {
 }
 
 export default TimelineFlowbite;
+
+TimelineFlowbite.propTypes = {
+  commandes: PropTypes.array.isRequired,
+};

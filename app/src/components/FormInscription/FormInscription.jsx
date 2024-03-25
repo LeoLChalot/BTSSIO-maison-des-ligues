@@ -66,7 +66,7 @@ const FormInscription = () => {
     console.table(user)
 
     const inscription = await axios.post(
-      `http://192.168.1.35:3000/m2l/user/inscription`,
+      `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/inscription`,
       {
         prenom: user.prenom,
         nom: user.nom,

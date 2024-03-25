@@ -1,5 +1,7 @@
 import axios from 'axios'
 import Article from './Article'
+import { env } from './conf'
+
 class Panier {
   constructor(pseudo) {
     this.id_panier
@@ -9,7 +11,7 @@ class Panier {
 
   async initCart() {
     try {
-      const url = `http://192.168.1.35:3000/m2l/panier/${this.pseudo}`
+      const url = `http://${env.apiUrl}/m2l/panier/${this.pseudo}`
       const headers = {
         'Content-Type': 'application/json',
       }
@@ -75,7 +77,7 @@ class Panier {
       }
 
       const res = await axios.post(
-        `http://192.168.1.35:3000/m2l/panier/${this.pseudo}`,
+        `http://${env.apiUrl}/m2l/panier/${this.pseudo}`,
         body,
         config
       )
@@ -89,7 +91,7 @@ class Panier {
     try {
       // Implement the logic to delete an article from the cart
       console.log('Backend', { pseudo: this.pseudo })
-      const url = `http://192.168.1.35:3000/m2l/panier/${this.pseudo}?id_panier=${id_panier}&id_article=${id_article}`
+      const url = `http://${env.apiUrl}/m2l/panier/${this.pseudo}?id_panier=${id_panier}&id_article=${id_article}`
       console.log({ handleDelete: url })
       const headers = {
         'Content-Type': 'application/json',
@@ -115,7 +117,7 @@ class Panier {
   async confirmPanier() {
     // Implement the logic to confirm the cart
     console.log('Backend', { "pseudo": this.pseudo })
-    const url = `http://192.168.1.35:3000/m2l/panier/validate/${this.pseudo}`
+    const url = `http://${env.apiUrl}/m2l/panier/validate/${this.pseudo}`
     console.log({ handleDelete: url })
     const headers = {
       'Content-Type': 'application/json',

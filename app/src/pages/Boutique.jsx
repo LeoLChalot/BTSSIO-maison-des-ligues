@@ -18,19 +18,18 @@ const Boutique = () => {
     return regex.test(uuid)
   }
 
-  const fetchArticles = async (id_categorie) => {
-    if (id_categorie == null) {
-      const result = await Article.getAllArticles()
-      console.log({ result: result })
-      setArticles(result.data.infos)
-    } else if (validateUUIDv4(id_categorie)) {
-      const result = await Article.getArticlesByCategoryId(id_categorie)
-      console.log({ result: result })
-      result != undefined ? setArticles(result.data.infos) : setErrorMessage('Aucun article')
-    }
-  }
-
   useEffect(() => {
+    const fetchArticles = async (id_categorie) => {
+      if (id_categorie == null) {
+        const result = await Article.getAllArticles()
+        console.log({ result: result })
+        setArticles(result.data.infos)
+      } else if (validateUUIDv4(id_categorie)) {
+        const result = await Article.getArticlesByCategoryId(id_categorie)
+        console.log({ result: result })
+        result != undefined ? setArticles(result.data.infos) : setErrorMessage('Aucun article')
+      }
+    }
     fetchArticles(categorie)
     console.log({ id_categorie: categorie })
   }, [categorie])
@@ -39,7 +38,7 @@ const Boutique = () => {
     <>
       <MenuBoutique setCategorie={setCategorie} />
       <main>
-        {articles?.length ? (
+      {articles?.length ? (
           articles.map((article) => (
             <ArticleCardFlowbite key={v4()} article={article} />
             // <ArticleCard key={v4()} article={article} />

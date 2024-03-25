@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
+import PropTypes from 'prop-types';
 const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [pseudo, setPseudo] = useState('')
   const [mail, setMail] = useState('')
   const [panier, setPanier] = useState(null)
-  const [jwtToken, setJwtToken] = useState('')
+  const [, setJwtToken] = useState('')
 
 
   const updateState = (jwtToken) => {
@@ -47,3 +48,8 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext)
 }
+
+
+AuthProvider.propTypes = {
+  children: PropTypes.node
+};

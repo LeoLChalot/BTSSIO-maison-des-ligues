@@ -1,12 +1,16 @@
 import { Button, Card } from 'flowbite-react'
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types';
+
 
 function ArticleCardFlowbite({ article }) {
-  const serverBaseUrl = 'http://localhost:3000'
+  const serverBaseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
   const description = article.description
   const photoPath = article.photo
   const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
+
+  console.log(photoUrl)
 
   return (
     <Card
@@ -79,3 +83,13 @@ function ArticleCardFlowbite({ article }) {
 }
 
 export default ArticleCardFlowbite
+
+ArticleCardFlowbite.propTypes = {
+  article: PropTypes.shape({
+    description: PropTypes.string.isRequired,
+    photo: PropTypes.string.isRequired,
+    nom: PropTypes.string.isRequired,
+    prix: PropTypes.number.isRequired,
+    id_article: PropTypes.number.isRequired
+  }).isRequired,
+};

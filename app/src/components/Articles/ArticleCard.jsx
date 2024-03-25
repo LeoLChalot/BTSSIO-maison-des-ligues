@@ -1,11 +1,11 @@
-import React from 'react'
 
 
 import './ArticleCard.css'
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const ArticleCard = ({ article }) => {
-  const serverBaseUrl = 'http://localhost:3000'
+  const serverBaseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL)}`
 
   const description = article.description
   const photoPath = article.photo
@@ -31,3 +31,13 @@ const ArticleCard = ({ article }) => {
 }
 
 export default ArticleCard
+
+ArticleCard.propTypes = {
+  article: PropTypes.shape({
+    description: PropTypes.string.isRequired,
+    photo: PropTypes.string.isRequired,
+    nom: PropTypes.string.isRequired,
+    prix: PropTypes.number.isRequired,
+    id_article: PropTypes.number.isRequired
+  }).isRequired,
+};

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react'
+import PropTypes from 'prop-types';
 const ViewContext = createContext()
 
 export const ViewProvider = ({ children }) => {
@@ -20,3 +21,8 @@ export const ViewProvider = ({ children }) => {
 export const useRender = () => {
     return useContext(ViewContext)
 }
+
+
+ViewProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+  };
