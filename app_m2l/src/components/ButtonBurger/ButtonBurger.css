@@ -1,0 +1,46 @@
+#button-burger {
+  z-index: 999;
+  position: relative;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 50%;
+  background-color: var(--color-bg-primary);
+}
+
+#button-burger .bar::before {
+  z-index: 0;
+  content: '';
+  display: block;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 5px;
+  border-radius: 5px;
+  background-color: var(--color-header);
+  transition: var(--transition-config);
+}
+
+#button-burger.show .bar:nth-child(1):before {
+  transform-origin: center;
+  transform: translateY(13px) rotate(45deg) scale(0.9);
+}
+#button-burger.show .bar:nth-child(2):before {
+  opacity: 0;
+}
+#button-burger.show .bar:nth-child(3):before {
+  transform-origin: center;
+  transform: translateY(-13px) rotate(-45deg) scale(0.9);
+}
+
+@media screen and (min-width: 769px) {
+  #button-burger {
+    display: none;
+  }
+}

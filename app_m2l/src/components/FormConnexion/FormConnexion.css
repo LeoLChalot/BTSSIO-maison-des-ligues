@@ -1,0 +1,53 @@
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.form #formulaire-inscription {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form #formulaire-inscription .input-group {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form #formulaire-inscription .input-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 1px 1px 4px 1px rgb(178, 178, 178);
+}
+
+.form #formulaire-inscription input[type='submit'] {
+  width: 50%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  background-color: rgb(186, 255, 186);
+  box-shadow: 1px 1px 4px 1px rgb(178, 178, 178);
+}
+
+.progress-bar{
+  display: inline-block;
+  width: 100%;
+  text-align: right;
+}
+
+
+.show-password{
+  width: 10%!important;
+  padding: 0!important;
+  box-shadow: 0 0 0 0!important;
+}
