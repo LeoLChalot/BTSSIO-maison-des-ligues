@@ -17,28 +17,12 @@ const ArticleDetail = () => {
   const [quantite, setQuantite] = useState(1)
   const [photo, setPhoto] = useState(null)
   const [categorie, setCategorie] = useState('')
-  const serverBaseUrl = 'http://localhost:3000'
+  const serverBaseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
   const [jwtToken, setJwtToken] = useState('')
   const [addedArticle, setAddedArticle] = useState(false)
   const navigate = useNavigate()
 
-  const fetchArticle = async (id) => {
-    try {
-      const { data } = await axios.get(
-        `${serverBaseUrl}/m2l/boutique/articles?id_article=${id}`
-      )
-      const photoPath = data.infos[0].photo
-      const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
-      setPhoto(photoUrl)
-      const selectedCategorie = await Categorie.getCategoryById(
-        data.infos[0].categorie_id
-      )
-      setCategorie(selectedCategorie)
-      setArticle(data.infos[0])
-    } catch (error) {
-      console.error('Error fetching article:', error)
-    }
-  }
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -79,7 +63,7 @@ const ArticleDetail = () => {
         withCredentials: true,
       }
       const res = await axios.post(
-        `http://192.168.1.35:3000/m2l/panier/${pseudo}`,
+        `${serverBaseUrl}/m2l/panier/${pseudo}`,
         body,
         config
       )
@@ -99,10 +83,27 @@ const ArticleDetail = () => {
   }
 
   useEffect(() => {
+    const fetchArticle = async (id) => {
+      try {
+        const { data } = await axios.get(
+          `${serverBaseUrl}/m2l/boutique/articles?id_article=${id}`
+        )
+        const photoPath = data.infos[0].photo
+        const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
+        setPhoto(photoUrl)
+        const selectedCategorie = await Categorie.getCategoryById(
+          data.infos[0].categorie_id
+        )
+        setCategorie(selectedCategorie)
+        setArticle(data.infos[0])
+      } catch (error) {
+        console.error('Error fetching article:', error)
+      }
+    }
     setAddedArticle(false)
     fetchArticle(id)
     setJwtToken(Cookies.get('jwt_token'))
-  }, [addedArticle, id])
+  }, [addedArticle, id, serverBaseUrl])
 
   return (
     <>

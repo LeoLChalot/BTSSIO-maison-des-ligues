@@ -20,7 +20,7 @@ const FormArticle = () => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          'http://192.168.1.35:3000/m2l/boutique/categories'
+          `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/categories`
         )
         setCategories(data.infos)
       } catch (error) {
@@ -46,7 +46,7 @@ const FormArticle = () => {
 
     try {
       const { data } = await axios.post(
-        'http://192.168.1.35:3000/m2l/admin/article',
+        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/article`,
         formData,
         {
           headers: {

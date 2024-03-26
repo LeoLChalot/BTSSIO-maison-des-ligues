@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react'
 import { v4 } from 'uuid'
+import PropTypes from 'prop-types'
 import Categorie from '../../models/Categorie'
 import './MenuBoutique.css'
 
@@ -43,3 +43,8 @@ const MenuBoutique = ({ setCategorie }) => {
 }
 
 export default MenuBoutique
+
+
+MenuBoutique.propTypes = {
+  setCategorie: PropTypes.func.isRequired
+}

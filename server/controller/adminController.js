@@ -276,12 +276,14 @@ exports.updateArticle = async (req, res) => {
 };
 
 exports.deleteArticle = async (req, res) => {
+   console.log(req.params.id);
+   console.log("DELETING ARTICLE");
    let connexion;
    try {
       connexion = await ConnexionDAO.connect();
       const articleDAO = new ArticleDAO();
 
-      const id = req.body.id;
+      const { id } = req.params;
 
       const findWithId = {
          id_article: id,
@@ -298,33 +300,13 @@ exports.deleteArticle = async (req, res) => {
          });
          return;
       }
-      if (quantity) {
-         const updateArticle = {
-            quantite: articleMagasin[0][0].quantite - quantity,
-            id_article: articleMagasin[0][0].id_article,
-         };
-         console.log(updateArticle);
-         const result = await articleDAO.update(
-            connexion,
-            updateArticle
-         );
-         res.status(201).json({
-            success: true,
-            message: 'Article(s) supprimé(s) !',
-         });
-      } else {
-         const result = await articleDAO.delete(
-            connexion,
-            findWithId
-         );
-         res.status(201).json({
-            success: true,
-            message: 'Tous les articles supprimés !',
-         });
-      }
+
+      const articleASupprimer = await articleDAO.delete(connexion, findWithId);
+
    } catch (error) {
       console.error('Error connecting shop:', error);
       throw error;
+
    } finally {
       ConnexionDAO.disconnect();
    }

@@ -25,7 +25,7 @@ const FormConnexion = () => {
     e.preventDefault()
 
 
-    const res = await axios.post(`http://192.168.1.35:3000/m2l/user/connexion`, {
+    const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, {
       login: login,
       mot_de_passe: password,
     })

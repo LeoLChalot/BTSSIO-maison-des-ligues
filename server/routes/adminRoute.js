@@ -33,52 +33,34 @@ router.get('/', async (req, res) => {
 
 router.delete(
    '/user',
-   adminController.deleteUserByPseudo,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
+   adminController.deleteUserByPseudo
 );
 
 router.post(
    '/categorie',
-   adminController.createCategory,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
+   adminController.createCategory
 );
 
 router.delete(
    '/categorie',
-   adminController.deleteCategory,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
+   adminController.deleteCategory
 );
 
 router.post(
    '/article',
    upload.single('photo'),
-   adminController.createArticle,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
+   adminController.createArticle
 );
 
-router.put(
-   '/article',
-   upload.single('photo'),
-   adminController.updateArticle,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
-);
+// router.put(
+//    '/article',
+//    upload.single('photo'),
+//    adminController.updateArticle
+// );
 
 router.delete(
-   '/article',
-   adminController.deleteArticle,
-   async (req, res) => {
-      return res.status(200).json({ success: true });
-   }
+   '/:id',
+   adminController.deleteArticle
 );
 
 
