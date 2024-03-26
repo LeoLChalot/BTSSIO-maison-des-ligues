@@ -37,9 +37,11 @@ const FormConnexion = () => {
         secure: true,
       })
       let token = Cookies.get('jwt_token')
+	console.log({"token":token})
       updateState(token)
+console.log({"tf_jwtDecode": jwtDecode})
       token = jwtDecode(token)
-      console.log(token)
+      console.log({"new Token": token})
 
 
       navigate(`${token.role ? '/dashboard' : ('/profil' + `/${res.data.infos.utilisateur.pseudo}`)}`)
