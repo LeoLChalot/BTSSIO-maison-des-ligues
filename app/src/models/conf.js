@@ -1,3 +1,3 @@
 export const env = {
-    apiUrl: '127.0.0.1:3000',
+    apiUrl: '192.168.1.35:3000',
 }

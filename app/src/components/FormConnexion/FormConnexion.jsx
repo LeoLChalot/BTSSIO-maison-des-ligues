@@ -30,17 +30,21 @@ const FormConnexion = () => {
       mot_de_passe: password,
     })
 
-    if (res.data.success === true) {
+	console.log(res);
+
+    if (res.status == 200) {
       console.log(res.data.infos)
       Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {
         expires: 1,
         secure: true,
       })
-      let token = Cookies.get('jwt_token')
+      // let token = Cookies.get('jwt_token')
+	let token = res.data.infos.utilisateur.jwt_token
 	console.log({"token":token})
       updateState(token)
 console.log({"tf_jwtDecode": jwtDecode})
       token = jwtDecode(token)
+	console.log({"updateState":updateState});
       console.log({"new Token": token})
 
 

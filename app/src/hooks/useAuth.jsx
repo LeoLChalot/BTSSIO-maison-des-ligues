@@ -9,15 +9,15 @@ export const AuthProvider = ({ children }) => {
   const [pseudo, setPseudo] = useState('')
   const [mail, setMail] = useState('')
   const [panier, setPanier] = useState(null)
-  const [, setJwtToken] = useState('')
+  const [jwtToken, setJwtToken] = useState('')
 
 
   const updateState = (jwtToken) => {
     if (jwtToken) {
-      // Décode le token pour obtenir les informations nécessaires
+      // Decode le token pour obtenir les informations nécessaires
       const decodedToken = jwtDecode(jwtToken)
 
-      // Vérifie si le token est encore valide
+      // Verifie si le token est encore valide
       const currentDateTime = new Date().getTime() / 1000
       const isValidToken = decodedToken.exp > currentDateTime
 
@@ -26,10 +26,12 @@ export const AuthProvider = ({ children }) => {
       setPseudo(decodedToken.pseudo)
       setPanier(decodedToken.panier)
       setJwtToken(jwtToken)
-
+	
+	
       // Vérifie le rôle de l'utilisateur
       if (decodedToken.role) {
         setIsAdmin(true)
+	console.log({"UseAuth Var" : isLoggedIn, isAdmin, pseudo, mail, panier, jwtToken})
       }
     } else {
       setIsLoggedIn(false)
