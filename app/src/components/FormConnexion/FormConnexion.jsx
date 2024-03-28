@@ -34,7 +34,7 @@ const FormConnexion = () => {
       console.log(res.data.infos)
       Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {
         expires: 1,
-        secure: true,
+        secure: false,
       })
       let token = Cookies.get('jwt_token')
       updateState(token)
