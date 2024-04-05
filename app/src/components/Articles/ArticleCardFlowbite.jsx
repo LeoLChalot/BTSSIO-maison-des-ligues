@@ -7,7 +7,7 @@ function ArticleCardFlowbite({ article }) {
   const serverBaseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
   const description = article.description
-  const photoPath = article.photo
+  const photoPath = article.image
   const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
 
   console.log(photoUrl)
@@ -73,7 +73,7 @@ function ArticleCardFlowbite({ article }) {
           {article.prix} €
         </span>
         <Button>
-          <Link className="link-button" to={`/article/${article.id_article}`}>
+          <Link className="link-button" to={`/article/${article.id}`}>
             Détail
           </Link>
         </Button>
@@ -87,9 +87,9 @@ export default ArticleCardFlowbite
 ArticleCardFlowbite.propTypes = {
   article: PropTypes.shape({
     description: PropTypes.string.isRequired,
-    photo: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
     nom: PropTypes.string.isRequired,
     prix: PropTypes.number.isRequired,
-    id_article: PropTypes.number.isRequired
+    id: PropTypes.string.isRequired
   }).isRequired,
 };

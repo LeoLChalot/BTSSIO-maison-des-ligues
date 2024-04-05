@@ -24,11 +24,18 @@ const FormConnexion = () => {
   const handleFormData = async (e) => {
     e.preventDefault()
 
-
-    const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, {
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+    const body = {
       login: login,
       mot_de_passe: password,
-    })
+    }
+    const config = {
+      headers,
+      withCredentials: true,
+    }
+    const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, body, config)
 
     if (res.data.success === true) {
       console.log(res.data.infos)
@@ -37,13 +44,8 @@ const FormConnexion = () => {
         secure: false,
       })
       let token = Cookies.get('jwt_token')
-	console.log({"token":token})
       updateState(token)
-console.log({"tf_jwtDecode": jwtDecode})
       token = jwtDecode(token)
-      console.log({"new Token": token})
-
-
       navigate(`${token.role ? '/dashboard' : ('/profil' + `/${res.data.infos.utilisateur.pseudo}`)}`)
     }
 
