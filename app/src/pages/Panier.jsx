@@ -1,6 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Panier from '../models/Panier'
 import panierVide from '/panier-vide.png'
 import { useAuth } from '../hooks/useAuth'
 import { ToastContainer } from 'react-toastify'
@@ -10,42 +10,69 @@ import axios from 'axios'
 
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
-  const { pseudo, id_panier } =
+  const { pseudo, id_panier, jwtToken } =
     useAuth()
   const [prixTotal, setPrixTotal] = useState(0)
   const [panier, setPanier] = useState(null)
   const [articles, setArticles] = useState([])
   const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
+  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
-  const handleAction = async (id_article, id_panier, action) => {
-    try {
-      const get_panier = new Panier(pseudo)
-      if (action == 'delete') {
-        console.log(
-          `Suppression de l'article id: ${id_article} du panier de ${pseudo}`
-        )
-        await get_panier.deleteArticleFromPanier(id_article, id_panier)
-      } else if (action == 'add') {
-        console.log(
-          `Ajout de l'article id: ${id_article} au panier de ${pseudo}`
-        )
-        await get_panier.addArticleToPanier(id_article, id_panier)
-      }
-      setRerender((rerender) => !rerender)
-    } catch (error) {
-      console.error(
-        "Erreur lors de l'action sur l'article dans le panier",
-        error
-      )
+
+  const addToCart = async (id_article) => {
+    console.log(
+      `Ajout de l'article id: ${id_article} au panier de ${pseudo}`
+    )
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     }
+    const body = {
+      id_article: id_article,
+      quantite: 1,
+    }
+    const config = {
+      headers,
+      withCredentials: true,
+    }
+    const request = await axios.post(
+      `${baseUrl}/m2l/panier/add/${panier.id}`,
+      body,
+      config
+    )
+    request.status == 200 ? toast.success(request.data.message) : toast.error(request.data.message)
+    setRerender((rerender) => !rerender)
   }
+  const deleteToCart = async (id_article) => {
+    console.log(
+      `Suppression de l'article id: ${id_article} du panier de ${pseudo}`
+    )
+    const request = await axios.delete(`${baseUrl}/m2l/panier/delete_one/${panier.id}?id_article=${id_article}`)
+    request.status == 200 ? toast.success(request.data.message) : toast.error(request.data.message)
+    setRerender((rerender) => !rerender)
+  }
+
 
   const validerPanier = async () => {
     try {
-      const get_panier = new Panier(pseudo)
-      await get_panier.confirmPanier()
-      toast.info('Panier validé !')
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
+      }
+      const body = {
+        panier: panier
+      }
+      const config = {
+        headers,
+        withCredentials: true,
+      }
+      const request = await axios.post(
+        `${baseUrl}/m2l/panier/validate/${pseudo}`,
+        body,
+        config
+      )
+      request.status == 200 ? toast.success(request.data.message) : toast.error(request.data.message)
       setRerender((rerender) => !rerender)
 
     } catch (error) {
@@ -55,7 +82,7 @@ const PagePanier = () => {
 
   const articleStandBy = async (id_panier, id_article) => {
     const requestStandby = await axios.post(
-      `http://${JSON.stringify(import.meta.env.VITE_API_URL)}/m2l/panier/standby/${id_panier}`,
+      `${baseUrl}/m2l/panier/standby/${id_panier}`,
       { "id_article": id_article }
     )
 
@@ -64,85 +91,71 @@ const PagePanier = () => {
   }
 
   useEffect(() => {
+    console.log(pseudo)
     pseudo === pseudo_param
       ? console.log('Pseudo OK')
       : navigate(`/panier/${pseudo}`)
+
     const fetchData = async () => {
-      const new_panier = new Panier(pseudo)
-      const requestPanier = await new_panier.initCart()
-      const requestArticles = requestPanier.getArticles()
-      const cumulatedPrix = await requestPanier.getPrixTotal()
-
-      const id_panier = requestPanier.getId()
-
-      setPanier(requestPanier)
-      setPrixTotal(cumulatedPrix)
-      setArticles(requestArticles)
-      console.log({
-        message: 'Initialisation du panier',
-        id_panier,
-        articles: requestArticles,
-        cumulatedPrix,
-      })
-
-
+      const fetch_panier = await axios.get(`${baseUrl}/m2l/panier/${pseudo}`)
+      console.log(fetch_panier)
+      setPanier(await fetch_panier.data.infos.panier)
+      setPrixTotal(await fetch_panier.data.infos.panier.prix_total)
+      setArticles(await fetch_panier.data.infos.panier.articles)
     }
     fetchData()
-  }, [navigate, pseudo, pseudo_param, rerender])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rerender])
 
   return (
     <>
       <div id="page-panier">
         {prixTotal == 0 ?
           <h1 className="page-title text-3xl font-bold">Page Panier</h1>
-          : <h1 className="page-title text-3xl font-bold">Page Panier - {prixTotal} €</h1>}
+          : <h1 className="page-title text-3xl font-bold">Page Panier - {panier.prix_total} €</h1>}
         <div className="panier-container">
           {articles?.length > 0 ? (
             <>
               <table>
                 <tbody>
                   {articles.map((article) => (
-                    <tr key={article.id}>
+                    <tr key={article.article.id}>
                       <td>
                         <img
                           src={
-                            `${JSON.stringify(import.meta.env.VITE_API_URL)}/` +
-                            article.photo.replace(/\\/g, '/')
+                            `${baseUrl}/` +
+                            article.article.image.replace(/\\/g, '/')
                           }
                           width="100"
                           height="100"
                           className="cart-item"
                         />
                       </td>
-                      <td>{article.nom}</td>
+                      <td>{article.article.nom}</td>
                       <td>
                         {(
-                          article.prix_unite * article.quantite_articles
-                        ).toFixed(2)}
+                          article.sous_total
+                        )}
                         €
                       </td>
                       <td>
                         <Button
                           // color="failure"
                           onClick={() =>
-                            handleAction(
-                              article.id_article,
-                              article.id_panier,
-                              'delete'
+                            deleteToCart(
+                              article.article.id,
                             )
                           }
                         >
                           <p className='font-bold text-white'>-</p>
                         </Button>
                       </td>
-                      <td>{article.quantite_articles}</td>
+                      <td><p>{article.quantite}</p></td>
                       <td>
                         <Button
                           onClick={() =>
-                            handleAction(
-                              article.id_article,
-                              article.id_panier,
-                              'add'
+                            addToCart(
+                              article.article.id,
                             )
                           }
                         >
