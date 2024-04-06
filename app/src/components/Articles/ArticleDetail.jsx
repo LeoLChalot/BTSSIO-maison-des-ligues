@@ -40,14 +40,13 @@ const ArticleDetail = () => {
     try {
       setJwtToken(Cookies.get('jwt_token'))
       const decoded_token = decodeToken(jwtToken)
-      const pseudo = decoded_token.pseudo
       const panier = decoded_token.panier
       const headers = {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
       }
       const body = {
-        id_panier: panier,
-        id: article.id,
+        id_article: article.id,
         quantite: quantite,
       }
       const config = {
@@ -55,12 +54,10 @@ const ArticleDetail = () => {
         withCredentials: true,
       }
       const res = await axios.post(
-        `${baseUrl}/m2l/panier/${pseudo}`,
+        `${baseUrl}/m2l/panier/add/${panier}`,
         body,
         config
       )
-
-      console.log(res)
       if (res.status === 200) {
         quantite === 1
           ? toast.info('Article ajouté au panier')
@@ -75,7 +72,6 @@ const ArticleDetail = () => {
   }
 
   useEffect(() => {
-    console.log({ id: id })
     const fetchArticle = async (id) => {
       try {
         const response = await axios.get(
@@ -87,7 +83,7 @@ const ArticleDetail = () => {
         const categorie = await axios.get(
           `${baseUrl}/m2l/boutique/categorie/id/${response.data.infos.categorie.id}`
         )
-        setCategorie(categorie.id)
+        setCategorie(categorie.data.infos.nom)
         setArticle(response.data.infos)
       } catch (error) {
         console.error('Error fetching article:', error)
@@ -97,7 +93,7 @@ const ArticleDetail = () => {
     setAddedArticle(false)
     fetchArticle(id)
     setJwtToken(Cookies.get('jwt_token'))
-  }, [baseUrl, id])
+  }, [baseUrl, id, navigate])
 
   return (
     <>

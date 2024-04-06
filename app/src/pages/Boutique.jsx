@@ -26,14 +26,10 @@ const Boutique = () => {
         const result = await axios.get(
           `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/articles/categorie/id/${id_categorie}`
         )
-
         setArticles(result.data.infos)
-        console.log({ result: result })
       }
     }
-
     fetchArticles(categorie)
-    console.log({ id_categorie: categorie })
   }, [categorie])
 
   return (

@@ -10,8 +10,6 @@ function ArticleCardFlowbite({ article }) {
   const photoPath = article.image
   const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
 
-  console.log(photoUrl)
-
   return (
     <Card
       aspect-square

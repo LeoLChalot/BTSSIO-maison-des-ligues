@@ -1,22 +1,20 @@
 import { useState, useEffect } from 'react'
 import { v4 } from 'uuid'
 import PropTypes from 'prop-types'
-import Categorie from '../../models/Categorie'
 import './MenuBoutique.css'
+import axios from 'axios'
 
 const MenuBoutique = ({ setCategorie }) => {
   const [categories, setCategories] = useState([])
 
-  const fetchCategories = async () => {
-    const res = await Categorie.getAllCategories()
-    const listCategories = res.infos
-    console.log(listCategories)
-    setCategories(listCategories)
-  }
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await axios.get(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/categories/all`)
+      const listCategories = response.data.infos
+      setCategories(listCategories)
+    }
     fetchCategories()
-    console.log(categories)
   }, [])
 
   return (
@@ -31,7 +29,7 @@ const MenuBoutique = ({ setCategorie }) => {
             categories.map((category) => (
               <li
                 key={v4()}
-                onClick={() => setCategorie(category.id_categorie)}
+                onClick={() => setCategorie(category.id)}
               >
                 {category.nom}
               </li>

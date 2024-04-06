@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [mail, setMail] = useState('')
   const [panier, setPanier] = useState(null)
   const [, setJwtToken] = useState('')
+  
 
 
   const updateState = (jwtToken) => {
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
       // Vérifie si le token est encore valide
       const currentDateTime = new Date().getTime() / 1000
-      const isValidToken = decodedToken.exp > currentDateTime
+      const isValidToken = decodedToken.exp > currentDateTime ? true : false
 
       setIsLoggedIn(isValidToken)
       setMail(decodedToken.email)
