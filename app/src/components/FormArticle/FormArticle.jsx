@@ -16,13 +16,15 @@ const FormArticle = () => {
   const [categories, setCategories] = useState([])
   const [rerender, setRerender] = useState(false)
 
+  const baseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/categories/all`
+          `${baseUrl}/m2l/boutique/categories/all`
         )
-        setCategories(data.infos)
+        setCategories(data.infos.categories)
       } catch (error) {
         console.error('Error retrieving categories:', error)
       }

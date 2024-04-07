@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
       // Vérifie si le token est encore valide
       const currentDateTime = new Date().getTime() / 1000
-      const isValidToken = decodedToken.exp > currentDateTime ? true : false
+      const isValidToken = decodedToken.exp > currentDateTime ? 1 : 0
 
       setIsLoggedIn(isValidToken)
       setMail(decodedToken.email)

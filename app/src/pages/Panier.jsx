@@ -49,7 +49,7 @@ const PagePanier = () => {
       `Suppression de l'article id: ${id_article} du panier de ${pseudo}`
     )
     const request = await axios.delete(`${baseUrl}/m2l/panier/delete_one/${panier.id}?id_article=${id_article}`)
-    request.status == 200 ? toast.success(request.data.message) : toast.error(request.data.message)
+    request.status == 200 ? toast.info(request.data.message) : toast.error(request.data.message)
     setRerender((rerender) => !rerender)
   }
 

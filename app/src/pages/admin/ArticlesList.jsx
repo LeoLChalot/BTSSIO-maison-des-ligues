@@ -4,13 +4,13 @@ import './ArticlesList.css'
 
 const ArticlesList = () => {
   const [articles, setArticles] = useState([])
-
+  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
   
   const handleDeleteArticle = async (id_article) => {
     try {
       // Appeler une fonction pour supprimer l'article
       const { data } = await axios.delete(
-        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/articles/${id_article}`
+        `${baseUrl}/m2l/admin/articles/${id_article}`
       )
       alert(data.message)
       // Mettre à jour la liste des articles après suppression
@@ -21,12 +21,12 @@ const ArticlesList = () => {
   }
   useEffect(() => {
     const fetchArticles = async () => {
-        const result = await axios.get(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/articles/all`);
-        setArticles(result.data.infos)
+        const result = await axios.get(`${baseUrl}/m2l/boutique/articles/all`);
+        setArticles(result.data.infos.articles)
     }
     // Appeler une fonction pour récupérer la liste des articles
     fetchArticles()
-  }, [articles.length])
+  }, [articles.length, baseUrl])
 
   return (
     <div>

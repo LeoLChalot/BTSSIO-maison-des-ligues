@@ -78,13 +78,14 @@ const ArticleDetail = () => {
           `${baseUrl}/m2l/boutique/article/id/${id}`
         )
 
-        const photoUrl = `${baseUrl}/${response.data.infos.image.replace(/\\/g, '/')}`
+        const article = response.data.infos.article
+
+        console.log(article)
+
+        const photoUrl = `${baseUrl}/${article.image.replace(/\\/g, '/')}`
         setPhoto(photoUrl)
-        const categorie = await axios.get(
-          `${baseUrl}/m2l/boutique/categorie/id/${response.data.infos.categorie.id}`
-        )
-        setCategorie(categorie.data.infos.nom)
-        setArticle(response.data.infos)
+        setCategorie(article.categorie.nom)
+        setArticle(article)
       } catch (error) {
         console.error('Error fetching article:', error)
         navigate('/404')

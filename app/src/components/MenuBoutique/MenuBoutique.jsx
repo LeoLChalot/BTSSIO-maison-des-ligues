@@ -7,11 +7,13 @@ import axios from 'axios'
 const MenuBoutique = ({ setCategorie }) => {
   const [categories, setCategories] = useState([])
 
+  const baseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
+
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const response = await axios.get(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/categories/all`)
-      const listCategories = response.data.infos
+      const response = await axios.get(`${baseUrl}/m2l/boutique/categories/all`)
+      const listCategories = response.data.infos.categories
       setCategories(listCategories)
     }
     fetchCategories()
@@ -21,7 +23,7 @@ const MenuBoutique = ({ setCategorie }) => {
     <>
       <aside>
         <ul>
-          <li onClick={() => setCategorie(null)}>Tous les articles</li>
+          <li onClick={() => setCategorie('')}>Tous les articles</li>
         </ul>
         <h3>Par catégories</h3>
         <ul>

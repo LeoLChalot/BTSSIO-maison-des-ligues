@@ -5,15 +5,15 @@ import { Link } from 'react-router-dom'
 
 function ArticlesListFlowbite() {
   const [articles, setArticles] = useState([])
-  const serverBaseUrl = 'http://' + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '') + '/'
+  const baseUrl = 'http://' + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
   const handleDeleteArticle = async (id) => {
     try {
       // Appeler une fonction pour supprimer l'article
       const response = await axios.delete(
-        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/article/${id}`
+        `${baseUrl}/m2l/admin/article/${id}`
       )
-      alert("Référence supprimée !")
+      alert(response.data.message)
       setArticles((articles) => articles.filter((article) => article.id !== id))
     } catch (error) {
       console.error('Error deleting article:', error)
@@ -23,12 +23,12 @@ function ArticlesListFlowbite() {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const result = await axios.get(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/articles/all`);
-      setArticles(result.data.infos)
+      const result = await axios.get(`${baseUrl}/m2l/boutique/articles/all`);
+      setArticles(result.data.infos.articles)
     }
     // Appeler une fonction pour récupérer la liste des articles
     fetchArticles()
-  }, [articles.length])
+  }, [articles.length, baseUrl])
 
   return (
     <div className="fluid">
@@ -48,8 +48,8 @@ function ArticlesListFlowbite() {
           {articles.map((article) => (
             <Table.Row key={article.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
 
-              {console.log((serverBaseUrl + article.image).replace(/\\/g, '/'))}
-              <Table.Cell><img src={(serverBaseUrl + article.image).replace(/\\/g, '/')} alt={article.nom} width={80} /></Table.Cell>
+              {console.log((baseUrl + article.image).replace(/\\/g, '/'))}
+              <Table.Cell><img src={(`${baseUrl}/${article.image}`).replace(/\\/g, "/")} alt={article.nom} width={80} /></Table.Cell>
               <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                 {article.nom}
               </Table.Cell>
