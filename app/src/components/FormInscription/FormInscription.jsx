@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import bcrypt from 'bcryptjs'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Oeil from '/oeil.svg'
@@ -54,14 +53,13 @@ const FormInscription = () => {
     setPseudo(e.target['pseudo'].value)
     setEmail(e.target['email'].value)
     setPasswordCheck(e.target['password-check'].value)
-    let passwordHash = await bcrypt.hash(passwordCheck, 10)
 
     const user = {
       prenom: prenom,
       nom: nom,
       pseudo: pseudo,
       email: email,
-      passwordHash: passwordHash,
+      password: password,
     }
     console.table(user)
 
@@ -72,7 +70,7 @@ const FormInscription = () => {
         nom: user.nom,
         pseudo: user.pseudo,
         email: user.email,
-        mot_de_passe: user.passwordHash,
+        mot_de_passe: user.password,
       }
     )
 

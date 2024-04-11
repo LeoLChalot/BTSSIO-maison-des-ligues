@@ -55,7 +55,7 @@ const App = () => {
               </>
             )}
             <Route path="/notyou" element={<ErreurAuth />} />
-            <Route path="*" element={<Erreur404 />} />
+            <Route path="/404" element={<Erreur404 />} />
             <Route path="/unauthorized" element={<ErreurNonAdmin />} />
           </Routes>
         </Suspense>

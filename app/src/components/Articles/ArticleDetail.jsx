@@ -1,15 +1,13 @@
-// Importez useState et useEffect
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { Button, TextInput } from 'flowbite-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Categorie from '../../models/Categorie'
-import { decodeToken } from '../../utils/decodeToken'
-import Cookies from 'js-cookie'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import RatingDetail from '../Rating/RatingDetail';
+import axios from 'axios'
+import { decodeToken } from '../../utils/decodeToken'
+import Cookies from 'js-cookie'
 import './ArticleDetail.css'
-import RatingDetail from '../Rating/RatingDetail'
-import { Button, TextInput } from 'flowbite-react'
 
 const ArticleDetail = () => {
   const { id } = useParams()
@@ -17,7 +15,7 @@ const ArticleDetail = () => {
   const [quantite, setQuantite] = useState(1)
   const [photo, setPhoto] = useState(null)
   const [categorie, setCategorie] = useState('')
-  const serverBaseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
+  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
   const [jwtToken, setJwtToken] = useState('')
   const [addedArticle, setAddedArticle] = useState(false)
   const navigate = useNavigate()
@@ -42,20 +40,13 @@ const ArticleDetail = () => {
     try {
       setJwtToken(Cookies.get('jwt_token'))
       const decoded_token = decodeToken(jwtToken)
-      const pseudo = decoded_token.pseudo
       const panier = decoded_token.panier
-      console.log({ panier: decoded_token.panier })
-      console.log({
-        panier: panier,
-        article: article.id_article,
-        quantite: quantite,
-      })
       const headers = {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`,
       }
       const body = {
-        id_panier: panier,
-        id_article: article.id_article,
+        id_article: article.id,
         quantite: quantite,
       }
       const config = {
@@ -63,12 +54,10 @@ const ArticleDetail = () => {
         withCredentials: true,
       }
       const res = await axios.post(
-        `${serverBaseUrl}/m2l/panier/${pseudo}`,
+        `${baseUrl}/m2l/panier/add/${panier}`,
         body,
         config
       )
-
-      console.log(res)
       if (res.status === 200) {
         quantite === 1
           ? toast.info('Article ajouté au panier')
@@ -85,25 +74,27 @@ const ArticleDetail = () => {
   useEffect(() => {
     const fetchArticle = async (id) => {
       try {
-        const { data } = await axios.get(
-          `${serverBaseUrl}/m2l/boutique/articles?id_article=${id}`
+        const response = await axios.get(
+          `${baseUrl}/m2l/boutique/article/id/${id}`
         )
-        const photoPath = data.infos[0].photo
-        const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
+
+        const article = response.data.infos.article
+
+        console.log(article)
+
+        const photoUrl = `${baseUrl}/${article.image.replace(/\\/g, '/')}`
         setPhoto(photoUrl)
-        const selectedCategorie = await Categorie.getCategoryById(
-          data.infos[0].categorie_id
-        )
-        setCategorie(selectedCategorie)
-        setArticle(data.infos[0])
+        setCategorie(article.categorie.nom)
+        setArticle(article)
       } catch (error) {
         console.error('Error fetching article:', error)
+        navigate('/404')
       }
     }
     setAddedArticle(false)
     fetchArticle(id)
     setJwtToken(Cookies.get('jwt_token'))
-  }, [addedArticle, id, serverBaseUrl])
+  }, [baseUrl, id, navigate])
 
   return (
     <>

@@ -9,7 +9,12 @@ export const AuthProvider = ({ children }) => {
   const [pseudo, setPseudo] = useState('')
   const [mail, setMail] = useState('')
   const [panier, setPanier] = useState(null)
+<<<<<<< HEAD
   const [jwtToken, setJwtToken] = useState('')
+=======
+  const [, setJwtToken] = useState('')
+  
+>>>>>>> 8f573bb579302368335c11c564b5d4d0918638c5
 
 
   const updateState = (jwtToken) => {
@@ -19,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
       // Verifie si le token est encore valide
       const currentDateTime = new Date().getTime() / 1000
-      const isValidToken = decodedToken.exp > currentDateTime
+      const isValidToken = decodedToken.exp > currentDateTime ? 1 : 0
 
       setIsLoggedIn(isValidToken)
       setMail(decodedToken.email)

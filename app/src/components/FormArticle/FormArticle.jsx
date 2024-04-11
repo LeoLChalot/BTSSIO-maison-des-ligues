@@ -16,13 +16,15 @@ const FormArticle = () => {
   const [categories, setCategories] = useState([])
   const [rerender, setRerender] = useState(false)
 
+  const baseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/categories`
+          `${baseUrl}/m2l/boutique/categories/all`
         )
-        setCategories(data.infos)
+        setCategories(data.infos.categories)
       } catch (error) {
         console.error('Error retrieving categories:', error)
       }
@@ -36,6 +38,7 @@ const FormArticle = () => {
       console.log(data.photo[0])
       formData.append('photo', data.photo[0])
     }
+
     // formData.append('photo', data.photo[0]);
 
     Object.keys(data).forEach((key) => {
@@ -55,14 +58,10 @@ const FormArticle = () => {
         }
       )
 
-      // Clear the form fields after successful submission
       Object.keys(data).forEach((key) => {
         setValue(key, '')
       })
-
       alert(data.message)
-
-
       setRerender(!rerender)
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'article :", error)
@@ -87,12 +86,12 @@ const FormArticle = () => {
       <Label htmlFor="categorie" value="Catégorie" />
       <Select
         {...register('categorie')}
-        defaultValue={categories[0]?.id_categorie}
+        defaultValue={categories[0]?.id}
         required
       >
-        {categories.map((cat) => (
-          <option key={cat.id_categorie} value={cat.id_categorie}>
-            {cat.nom}
+        {categories.map((categorie) => (
+          <option key={categorie.id} value={categorie.id}>
+            {categorie.nom}
           </option>
         ))}
       </Select>

@@ -1,19 +1,18 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
-import Categorie from '../../models/Categorie';
+import axios from 'axios';
+
 const FormCategorie = () => {
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+
     // Here you can handle the data submission, such as sending it to an API endpoint
-    Categorie.addCategory(data.categorie)
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error('Error adding category:', error);
-      });
+    const response = await axios.post(
+      `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/boutique/categorie`,
+      { data }
+    )
+
+    console.log(response.data)
   };
 
   return (

@@ -24,11 +24,18 @@ const FormConnexion = () => {
   const handleFormData = async (e) => {
     e.preventDefault()
 
-
-    const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, {
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+    const body = {
       login: login,
       mot_de_passe: password,
-    })
+    }
+    const config = {
+      headers,
+      withCredentials: true,
+    }
+    const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, body, config)
 
 	console.log(res);
 
@@ -38,16 +45,22 @@ const FormConnexion = () => {
         expires: 1,
         secure: false,
       })
+<<<<<<< HEAD
       // let token = Cookies.get('jwt_token')
 	let token = res.data.infos.utilisateur.jwt_token
 	console.log({"token":token})
+=======
+      let token = Cookies.get('jwt_token')
+>>>>>>> 8f573bb579302368335c11c564b5d4d0918638c5
       updateState(token)
-console.log({"tf_jwtDecode": jwtDecode})
       token = jwtDecode(token)
+<<<<<<< HEAD
 	console.log({"updateState":updateState});
       console.log({"new Token": token})
 
 
+=======
+>>>>>>> 8f573bb579302368335c11c564b5d4d0918638c5
       navigate(`${token.role ? '/dashboard' : ('/profil' + `/${res.data.infos.utilisateur.pseudo}`)}`)
     }
 

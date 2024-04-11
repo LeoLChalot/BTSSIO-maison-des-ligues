@@ -1,25 +1,20 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import Article from '../../models/Article'
 import { Table } from 'flowbite-react'
 import { Link } from 'react-router-dom'
 
 function ArticlesListFlowbite() {
-  const [modif, setModif] = useState(false)
   const [articles, setArticles] = useState([])
-  const serverBaseUrl = 'http://' + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '') + '/'
-  const [, setRerender] = useState(false)
+  const baseUrl = 'http://' + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
-
-  
-  const handleDeleteArticle = async (id_article) => {
+  const handleDeleteArticle = async (id) => {
     try {
       // Appeler une fonction pour supprimer l'article
-      const { data } = await axios.delete(
-        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/${id_article}`
+      const response = await axios.delete(
+        `${baseUrl}/m2l/admin/article/${id}`
       )
-      setModif()
-      alert(data.message)
+      alert(response.data.message)
+      setArticles((articles) => articles.filter((article) => article.id !== id))
     } catch (error) {
       console.error('Error deleting article:', error)
     }
@@ -28,15 +23,13 @@ function ArticlesListFlowbite() {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const { data } = await Article.getAllArticles()
-      console.log({ result: data })
-      setArticles(data.infos)
-      console.table(data.infos)
-      setRerender((rerender) => !rerender)
+      const result = await axios.get(`${baseUrl}/m2l/boutique/articles/all`);
+      setArticles(result.data.infos.articles)
     }
     // Appeler une fonction pour récupérer la liste des articles
     fetchArticles()
-  }, [modif])
+  }, [articles.length, baseUrl])
+
   return (
     <div className="fluid">
       <Table hoverable>
@@ -53,10 +46,10 @@ function ArticlesListFlowbite() {
         <Table.Body className="divide-y">
           
           {articles.map((article) => (
-            <Table.Row key={article.id_article} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+            <Table.Row key={article.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
 
-              {console.log((serverBaseUrl + article.photo).replace(/\\/g, '/'))}
-              <Table.Cell><img src={(serverBaseUrl + article.photo).replace(/\\/g, '/')} alt={article.nom} width={80} /></Table.Cell>
+              {console.log((baseUrl + article.image).replace(/\\/g, '/'))}
+              <Table.Cell><img src={(`${baseUrl}/${article.image}`).replace(/\\/g, "/")} alt={article.nom} width={80} /></Table.Cell>
               <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                 {article.nom}
               </Table.Cell>
@@ -65,14 +58,14 @@ function ArticlesListFlowbite() {
               {/* <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">{article.categorie_id}</Table.Cell> */}
               <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                 <Link
-                  to={"/edit/" + article.id_article}
+                  to={"/edit/" + article.id}
                   className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                 >
                   Edit
                 </Link>
                 <Link
                   className="font-medium text-cyan-600 hover:underline dark:text-cyan-500 p-4"
-                  onClick={() => handleDeleteArticle(article.id_article)}
+                  onClick={() => handleDeleteArticle(article.id)}
                 >
                   Delete
                 </Link>
