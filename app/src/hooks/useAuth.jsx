@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false)
   const [pseudo, setPseudo] = useState('')
   const [mail, setMail] = useState('')
-  const [panier, setPanier] = useState(null)
+  const [panier_id, setPanier] = useState(null)
   const [token, setToken] = useState('')
 
 
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       setToken(token)
 	setIsAdmin(decodedToken.role)
 	
-	console.log(mail, panier, pseudo, token, isAdmin)
+	console.log(mail, panier_id, pseudo, token, isAdmin)
     } else {
       setIsLoggedIn(false)
       setIsAdmin(false)
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isAdmin, pseudo, mail, panier,token, updateState }}>
+    <AuthContext.Provider value={{ isLoggedIn, isAdmin, pseudo, mail, panier_id, token, updateState }}>
       {children}
     </AuthContext.Provider>
   )

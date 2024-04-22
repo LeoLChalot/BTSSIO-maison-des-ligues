@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
   const [rerender, setRerender] = useState(false)
-	// const {isAdmin} = useAuth();
+	const {isAdmin} = useAuth();
   const updateRerender = () => {
     setRerender((rerender) => !rerender)
   }
