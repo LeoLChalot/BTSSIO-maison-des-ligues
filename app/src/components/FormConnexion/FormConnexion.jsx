@@ -40,17 +40,19 @@ const FormConnexion = () => {
 
     if (res.status == 200) {
       console.log(res.data.infos)
-      Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {
+	const pseudo = res.data.infos.utilisateur.pseudo
+
+      Cookies.set('token', res.data.infos.utilisateur.token, {
         expires: 1,
         secure: false,
       })
 
-	let token = res.data.infos.utilisateur.jwt_token
+	let token = res.data.infos.utilisateur.token
 	updateState(token)
-	token = jwtDecode(token)
-	console.log({"new Token": token})
-
-      navigate(`${token.role ? '/dashboard' : ('/profil' + `/${res.data.infos.utilisateur.pseudo}`)}`)
+	const decodedToken = jwtDecode(token)
+	console.log(`TOKEN DECODE ROLE => ${decodedToken.role}`);
+	const navigatePath = decodedToken.role == true ? `/dashboard` : `/profil/${pseudo}`;
+      navigate(navigatePath);
     }
 
     toast.error('Login ou mot de passe invalide')

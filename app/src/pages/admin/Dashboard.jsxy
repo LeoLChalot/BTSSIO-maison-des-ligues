@@ -16,7 +16,9 @@ const Dashboard = () => {
   const refresh = () => window.location.reload(true)
 	
 	useEffect(() => {
-		console.log({"isAdmin": isAdmin});
+		const {isAdmin} = useAuth();
+		console.log({"isAdmin": isAdmin);
+		 
 	},[isAdmin])
 
   return (

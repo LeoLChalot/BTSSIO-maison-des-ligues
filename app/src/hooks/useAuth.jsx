@@ -9,30 +9,27 @@ export const AuthProvider = ({ children }) => {
   const [pseudo, setPseudo] = useState('')
   const [mail, setMail] = useState('')
   const [panier, setPanier] = useState(null)
-  const [jwtToken, setJwtToken] = useState('')
+  const [token, setToken] = useState('')
 
 
-  const updateState = (jwtToken) => {
-    if (jwtToken) {
+  const updateState = (token) => {
+    if (token) {
       // Decode le token pour obtenir les informations nécessaires
-      const decodedToken = jwtDecode(jwtToken)
+      const decodedToken = jwtDecode(token)
 
       // Verifie si le token est encore valide
       const currentDateTime = new Date().getTime() / 1000
-      const isValidToken = decodedToken.exp > currentDateTime ? 1 : 0
+      const isValidToken = decodedToken.exp > currentDateTime ? true : false
 
       setIsLoggedIn(isValidToken)
+
       setMail(decodedToken.email)
       setPseudo(decodedToken.pseudo)
       setPanier(decodedToken.panier)
-      setJwtToken(jwtToken)
+      setToken(token)
+	setIsAdmin(decodedToken.role)
 	
-	
-      // Vérifie le rôle de'utilisateur
-      if (decodedToken.role) {
-        setIsAdmin(true)
-	console.log({"UseAuth Var" : isLoggedIn, isAdmin, pseudo, mail, panier, jwtToken})
-      }
+	console.log(mail, panier, pseudo, token, isAdmin)
     } else {
       setIsLoggedIn(false)
       setIsAdmin(false)
@@ -41,7 +38,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isAdmin, pseudo, mail, panier, updateState }}>
+    <AuthContext.Provider value={{ isLoggedIn, isAdmin, pseudo, mail, panier,token, updateState }}>
       {children}
     </AuthContext.Provider>
   )

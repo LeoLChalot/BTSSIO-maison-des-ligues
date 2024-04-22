@@ -22,6 +22,7 @@ import FooterFlowbite from './components/Footer/Footer'
 
 const App = () => {
   const { isLoggedIn, isAdmin } = useAuth()
+	console.log({"IsLoggedIn": isLoggedIn, "isAdmin": isAdmin});
   return (
     <>
       <Nav />

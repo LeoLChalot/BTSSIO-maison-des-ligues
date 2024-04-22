@@ -11,14 +11,14 @@ function Nav() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const jwtToken = Cookies.get('jwt_token')
+    const jwtToken = Cookies.get('token')
     updateState(jwtToken)
     console.log('Context updated:', { isLoggedIn, isAdmin, pseudo })
   }, [pseudo])
 
   const handleLogout = () => {
     // Supprime le cookie et déconnecte l'utilisateur
-    Cookies.remove('jwt_token')
+    Cookies.remove('token')
     updateState(null)
     // Redirige vers la page de connexion par exemple
     navigate('/connexion')
