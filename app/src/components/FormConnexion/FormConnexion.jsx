@@ -37,7 +37,6 @@ const FormConnexion = () => {
     }
     const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, body, config)
 
-	console.log(res);
 
     if (res.status == 200) {
       console.log(res.data.infos)
@@ -45,22 +44,12 @@ const FormConnexion = () => {
         expires: 1,
         secure: false,
       })
-<<<<<<< HEAD
-      // let token = Cookies.get('jwt_token')
+
 	let token = res.data.infos.utilisateur.jwt_token
-	console.log({"token":token})
-=======
-      let token = Cookies.get('jwt_token')
->>>>>>> 8f573bb579302368335c11c564b5d4d0918638c5
-      updateState(token)
-      token = jwtDecode(token)
-<<<<<<< HEAD
-	console.log({"updateState":updateState});
-      console.log({"new Token": token})
+	updateState(token)
+	token = jwtDecode(token)
+	console.log({"new Token": token})
 
-
-=======
->>>>>>> 8f573bb579302368335c11c564b5d4d0918638c5
       navigate(`${token.role ? '/dashboard' : ('/profil' + `/${res.data.infos.utilisateur.pseudo}`)}`)
     }
 

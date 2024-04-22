@@ -9,12 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [pseudo, setPseudo] = useState('')
   const [mail, setMail] = useState('')
   const [panier, setPanier] = useState(null)
-<<<<<<< HEAD
   const [jwtToken, setJwtToken] = useState('')
-=======
-  const [, setJwtToken] = useState('')
-  
->>>>>>> 8f573bb579302368335c11c564b5d4d0918638c5
 
 
   const updateState = (jwtToken) => {
@@ -33,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       setJwtToken(jwtToken)
 	
 	
-      // Vérifie le rôle de l'utilisateur
+      // Vérifie le rôle de'utilisateur
       if (decodedToken.role) {
         setIsAdmin(true)
 	console.log({"UseAuth Var" : isLoggedIn, isAdmin, pseudo, mail, panier, jwtToken})
