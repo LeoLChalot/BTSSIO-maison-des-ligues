@@ -8,6 +8,7 @@ import axios from 'axios'
 import { decodeToken } from '../../utils/decodeToken'
 import Cookies from 'js-cookie'
 import './ArticleDetail.css'
+import { useAuth } from '../../hooks/useAuth';
 
 const ArticleDetail = () => {
   const { id } = useParams()
@@ -19,13 +20,14 @@ const ArticleDetail = () => {
   const [jwtToken, setJwtToken] = useState('')
   const [addedArticle, setAddedArticle] = useState(false)
   const navigate = useNavigate()
+	const { token } = useAuth();
 
   
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (Cookies.get('jwt_token') === undefined) {
+    if (jwtToken  === undefined) {
       alert('Veuillez vous connecter pour ajouter un article au panier')
       navigate('/connexion')
       return
@@ -38,9 +40,8 @@ const ArticleDetail = () => {
     }
 
     try {
-      setJwtToken(Cookies.get('jwt_token'))
       const decoded_token = decodeToken(jwtToken)
-      const panier = decoded_token.panier
+      const panier_id = decoded_token.panier
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${jwtToken}`,
@@ -54,7 +55,7 @@ const ArticleDetail = () => {
         withCredentials: true,
       }
       const res = await axios.post(
-        `${baseUrl}/m2l/panier/add/${panier}`,
+        `${baseUrl}/m2l/panier/add/${panier_id}`,
         body,
         config
       )
@@ -93,7 +94,7 @@ const ArticleDetail = () => {
     }
     setAddedArticle(false)
     fetchArticle(id)
-    setJwtToken(Cookies.get('jwt_token'))
+    setJwtToken(Cookies.get('token'))
   }, [baseUrl, id, navigate])
 
   return (

@@ -38,16 +38,22 @@ const FormConnexion = () => {
     }
     const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, body, config)
 
-    if (res.data.success === true) {
+
+    if (res.status == 200) {
       console.log(res.data.infos)
-      Cookies.set('jwt_token', res.data.infos.utilisateur.jwt_token, {
+	const pseudo = res.data.infos.utilisateur.pseudo
+
+      Cookies.set('token', res.data.infos.utilisateur.token, {
         expires: 1,
         secure: false,
       })
-      let token = Cookies.get('jwt_token')
-      updateState(token)
-      token = jwtDecode(token)
-      navigate(`${token.role ? '/dashboard' : ('/profil' + `/${res.data.infos.utilisateur.pseudo}`)}`)
+
+	let token = res.data.infos.utilisateur.token
+	updateState(token)
+	const decodedToken = jwtDecode(token)
+	console.log(`TOKEN DECODE ROLE => ${decodedToken.role}`);
+	const navigatePath = decodedToken.role == true ? `/dashboard` : `/profil/${pseudo}`;
+      navigate(navigatePath);
     }
 
     toast.error('Login ou mot de passe invalide')

@@ -13,16 +13,20 @@ function Nav() {
   const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
   useEffect(() => {
-    const jwtToken = Cookies.get('jwt_token')
+    const jwtToken = Cookies.get('token')
     updateState(jwtToken)
     console.log('Context updated:', { isLoggedIn, isAdmin, pseudo })
   }, [pseudo])
 
   const handleLogout = async () => {
     // Supprime le cookie et déconnecte l'utilisateur
+<<<<<<< HEAD
     await axios.delete(`${baseUrl}/m2l/panier/delete_all/${panier}`)
     await axios.delete(`${baseUrl}/m2l/panier/delete/${panier}`)
     Cookies.remove('jwt_token')
+=======
+    Cookies.remove('token')
+>>>>>>> db9a8266dd6991ff6df45f5d21569403fb407c3f
     updateState(null)
     // Redirige vers la page de connexion par exemple
     navigate('/connexion')

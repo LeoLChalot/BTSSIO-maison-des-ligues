@@ -10,11 +10,15 @@ import {
   Textarea,
   TextInput,
 } from 'flowbite-react'
+import {useAuth} from "../../hooks/useAuth";
+
 
 const FormArticle = () => {
   const { register, handleSubmit, setValue } = useForm()
   const [categories, setCategories] = useState([])
   const [rerender, setRerender] = useState(false)
+const {token} = useAuth();
+console.log(useAuth());
 
   const baseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
 
@@ -46,14 +50,15 @@ const FormArticle = () => {
         formData.append(key, data[key])
       }
     })
-
+	
     try {
       const { data } = await axios.post(
-        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/article`,
+        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/article/new`,
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+	    'Authorization': `Bearer ${token}`
           },
         }
       )

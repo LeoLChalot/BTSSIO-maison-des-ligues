@@ -10,7 +10,7 @@ import axios from 'axios'
 
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
-  const { pseudo, id_panier, jwtToken } =
+  const { pseudo, panier_id, token } =
     useAuth()
   const [prixTotal, setPrixTotal] = useState(0)
   const [panier, setPanier] = useState(null)
@@ -26,7 +26,7 @@ const PagePanier = () => {
     )
     const headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${jwtToken}`,
+	'Authorization': `Bearer ${token}`
     }
     const body = {
       id_article: id_article,
@@ -58,7 +58,7 @@ const PagePanier = () => {
     try {
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwtToken}`,
+        'Authorization': `Bearer ${token}`,
       }
       const body = {
         panier: panier
@@ -170,7 +170,7 @@ const PagePanier = () => {
                   ))}
                 </tbody>
               </table>
-              <Button type="submit" onClick={() => validerPanier(id_panier)}>
+              <Button type="submit" onClick={() => validerPanier(panier.id)}>
                 Valider
               </Button>
             </>

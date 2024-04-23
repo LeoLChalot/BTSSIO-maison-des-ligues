@@ -12,7 +12,6 @@ function ArticleCardFlowbite({ article }) {
 
   return (
     <Card
-      aspect-square
       className="w-full w-64 my-2 mx-4"
       imgAlt={description}
       imgSrc={photoUrl}

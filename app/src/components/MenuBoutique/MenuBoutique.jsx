@@ -12,7 +12,7 @@ const MenuBoutique = ({ setCategorie }) => {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const response = await axios.get(`${baseUrl}/m2l/boutique/categories/all`)
+      const response = await axios.get(`http://192.168.1.35:3000/m2l/boutique/categories/all`)
       const listCategories = response.data.infos.categories
       setCategories(listCategories)
     }
