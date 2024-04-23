@@ -4,11 +4,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useEffect } from 'react'
 import Cookies from 'js-cookie'
+import axios from 'axios';
 import './Navbar.css'
 
 function Nav() {
-  const { isLoggedIn, isAdmin, pseudo, updateState } = useAuth()
+  const { isLoggedIn, isAdmin, pseudo, updateState, panier } = useAuth()
   const navigate = useNavigate()
+  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
 
   useEffect(() => {
     const jwtToken = Cookies.get('jwt_token')
@@ -16,8 +18,10 @@ function Nav() {
     console.log('Context updated:', { isLoggedIn, isAdmin, pseudo })
   }, [pseudo])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Supprime le cookie et déconnecte l'utilisateur
+    await axios.delete(`${baseUrl}/m2l/panier/delete_all/${panier}`)
+    await axios.delete(`${baseUrl}/m2l/panier/delete/${panier}`)
     Cookies.remove('jwt_token')
     updateState(null)
     // Redirige vers la page de connexion par exemple

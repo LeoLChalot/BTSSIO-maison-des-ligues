@@ -162,10 +162,10 @@ const PagePanier = () => {
                           <p className='font-bold text-white'>+</p>
                         </Button>
                       </td>
-                      <td>
+                      {/* <td>
                         <Button
                           onClick={() => articleStandBy(article.id_article, article.id_panier)}>File</Button>
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>

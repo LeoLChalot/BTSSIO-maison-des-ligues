@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import axios from 'axios';
-
 import MenuBoutique from '../components/MenuBoutique/MenuBoutique'
-
 import './page.css'
 import ArticleCardFlowbite from '../components/Articles/ArticleCardFlowbite'
 
