@@ -10,14 +10,14 @@ import axios from 'axios'
 
 const PagePanier = () => {
   const pseudo_param = useParams().pseudo
-  const { pseudo, panier_id, token } =
+  const { pseudo, token } =
     useAuth()
   const [prixTotal, setPrixTotal] = useState(0)
   const [panier, setPanier] = useState(null)
   const [articles, setArticles] = useState([])
   const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
-  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
 
 
   const addToCart = async (id_article) => {
@@ -26,7 +26,7 @@ const PagePanier = () => {
     )
     const headers = {
       'Content-Type': 'application/json',
-	'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`
     }
     const body = {
       id_article: id_article,
@@ -37,7 +37,7 @@ const PagePanier = () => {
       withCredentials: true,
     }
     const request = await axios.post(
-      `${baseUrl}/m2l/panier/add/${panier.id}`,
+      `${baseUrl}/panier/add/${panier.id}`,
       body,
       config
     )
@@ -48,7 +48,7 @@ const PagePanier = () => {
     console.log(
       `Suppression de l'article id: ${id_article} du panier de ${pseudo}`
     )
-    const request = await axios.delete(`${baseUrl}/m2l/panier/delete_one/${panier.id}?id_article=${id_article}`)
+    const request = await axios.delete(`${baseUrl}/panier/delete_one/${panier.id}?id_article=${id_article}`)
     request.status == 200 ? toast.info(request.data.message) : toast.error(request.data.message)
     setRerender((rerender) => !rerender)
   }
@@ -68,7 +68,7 @@ const PagePanier = () => {
         withCredentials: true,
       }
       const request = await axios.post(
-        `${baseUrl}/m2l/panier/validate/${pseudo}`,
+        `${baseUrl}/panier/validate/${pseudo}`,
         body,
         config
       )
@@ -80,15 +80,15 @@ const PagePanier = () => {
     }
   }
 
-  const articleStandBy = async (id_panier, id_article) => {
-    const requestStandby = await axios.post(
-      `${baseUrl}/m2l/panier/standby/${id_panier}`,
-      { "id_article": id_article }
-    )
+  // const articleStandBy = async (id_panier, id_article) => {
+  //   const requestStandby = await axios.post(
+  //     `${baseUrl}/panier/standby/${id_panier}`,
+  //     { "id_article": id_article }
+  //   )
 
-    console.log('Mise en fil d\'attente de l\'article dans le panier de ' + pseudo)
-    console.log(requestStandby)
-  }
+  //   console.log('Mise en fil d\'attente de l\'article dans le panier de ' + pseudo)
+  //   console.log(requestStandby)
+  // }
 
   useEffect(() => {
     console.log(pseudo)
@@ -184,7 +184,7 @@ const PagePanier = () => {
       </div>
       <ToastContainer />
     </>
-  )
+  );
 }
 
 export default PagePanier

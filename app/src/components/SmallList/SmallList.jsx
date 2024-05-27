@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import './SmallList.css'
 
@@ -17,7 +16,7 @@ const SmallList = ({ titre, items }) => {
       <ul>
         {titreListe}
         {items.map((item) => (
-          <li>
+          <li key={item}>
             <p>
               <small>{item}</small>
             </p>

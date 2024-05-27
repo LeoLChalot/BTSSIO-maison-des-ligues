@@ -1,6 +1,6 @@
 import { Rating } from 'flowbite-react'
 
-function RatingDetail({}) {
+function RatingDetail() {
   return (
     <>
       <Rating className="mb-2">
