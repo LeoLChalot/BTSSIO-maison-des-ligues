@@ -7,12 +7,12 @@ import axios from 'axios'
 const MenuBoutique = ({ setCategorie }) => {
   const [categories, setCategories] = useState([])
 
-  const baseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
 
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const response = await axios.get(`http://192.168.1.35:3000/m2l/boutique/categories/all`)
+      const response = await axios.get(`${baseUrl}/boutique/categories/all`)
       const listCategories = response.data.infos.categories
       setCategories(listCategories)
     }

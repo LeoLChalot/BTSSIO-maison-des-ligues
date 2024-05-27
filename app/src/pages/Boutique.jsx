@@ -8,7 +8,7 @@ import ArticleCardFlowbite from '../components/Articles/ArticleCardFlowbite'
 const Boutique = () => {
   const [articles, setArticles] = useState([])
   const [categorie, setCategorie] = useState('')
-  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
 
   const validateUUIDv4 = (uuid) => {
     const regex =
@@ -19,11 +19,11 @@ const Boutique = () => {
   useEffect(() => {
     const fetchArticles = async (id_categorie) => {
       if (id_categorie == '') {
-        const result = await axios.get(`${baseUrl}/m2l/boutique/articles/all`);
+        const result = await axios.get(`${baseUrl}/boutique/articles/all`);
         setArticles(result.data.infos.articles)
       } else if (validateUUIDv4(id_categorie)) {
         const result = await axios.get(
-          `${baseUrl}/m2l/boutique/articles/categorie/id/${id_categorie}`
+          `${baseUrl}/boutique/articles/categorie/id/${id_categorie}`
         )
         setArticles(result.data.infos.articles)
       }
