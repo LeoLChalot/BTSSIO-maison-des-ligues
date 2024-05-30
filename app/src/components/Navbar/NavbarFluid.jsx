@@ -22,7 +22,7 @@ function Nav() {
     // Supprime le cookie et déconnecte l'utilisateur
     await axios.delete(`${baseUrl}/panier/delete_all/${panier}`)
     await axios.delete(`${baseUrl}/panier/delete/${panier}`)
-    Cookies.remove('jwt_token')
+    Cookies.remove('token')
     updateState(null)
     // Redirige vers la page de connexion par exemple
     navigate('/connexion')

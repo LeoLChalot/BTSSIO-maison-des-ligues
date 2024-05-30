@@ -14,13 +14,14 @@ const Navbar = () => {
     const jwtToken = Cookies.get('jwt_token');
     updateState(jwtToken);
     console.log('Context updated:', { isLoggedIn, isAdmin, pseudo });
+	isLoggedIn ? navigate('/connexion'):null
   }, [pseudo]);
 
   const handleLogout = () => {
-    // Supprime le cookie et déconnecte l'utilisateur
-    Cookies.remove('jwt_token');
+    // Supprime le cookie et deconnecte l'utilisateuré
+	Cookies.remove('jwt_token');
     updateState(null);
-    // Redirige vers la page de connexion par exemple
+    // Redirige vers la page de connexion
     navigate('/connexion');
   };
 

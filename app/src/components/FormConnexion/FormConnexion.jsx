@@ -15,7 +15,7 @@ const FormConnexion = () => {
   const [password, setPassword] = useState('')
   const [showPassord, setShowPassword] = useState(false)
   const { updateState } = useAuth()
-  
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
   const navigate = useNavigate()
 
   const showPassordToggle = () => {
@@ -36,7 +36,7 @@ const FormConnexion = () => {
       headers,
       withCredentials: true,
     }
-    const res = await axios.post(`http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/user/connexion`, body, config)
+    const res = await axios.post(`${baseUrl}/user/connexion`, body, config)
 
 
     if (res.status == 200) {
