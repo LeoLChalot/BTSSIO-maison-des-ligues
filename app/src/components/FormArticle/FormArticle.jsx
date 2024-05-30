@@ -20,13 +20,13 @@ const FormArticle = () => {
 const {token} = useAuth();
 console.log(useAuth());
 
-  const baseUrl = `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          `${baseUrl}/m2l/boutique/categories/all`
+          `${baseUrl}/boutique/categories/all`
         )
         setCategories(data.infos.categories)
       } catch (error) {
@@ -53,7 +53,7 @@ console.log(useAuth());
 	
     try {
       const { data } = await axios.post(
-        `http://${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}/m2l/admin/article/new`,
+        `${baseUrl}/admin/article`,
         formData,
         {
           headers: {

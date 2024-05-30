@@ -18,7 +18,7 @@ const PagePanier = () => {
   const [rerender, setRerender] = useState(false)
   const navigate = useNavigate()
   const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
-
+  const photo_path_url = baseUrl.replace("m2l", "")
 
   const addToCart = async (id_article) => {
     console.log(
@@ -97,7 +97,7 @@ const PagePanier = () => {
       : navigate(`/panier/${pseudo}`)
 
     const fetchData = async () => {
-      const fetch_panier = await axios.get(`${baseUrl}/m2l/panier/${pseudo}`)
+      const fetch_panier = await axios.get(`${baseUrl}/panier/${pseudo}`)
       console.log(fetch_panier)
       setPanier(await fetch_panier.data.infos.panier)
       setPrixTotal(await fetch_panier.data.infos.panier.prix_total)
@@ -123,7 +123,7 @@ const PagePanier = () => {
                       <td>
                         <img
                           src={
-                            `${baseUrl}/` +
+                            photo_path_url +
                             article.article.image.replace(/\\/g, '/')
                           }
                           width="100"

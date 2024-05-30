@@ -16,7 +16,7 @@ const ArticleDetail = () => {
   const [quantite, setQuantite] = useState(1)
   const [photo, setPhoto] = useState(null)
   const [categorie, setCategorie] = useState('')
-  const baseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
   const [jwtToken, setJwtToken] = useState('')
   const [addedArticle, setAddedArticle] = useState(false)
   const navigate = useNavigate()
@@ -55,7 +55,7 @@ const ArticleDetail = () => {
         withCredentials: true,
       }
       const res = await axios.post(
-        `${baseUrl}/m2l/panier/add/${panier_id}`,
+        `${baseUrl}/panier/add/${panier_id}`,
         body,
         config
       )
@@ -76,14 +76,14 @@ const ArticleDetail = () => {
     const fetchArticle = async (id) => {
       try {
         const response = await axios.get(
-          `${baseUrl}/m2l/boutique/article/id/${id}`
+          `${baseUrl}/boutique/article/id/${id}`
         )
 
         const article = response.data.infos.article
 
         console.log(article)
 
-        const photoUrl = `${baseUrl}/${article.image.replace(/\\/g, '/')}`
+        const photoUrl = `${baseUrl.replace("/m2l", "")}/${article.image.replace(/\\/g, '/')}`
         setPhoto(photoUrl)
         setCategorie(article.categorie.nom)
         setArticle(article)

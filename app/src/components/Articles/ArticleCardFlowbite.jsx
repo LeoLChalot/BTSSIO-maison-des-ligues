@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 
 
 function ArticleCardFlowbite({ article }) {
-  const serverBaseUrl = `http://` + JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')
+  const baseUrl = `${JSON.stringify(import.meta.env.VITE_API_URL).replaceAll('"', '')}`
+  const serveurBaseUrl = baseUrl.replace("/m2l", "")
 
   const description = article.description
   const photoPath = article.image
-  const photoUrl = `${serverBaseUrl}/${photoPath.replace(/\\/g, '/')}`
+  const photoUrl = `${serveurBaseUrl}/${photoPath.replace(/\\/g, '/')}`
 
   return (
     <Card
