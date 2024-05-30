@@ -11,7 +11,7 @@ function ArticlesListFlowbite() {
 	const {token} = useAuth()
   const handleDeleteArticle = async (id) => {
     try {
-      // Appeler une fonction pour supprimer l'article
+      // Supprimer l'article
       const response = await axios.delete(`${baseUrl}/admin/article/${id}`,{
       headers: {
         'Content-Type': 'application-json',
@@ -31,7 +31,7 @@ function ArticlesListFlowbite() {
       const result = await axios.get(`${baseUrl}/boutique/articles/all`);
       setArticles(result.data.infos.articles)
     }
-    // Appeler une fonction pour récupérer la liste des articles
+    // Récupérer la liste des articles
     fetchArticles()
   }, [articles.length, baseUrl])
 
